@@ -1,0 +1,117 @@
+---
+title: "Nosotros| Quienes somos"
+description: "Meta description for the page"
+permalink: "/nosotros/"
+---
+
+{% extends "layouts/base.html" %}
+
+    <link rel="stylesheet" href="/assets/css/nosotros.css">
+
+
+{% block body %}
+
+
+    <!-- ============================================ -->
+    <!--                 Side By Side                 -->
+    <!-- ============================================ -->
+
+   <!-- ============================================ -->
+<!--                     FAQ                      -->
+<!-- ============================================ -->
+
+<section id="faq-1458">
+    <div class="cs-container">
+        <div class="cs-image-group">
+            <picture class="cs-picture">
+                <!--Mobile Image-->
+                <source media="(max-width: 600px)" srcset="https://csimages2.nyc3.digitaloceanspaces.com/Images/MISC/environment-slogan.jpg">
+                <!--Tablet and above Image-->
+                <source media="(min-width: 601px)" srcset="https://csimages2.nyc3.digitaloceanspaces.com/Images/MISC/environment-slogan.jpg">
+                <img loading="lazy" decoding="async" src="https://csimages2.nyc3.digitaloceanspaces.com/Images/MISC/environment-slogan.jpg" alt="body shop" width="522" height="609" aria-hidden="true">
+            </picture>
+        </div>
+        <div class="cs-content">
+            <span class="cs-topper">Asked Questions</span>
+            <h2 class="cs-title">Frequently Asked Questions</h2>
+            <ul class="cs-faq-group">
+                <!-- Active class added as default -->
+                <li class="cs-faq-item active">
+                    <button class="cs-button">
+                        <span class="cs-button-text">
+                            How does climate change affect people?
+                        </span>
+                    </button>
+                    <p class="cs-item-p">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">
+                            What is being done about climate change?
+                        </span>
+                    </button>
+                    <p class="cs-item-p">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">
+                            What is being done about climate change?
+                        </span>
+                    </button>
+                    <p class="cs-item-p">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">
+                            Is it hopeless to stop climate change?
+                        </span>
+                    </button>
+                    <p class="cs-item-p">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">
+                            How is climate change affecting wildlife?
+                        </span>
+                    </button>
+                    <p class="cs-item-p">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">
+                            How do I join the volunteer team?
+                        </span>
+                    </button>
+                    <p class="cs-item-p">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+     
+<script>
+    const faqItems = Array.from(document.querySelectorAll('.cs-faq-item'));
+        for (const item of faqItems) {
+            const onClick = () => {
+            item.classList.toggle('active')
+        }
+        item.addEventListener('click', onClick)
+        }
+                                
+</script>
+
+    
+
+{% endblock %}
