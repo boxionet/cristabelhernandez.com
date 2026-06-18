@@ -1,0 +1,243 @@
+/*-- -------------------------- -->
+<---    Booking Flow - Customer Type Step    -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #booking-flow-customer-type {
+        padding: 0;
+        min-height: 100vh;
+        background-color: #fff;
+        position: relative;
+
+        .booking-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .booking-image {
+            display: none;
+        }
+
+        .booking-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: calc(600 / 16 * 1rem);
+            padding: 0 calc(20 / 16 * 1rem);
+            position: relative;
+            z-index: 100;
+        }
+
+
+        .booking-main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: calc(40 / 16 * 1rem) 0;
+        }
+
+        .booking-title {
+            font-family: "Gordita", Arial, sans-serif;
+            font-size: calc(24 / 16 * 1rem);
+            font-weight: 500;
+            line-height: 1.2em;
+            margin: 0 0 calc(32 / 16 * 1rem) 0;
+            color: #1a1a1a;
+            text-align: left;
+        }
+
+        .booking-options {
+            display: flex;
+            flex-direction: column;
+            gap: calc(10 / 16 * 1rem);
+        }
+
+        .booking-option {
+            width: 100%;
+            padding: calc(12 / 16 * 1rem) calc(20 / 16 * 1rem);
+            background-color: #fff;
+            border: 1px solid #D4C4B0;
+            border-radius: calc(16 / 16 * 1rem);
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            font-family: "Gordita", Arial, sans-serif;
+            text-decoration: none;
+            color: inherit;
+
+            &:hover {
+                background-color: #FBF2E7;
+                border-color: #D4C4B0;
+            }
+
+            &:active {
+                background-color: #F0E6D8;
+            }
+        }
+
+        .booking-option-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: calc(4 / 16 * 1rem);
+        }
+
+        .booking-option-title {
+            font-size: calc(16 / 16 * 1rem);
+            font-weight: 500;
+            line-height: 1.2em;
+            color: #1a1a1a;
+            display: block;
+        }
+
+        .booking-option-subtitle {
+            font-size: calc(14 / 16 * 1rem);
+            font-weight: 400;
+            line-height: 1.5em;
+            color: #767676;
+            display: block;
+        }
+
+        .booking-option-arrow {
+            width: calc(20 / 16 * 1rem);
+            height: calc(20 / 16 * 1rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-left: calc(12 / 16 * 1rem);
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .booking-image {
+            display: none;
+            width: 50%;
+            height: 100%;
+            background-color: #fff;
+            position: relative;
+            overflow: hidden;
+
+            picture {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: calc(100/ 16 * 1rem);
+            }
+
+            img {
+                max-width: 80%;
+                height: auto;
+                object-fit: contain;
+            }
+        }
+    }
+}
+
+/* Tablet - 600px */
+@media only screen and (min-width: 37.5rem) {
+    #booking-flow-customer-type {
+        .booking-container {
+            min-height: 100vh;
+        }
+
+        .booking-main {
+            padding: calc(60 / 16 * 1rem) 0;
+        }
+
+        .booking-title {
+            font-size: calc(28 / 16 * 1rem);
+            margin-bottom: calc(40 / 16 * 1rem);
+        }
+
+        .booking-option {
+            padding: calc(16 / 16 * 1rem) calc(24 / 16 * 1rem);
+            margin-bottom: calc(6 / 16 * 1rem);
+        }
+    }
+}
+
+/* Desktop - 1024px */
+@media only screen and (min-width: 64rem) {
+    #booking-flow-customer-type {
+        .booking-container {
+            flex-direction: row;
+            height: 100vh;
+            min-height: auto;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+
+        .booking-content {
+            display: flex;
+            flex-direction: row;
+            width: 50%;
+            max-width: none;
+            padding: calc(32 / 16 * 1rem) calc(20 / 16 * 1rem) calc(32 / 16 * 1rem) calc(80 / 16 * 1rem);
+            justify-content: flex-end;
+        }
+
+        .booking-main {
+            padding: calc(80 / 16 * 1rem) 0;
+            padding-bottom: calc(160 / 16 * 1rem);
+            max-width: calc(530 / 16 * 1rem);
+            width: 100%;
+        }
+
+        .booking-title {
+            font-size: calc(32 / 16 * 1rem);
+            margin-bottom: calc(48 / 16 * 1rem);
+        }
+
+        .booking-option {
+            padding: calc(16 / 16 * 1rem) calc(24 / 16 * 1rem);
+            margin-bottom: calc(16 / 16 * 1rem);
+
+            &:hover {
+                background-color: #f0e6d8;
+            }
+        }
+
+        .booking-image {
+            display: flex;
+            width: 50%;
+            background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+            align-items: center;
+            justify-content: center;
+            padding: calc(40 / 16 * 1rem);
+            border-radius: calc(24 / 16 * 1rem);
+            margin: calc(40 / 16 * 1rem);
+            height: 80%;
+
+            picture {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            img {
+                max-width: 90%;
+                height: auto;
+                object-fit: contain;
+            }
+        }
+    }
+}

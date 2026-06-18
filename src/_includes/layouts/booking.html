@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ client.domain }}{{ page.url }}">
+    
+    <link rel="icon" type="image/png" href="/assets/favicons/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/assets/favicons/apple-touch-icon.png">
+    
+    <link rel="preload" as="font" type="font/otf" href="/assets/fonts/Gordita-Medium.otf" crossorigin>
+    <link rel="preload" as="font" type="font/otf" href="/assets/fonts/Gordita-Regular.otf" crossorigin>
+    
+    <link rel="stylesheet" href="/assets/css/root.css">
+    <link rel="stylesheet" href="/assets/css/booking-header.css">
+    
+    {% block head %}{% endblock %}
+    
+    <title>{{ title }}</title>
+</head>
+<body class="booking-page">
+    <!-- Booking Header (Custom) -->
+    <header id="booking-header" class="booking-header">
+        <div class="booking-header-container">
+            <button class="booking-back-btn" aria-label="Volver atrás" id="booking-back-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 12H4M4 12L10.0377 18M4 12L10.0377 6" stroke="#1D1D1F" stroke-width="1.5"></path></svg>
+            </button>
+            <a href="/" class="booking-header-logo" aria-label="Ir al inicio">
+                <img src="/assets/svgs/cristabel_logo_horizontal.svg" alt="Dr. Cristabel Hernandez" width="350" height="120" decoding="async">
+            </a>
+            <div class="booking-header-spacer"></div>
+        </div>
+    </header>
+
+    <script>
+        // Handle back button navigation based on current page
+        document.getElementById('booking-back-btn').addEventListener('click', function() {
+            const currentPath = window.location.pathname;
+            
+            if (currentPath.includes('/reservar/confirmacion')) {
+                window.location.href = '/reservar/fecha-hora/';
+            } else if (currentPath.includes('/reservar/fecha-hora')) {
+                window.location.href = '/reservar/servicios/';
+            } else if (currentPath.includes('/reservar/servicios')) {
+                window.location.href = '/reservar/';
+            } else if (currentPath.includes('/reservar/informacion')) {
+                window.location.href = '/reservar/fecha-hora/';
+            } else {
+                // Fallback to history.back() for other pages
+                history.back();
+            }
+        });
+    </script>
+
+    <main id="main" class="booking-main">
+        {% block body %}{% endblock %}
+    </main>
+
+    <!-- No footer for booking pages -->
+    
+    <script src="/assets/js/nav.js" defer></script>
+    <script src="/assets/js/dark.js" defer></script>
+</body>
+</html>

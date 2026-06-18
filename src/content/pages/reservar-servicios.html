@@ -1,0 +1,321 @@
+---
+title: "Seleccionar Servicios | Dr. Cristabel Hernandez"
+description: "Elige los servicios para tu cita"
+permalink: "/reservar/servicios/"
+---
+
+{% extends "layouts/booking.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/assets/css/reservar-servicios.css">
+{% endblock %}
+
+{% block body %}
+
+    <!-- ============================================ -->
+    <!--        Booking Flow - Services Selection     -->
+    <!-- ============================================ -->
+
+    <section id="booking-flow-services">
+        <div class="booking-services-container">
+            <!-- Back Button -->
+            <button class="booking-back-btn" onclick="window.location.href='/reservar/';" aria-label="Volver atrás">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <!-- Services List -->
+            <div class="booking-services-content">
+                <h1 class="booking-services-title">Selecciona un servicio</h1>
+                
+                <div class="booking-services-list">
+                    <!-- Service Card 1 -->
+                    <div class="booking-service-card" data-service-id="1">
+                        <div class="booking-service-content">
+                            <div class="booking-service-info">
+                                <h3 class="booking-service-name">Botox Preventivo</h3>
+                                <p class="booking-service-duration">30 min</p>
+                                <p class="booking-service-description">Botox preventivo personalizado respaldado por ciencia</p>
+                            </div>
+                            <div class="booking-service-footer">
+                                <span class="booking-service-price">$425</span>
+                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 2 -->
+                    <div class="booking-service-card" data-service-id="2">
+                        <div class="booking-service-content">
+                            <div class="booking-service-info">
+                                <h3 class="booking-service-name">Relleno de Labios</h3>
+                                <p class="booking-service-duration">45 min</p>
+                                <p class="booking-service-description">Aumento y definición de labios con ácido hialurónico</p>
+                            </div>
+                            <div class="booking-service-footer">
+                                <span class="booking-service-price">$350</span>
+                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 3 -->
+                    <div class="booking-service-card" data-service-id="3">
+                        <div class="booking-service-content">
+                            <div class="booking-service-info">
+                                <h3 class="booking-service-name">Relleno de Mejillas</h3>
+                                <p class="booking-service-duration">45 min</p>
+                                <p class="booking-service-description">Restaura volumen y define los pómulos</p>
+                            </div>
+                            <div class="booking-service-footer">
+                                <span class="booking-service-price">$400</span>
+                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 4 -->
+                    <div class="booking-service-card" data-service-id="4">
+                        <div class="booking-service-content">
+                            <div class="booking-service-info">
+                                <h3 class="booking-service-name">Microagujas</h3>
+                                <p class="booking-service-duration">60 min</p>
+                                <p class="booking-service-description">Rejuvenecimiento de piel con microneedling</p>
+                            </div>
+                            <div class="booking-service-footer">
+                                <span class="booking-service-price">$300</span>
+                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 5 -->
+                    <div class="booking-service-card" data-service-id="5">
+                        <div class="booking-service-content">
+                            <div class="booking-service-info">
+                                <h3 class="booking-service-name">Peeling Químico</h3>
+                                <p class="booking-service-duration">30 min</p>
+                                <p class="booking-service-description">Exfoliación profunda para renovación de piel</p>
+                            </div>
+                            <div class="booking-service-footer">
+                                <span class="booking-service-price">$250</span>
+                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Card 6 -->
+                    <div class="booking-service-card" data-service-id="6">
+                        <div class="booking-service-content">
+                            <div class="booking-service-info">
+                                <h3 class="booking-service-name">Consulta Complementaria</h3>
+                                <p class="booking-service-duration">30 min</p>
+                                <p class="booking-service-description">Consulta inicial con la Dra. Cristabel</p>
+                            </div>
+                            <div class="booking-service-footer">
+                                <span class="booking-service-price">Gratis</span>
+                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Sidebar - Desktop Only -->
+            <aside class="booking-cart-sidebar booking-cart-sidebar-desktop">
+                <div class="booking-cart-header">
+                    <h2 class="booking-cart-title">Resumen</h2>
+                </div>
+
+                <div class="booking-cart-items" id="cart-items-desktop">
+                    <p class="booking-cart-empty">Selecciona un servicio para comenzar</p>
+                </div>
+
+                <div class="booking-cart-summary">
+                    <div class="booking-cart-row">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal-desktop">$0</span>
+                    </div>
+                    <div class="booking-cart-row booking-cart-total">
+                        <span>Total:</span>
+                        <span id="cart-total-desktop">$0</span>
+                    </div>
+                </div>
+
+                <button class="booking-cart-continue-btn" id="continue-btn-desktop" disabled>
+                    Continuar
+                </button>
+            </aside>
+        </div>
+
+        <!-- Cart Bottom Bar - Mobile/Tablet -->
+        <div class="booking-cart-bottom-bar" id="cart-bottom-bar">
+            <div class="booking-cart-bottom-content">
+                <button class="booking-cart-bottom-toggle" id="cart-bottom-toggle">
+                    <div class="booking-cart-bottom-info">
+                        <span class="booking-cart-bottom-price" id="cart-bottom-price">$0</span>
+                        <div class="booking-cart-bottom-details-row">
+                            <svg class="booking-cart-bottom-icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27.768 7.359A1 1 0 0 0 27 7H6.835l-.611-3.357A2 2 0 0 0 4.256 2H2a1 1 0 0 0 0 2h2.25l3.195 17.536a3 3 0 0 0 .666 1.409A3.5 3.5 0 1 0 13.661 24h5.678a3.5 3.5 0 1 0 3.161-2H10.396a1 1 0 0 1-.984-.821L9.016 19h14.5a3 3 0 0 0 2.952-2.464l1.52-8.357a1 1 0 0 0-.22-.82M12 25.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m12 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5-9.321a1 1 0 0 1-.988.821H8.653L7.2 9H25.8z"></path>
+                            </svg>
+                            <span class="booking-cart-bottom-details" id="cart-bottom-details">0 items</span>
+                        </div>
+                    </div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="booking-cart-bottom-continue-btn" id="continue-btn-mobile" disabled>
+                    Continuar
+                </button>
+            </div>
+
+            <!-- Expandable Cart Panel -->
+            <div class="booking-cart-bottom-panel" id="cart-bottom-panel">
+                <div class="booking-cart-bottom-panel-header">
+                    <h2 class="booking-cart-bottom-panel-title">Desglose de precio</h2>
+                    <button class="booking-cart-bottom-panel-close" id="cart-bottom-close">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="booking-cart-bottom-panel-items" id="cart-items-mobile">
+                    <p class="booking-cart-empty">Selecciona un servicio para comenzar</p>
+                </div>
+
+                <div class="booking-cart-bottom-panel-footer">
+                    <hr class="booking-cart-divider">
+                    <div class="booking-cart-bottom-panel-total">
+                        <span>Total</span>
+                        <span id="cart-total-mobile">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const BookingStorage = {
+            STORAGE_KEY: "cristabel_booking",
+            
+            init() {
+                if (!this.get()) {
+                    this.set({
+                        customerType: null,
+                        services: {},
+                        dateTime: null,
+                        customerInfo: null,
+                        timestamp: new Date().toISOString(),
+                    });
+                }
+            },
+
+            get() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error("Error reading from localStorage:", e);
+                    return null;
+                }
+            },
+
+            set(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                    return true;
+                } catch (e) {
+                    console.error("Error writing to localStorage:", e);
+                    return false;
+                }
+            },
+
+            update(field, value) {
+                let data = this.get();
+                if (!data) {
+                    data = {
+                        customerType: null,
+                        services: {},
+                        dateTime: null,
+                        customerInfo: null,
+                        timestamp: new Date().toISOString(),
+                    };
+                }
+                data[field] = value;
+                data.timestamp = new Date().toISOString();
+                return this.set(data);
+            },
+
+            getField(field) {
+                const data = this.get();
+                return data ? data[field] : null;
+            },
+
+            setServices(services) {
+                return this.update("services", services);
+            },
+
+            getServices() {
+                return this.getField("services") || {};
+            },
+
+            getBookingData() {
+                return this.get();
+            },
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            BookingStorage.init();
+            
+            // Mark services as selected if they're in localStorage
+            const storedServices = BookingStorage.getServices();
+            if (storedServices && Object.keys(storedServices).length > 0) {
+                Object.keys(storedServices).forEach((serviceId) => {
+                    const serviceCard = document.querySelector(`[data-service-id="${serviceId}"]`);
+                    if (serviceCard) {
+                        serviceCard.classList.add("selected");
+                        const addBtn = serviceCard.querySelector(".booking-service-add-btn");
+                        if (addBtn) {
+                            addBtn.classList.add("selected");
+                            // Replace plus icon with checkmark
+                            addBtn.innerHTML = `
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            `;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    <script defer src="/assets/js/booking-services.js"></script>
+
+{% endblock %}

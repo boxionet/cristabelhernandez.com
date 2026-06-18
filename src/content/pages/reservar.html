@@ -1,0 +1,221 @@
+---
+title: "Reservar Cita | Dr. Cristabel Hernandez"
+description: "Reserva tu cita de consulta con la Dra. Cristabel Hernandez"
+permalink: "/reservar/"
+---
+
+{% extends "layouts/booking.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/assets/css/reservar.css">
+{% endblock %}
+
+{% block body %}
+
+    <!-- ============================================ -->
+    <!--           Booking Flow - Customer Type       -->
+    <!-- ============================================ -->
+
+    <section id="booking-flow-customer-type">
+        <div class="booking-container">
+            <div class="booking-content">
+                <div class="booking-main">
+                    <h1 class="booking-title">¿Cómo podemos ayudarte?</h1>
+                    
+                    <div class="booking-options">
+                        <button class="booking-option" data-option="new" onclick="handleCustomerTypeSelection('new')">
+                            <div class="booking-option-content">
+                                <span class="booking-option-title">Soy nuevo en Cristabel</span>
+                                <span class="booking-option-subtitle">Agenda tu consulta complementaria</span>
+                            </div>
+                            <div class="booking-option-arrow">
+                                <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.00177 9.1675V7.83423H13.3346V9.1675H2.00177Z" fill="#1D1D1F"></path>
+                                    <path d="M9.3349 4.50122L13.3347 8.50103L9.3349 12.5001" stroke="#1D1D1F" stroke-width="1.33327"></path>
+                                </svg>
+                            </div>
+                        </button>
+
+                        <button class="booking-option" data-option="returning" onclick="handleCustomerTypeSelection('returning')">
+                            <div class="booking-option-content">
+                                <span class="booking-option-title">Soy cliente de Cristabel</span>
+                                <span class="booking-option-subtitle">¡Bienvenido! Agenda tu próxima visita</span>
+                            </div>
+                            <div class="booking-option-arrow">
+                                <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.00177 9.1675V7.83423H13.3346V9.1675H2.00177Z" fill="#1D1D1F"></path>
+                                    <path d="M9.3349 4.50122L13.3347 8.50103L9.3349 12.5001" stroke="#1D1D1F" stroke-width="1.33327"></path>
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="booking-image">
+                <picture>
+                    <source srcset="/assets/svgs/cristabel-hernandez-logo.svg" type="image/webp">
+                    <img src="/assets/svgs/cristabel-hernandez-logo.svg" alt="Cristabel Hernandez - Aesthetic Services">
+                </picture>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Reset logic for booking data
+        function checkAndResetBookingData() {
+            const STORAGE_KEY = "cristabel_booking";
+            const data = localStorage.getItem(STORAGE_KEY);
+            
+            if (!data) return;
+            
+            try {
+                const parsedData = JSON.parse(data);
+                const createdAt = new Date(parsedData.timestamp);
+                const now = new Date();
+                const hoursDiff = (now - createdAt) / (1000 * 60 * 60);
+                
+                // Reset if session is older than 24 hours
+                if (hoursDiff > 24) {
+                    console.log('Session expired (older than 24 hours). Clearing booking data.');
+                    localStorage.removeItem(STORAGE_KEY);
+                }
+            } catch (e) {
+                console.error('Error checking session expiration:', e);
+            }
+        }
+        
+        // Check for expired sessions on page load
+        checkAndResetBookingData();
+        
+        // Reset data when user closes browser/tab
+        window.addEventListener('beforeunload', function() {
+            console.log('User closing browser/tab. Clearing booking data.');
+            localStorage.removeItem('cristabel_booking');
+        });
+
+        const BookingStorage = {
+            STORAGE_KEY: "cristabel_booking",
+            
+            init() {
+                if (!this.get()) {
+                    this.set({
+                        customerType: null,
+                        services: {},
+                        dateTime: null,
+                        customerInfo: null,
+                        timestamp: new Date().toISOString(),
+                    });
+                }
+            },
+
+            get() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error("Error reading from localStorage:", e);
+                    return null;
+                }
+            },
+
+            set(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                    return true;
+                } catch (e) {
+                    console.error("Error writing to localStorage:", e);
+                    return false;
+                }
+            },
+
+            update(field, value) {
+                let data = this.get();
+                if (!data) {
+                    data = {
+                        customerType: null,
+                        services: {},
+                        dateTime: null,
+                        customerInfo: null,
+                        timestamp: new Date().toISOString(),
+                    };
+                }
+                data[field] = value;
+                data.timestamp = new Date().toISOString();
+                return this.set(data);
+            },
+
+            getField(field) {
+                const data = this.get();
+                return data ? data[field] : null;
+            },
+
+            setCustomerType(type) {
+                if (!type) {
+                    console.error("Customer type cannot be empty");
+                    return false;
+                }
+                const result = this.update("customerType", type);
+                if (result) {
+                    console.log("✓ Customer type saved:", type);
+                } else {
+                    console.error("✗ Failed to save customer type");
+                }
+                return result;
+            },
+
+            getCustomerType() {
+                return this.getField("customerType");
+            },
+
+            getBookingData() {
+                return this.get();
+            },
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            BookingStorage.init();
+        });
+
+        function handleCustomerTypeSelection(type) {
+            const customerTypeLabel = type === 'new' ? 'Nuevo Paciente' : 'Paciente';
+            
+            try {
+                console.log('Starting handleCustomerTypeSelection with type:', type);
+                console.log('Customer type label:', customerTypeLabel);
+                
+                const currentData = BookingStorage.get();
+                console.log('Current storage data:', currentData);
+                
+                if (!currentData) {
+                    console.log('No data found, initializing...');
+                    BookingStorage.init();
+                    console.log('Storage initialized');
+                }
+                
+                console.log('Saving customer type...');
+                const success = BookingStorage.setCustomerType(customerTypeLabel);
+                console.log('Save result:', success);
+                
+                if (!success) {
+                    throw new Error('Failed to save customer type to localStorage');
+                }
+                
+                console.log('Verifying saved data...');
+                const savedType = BookingStorage.getCustomerType();
+                console.log('✓ Verified saved type:', savedType);
+                
+                console.log('Navigating to /reservar/servicios/ in 100ms...');
+                setTimeout(() => {
+                    window.location.href = '/reservar/servicios/';
+                }, 100);
+                
+            } catch (error) {
+                console.error('✗ Error in handleCustomerTypeSelection:', error);
+                console.error('Error message:', error.message);
+                alert('Error al guardar tu selección. Por favor intenta de nuevo.\n\nDetalles: ' + error.message);
+            }
+        }
+    </script>
+
+{% endblock %}
