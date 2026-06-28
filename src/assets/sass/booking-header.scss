@@ -10,6 +10,11 @@
         background-color: #fff;
     }
 
+    html:has(body.booking-page),
+    body.booking-page {
+        overflow-x: visible;
+    }
+
     #booking-header {
         background-color: #fff;
         border-bottom: 1px solid #F0E6D8;

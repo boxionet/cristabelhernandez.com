@@ -7,7 +7,7 @@
     #booking-flow-customer-type {
         padding: 0;
         min-height: 100vh;
-        background-color: #fff;
+        background-color: var(--booking-page-background);
         position: relative;
 
         .booking-container {
@@ -62,8 +62,8 @@
         .booking-option {
             width: 100%;
             padding: calc(12 / 16 * 1rem) calc(20 / 16 * 1rem);
-            background-color: #fff;
-            border: 1px solid #D4C4B0;
+            background-color: var(--booking-card-background);
+            border: 1px solid var(--booking-card-border);
             border-radius: calc(16 / 16 * 1rem);
             display: flex;
             flex-direction: row;
@@ -77,12 +77,40 @@
             color: inherit;
 
             &:hover {
-                background-color: #FBF2E7;
-                border-color: #D4C4B0;
+                background-color: var(--booking-secondary-button-hover);
+                border-color: var(--booking-secondary-button);
+                color: var(--booking-primary-button-text);
+
+                .booking-option-title,
+                .booking-option-subtitle {
+                    color: var(--booking-primary-button-text);
+                }
+
+                .booking-option-arrow svg path[fill] {
+                    fill: var(--booking-primary-button-text) !important;
+                }
+
+                .booking-option-arrow svg path[stroke] {
+                    stroke: var(--booking-primary-button-text) !important;
+                }
             }
 
             &:active {
-                background-color: #F0E6D8;
+                background-color: var(--booking-secondary-button);
+                color: var(--booking-primary-button-text);
+
+                .booking-option-title,
+                .booking-option-subtitle {
+                    color: var(--booking-primary-button-text);
+                }
+
+                .booking-option-arrow svg path[fill] {
+                    fill: var(--booking-primary-button-text) !important;
+                }
+
+                .booking-option-arrow svg path[stroke] {
+                    stroke: var(--booking-primary-button-text) !important;
+                }
             }
         }
 
@@ -97,7 +125,7 @@
             font-size: calc(16 / 16 * 1rem);
             font-weight: 500;
             line-height: 1.2em;
-            color: #1a1a1a;
+            color: var(--booking-main-text);
             display: block;
         }
 
@@ -105,7 +133,7 @@
             font-size: calc(14 / 16 * 1rem);
             font-weight: 400;
             line-height: 1.5em;
-            color: #767676;
+            color: var(--booking-secondary-text);
             display: block;
         }
 
@@ -210,7 +238,22 @@
             margin-bottom: calc(16 / 16 * 1rem);
 
             &:hover {
-                background-color: #f0e6d8;
+                background-color: var(--booking-secondary-button-hover);
+                border-color: var(--booking-secondary-button);
+                color: var(--booking-primary-button-text);
+
+                .booking-option-title,
+                .booking-option-subtitle {
+                    color: var(--booking-primary-button-text);
+                }
+
+                .booking-option-arrow svg path[fill] {
+                    fill: var(--booking-primary-button-text) !important;
+                }
+
+                .booking-option-arrow svg path[stroke] {
+                    stroke: var(--booking-primary-button-text) !important;
+                }
             }
         }
 

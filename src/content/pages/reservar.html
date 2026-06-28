@@ -25,8 +25,8 @@ permalink: "/reservar/"
                     <div class="booking-options">
                         <button class="booking-option" data-option="new" onclick="handleCustomerTypeSelection('new')">
                             <div class="booking-option-content">
-                                <span class="booking-option-title">Soy nuevo en Cristabel</span>
-                                <span class="booking-option-subtitle">Agenda tu consulta complementaria</span>
+                                <span class="booking-option-title">Es mi primera visita</span>
+                                <span class="booking-option-subtitle">Agenda tu valoración inicial</span>
                             </div>
                             <div class="booking-option-arrow">
                                 <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,8 +38,8 @@ permalink: "/reservar/"
 
                         <button class="booking-option" data-option="returning" onclick="handleCustomerTypeSelection('returning')">
                             <div class="booking-option-content">
-                                <span class="booking-option-title">Soy cliente de Cristabel</span>
-                                <span class="booking-option-subtitle">¡Bienvenido! Agenda tu próxima visita</span>
+                                <span class="booking-option-title">Ya soy paciente</span>
+                                <span class="booking-option-subtitle">Agenda tu próxima cita</span>
                             </div>
                             <div class="booking-option-arrow">
                                 <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,37 +62,28 @@ permalink: "/reservar/"
     </section>
 
     <script>
-        // Reset logic for booking data
-        function checkAndResetBookingData() {
+        // Clear booking data when starting a new booking flow
+        (function() {
             const STORAGE_KEY = "cristabel_booking";
             const data = localStorage.getItem(STORAGE_KEY);
-            
+
             if (!data) return;
-            
+
+            let shouldClear = true; // always clear on /reservar/
+
             try {
                 const parsedData = JSON.parse(data);
                 const createdAt = new Date(parsedData.timestamp);
-                const now = new Date();
-                const hoursDiff = (now - createdAt) / (1000 * 60 * 60);
-                
-                // Reset if session is older than 24 hours
-                if (hoursDiff > 24) {
-                    console.log('Session expired (older than 24 hours). Clearing booking data.');
-                    localStorage.removeItem(STORAGE_KEY);
-                }
+                const hoursDiff = (Date.now() - createdAt) / (1000 * 60 * 60);
+                if (hoursDiff > 24) shouldClear = true;
             } catch (e) {
-                console.error('Error checking session expiration:', e);
+                shouldClear = true;
             }
-        }
-        
-        // Check for expired sessions on page load
-        checkAndResetBookingData();
-        
-        // Reset data when user closes browser/tab
-        window.addEventListener('beforeunload', function() {
-            console.log('User closing browser/tab. Clearing booking data.');
-            localStorage.removeItem('cristabel_booking');
-        });
+
+            if (shouldClear) {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        })();
 
         const BookingStorage = {
             STORAGE_KEY: "cristabel_booking",

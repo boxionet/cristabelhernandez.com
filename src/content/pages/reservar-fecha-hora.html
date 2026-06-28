@@ -50,6 +50,29 @@ permalink: "/reservar/fecha-hora/"
                     </div>
                 </div>
 
+                <!-- Unavailable Date Message -->
+                <div class="booking-unavailable-message" id="unavailable-message" style="display: none;">
+                    <div class="booking-unavailable-content">
+                        <svg class="booking-unavailable-icon" width="80" height="80" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="6" width="24" height="22" rx="2" fill="url(#gradient)" stroke="#E8E2D9" stroke-width="1"/>
+                            <circle cx="10" cy="10" r="1.5" fill="#E8E2D9"/>
+                            <circle cx="16" cy="10" r="1.5" fill="#E8E2D9"/>
+                            <circle cx="22" cy="10" r="1.5" fill="#E8E2D9"/>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#9CAD8E;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#D4E4C8;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <h3 class="booking-unavailable-title">Esta fecha no está disponible</h3>
+                        <p class="booking-unavailable-subtitle" id="unavailable-subtitle">Available from Mon, Jun 29</p>
+                        <button class="booking-unavailable-btn" id="next-available-btn">
+                            Ir a la próxima fecha disponible
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Time Selection -->
                 <div class="booking-time-section">
                     <h2>Elige una hora</h2>
@@ -151,7 +174,7 @@ permalink: "/reservar/fecha-hora/"
             <!-- Cart Sidebar - Desktop Only -->
             <aside class="booking-cart-sidebar booking-cart-sidebar-desktop">
                 <div class="booking-cart-header">
-                    <h2 class="booking-cart-title">Resumen</h2>
+                    <h2 class="booking-cart-title">Resumen de Cita</h2>
                 </div>
 
                 <div class="booking-cart-items" id="cart-items-desktop">
@@ -339,6 +362,12 @@ permalink: "/reservar/fecha-hora/"
         document.addEventListener("DOMContentLoaded", function () {
             BookingStorage.init();
             
+            // Format price with RD$ currency and comma separator
+            function formatPrice(amount) {
+                const formatted = Math.round(amount).toLocaleString('en-US');
+                return `RD$ ${formatted}`;
+            }
+            
             // Load and display cart from localStorage
             const cartItemsDesktop = document.getElementById("cart-items-desktop");
             const cartSubtotalDesktop = document.getElementById("cart-subtotal-desktop");
@@ -427,7 +456,7 @@ permalink: "/reservar/fecha-hora/"
                             <span class="booking-cart-item-name">${service.name}</span>
                             <span class="booking-cart-item-duration">${service.duration} min</span>
                         </div>
-                        <span class="booking-cart-item-price">$${itemTotal}</span>
+                        <span class="booking-cart-item-price">${formatPrice(itemTotal)}</span>
                     `;
                     cartItemsDesktop.appendChild(desktopItemEl);
                     
@@ -438,15 +467,15 @@ permalink: "/reservar/fecha-hora/"
                             <span class="booking-cart-item-name">${service.name}</span>
                             <span class="booking-cart-item-duration">${service.duration} min</span>
                         </div>
-                        <span class="booking-cart-item-price">$${itemTotal}</span>
+                        <span class="booking-cart-item-price">${formatPrice(itemTotal)}</span>
                     `;
                     cartItemsMobile.appendChild(mobileItemEl);
                 });
                 
-                cartSubtotalDesktop.textContent = `$${total}`;
-                cartTotalDesktop.textContent = `$${total}`;
-                cartTotalMobile.textContent = `$${total}`;
-                cartBottomPrice.textContent = `$${total}`;
+                cartSubtotalDesktop.textContent = formatPrice(total);
+                cartTotalDesktop.textContent = formatPrice(total);
+                cartTotalMobile.textContent = formatPrice(total);
+                cartBottomPrice.textContent = formatPrice(total);
                 
                 if (itemCount === 0) {
                     cartItemsDesktop.innerHTML = '<p class="booking-cart-empty">Selecciona un servicio para comenzar</p>';
@@ -606,8 +635,8 @@ permalink: "/reservar/fecha-hora/"
                 continueBtnDesktop.addEventListener("click", function () {
                     const dateTime = BookingStorage.getDateTime();
                     if (dateTime && typeof dateTime === 'object' && dateTime.date && dateTime.time) {
-                        console.log('✓ Navigating to /reservar/confirmacion/');
-                        window.location.href = "/reservar/confirmacion/";
+                        console.log('✓ Navigating to /reservar/datos/');
+                        window.location.href = "/reservar/datos/";
                     }
                 });
             }
@@ -616,8 +645,8 @@ permalink: "/reservar/fecha-hora/"
                 continueBtnMobile.addEventListener("click", function () {
                     const dateTime = BookingStorage.getDateTime();
                     if (dateTime && typeof dateTime === 'object' && dateTime.date && dateTime.time) {
-                        console.log('✓ Navigating to /reservar/confirmacion/');
-                        window.location.href = "/reservar/confirmacion/";
+                        console.log('✓ Navigating to /reservar/datos/');
+                        window.location.href = "/reservar/datos/";
                     }
                 });
             }

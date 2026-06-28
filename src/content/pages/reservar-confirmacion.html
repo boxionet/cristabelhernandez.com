@@ -1,6 +1,6 @@
 ---
-title: "Confirmar Cita | Dr. Cristabel Hernandez"
-description: "Confirma tu cita de reserva"
+title: "Cita Confirmada | Dr. Cristabel Hernandez"
+description: "Tu solicitud de cita ha sido recibida. Te confirmaremos pronto."
 permalink: "/reservar/confirmacion/"
 ---
 
@@ -13,669 +13,347 @@ permalink: "/reservar/confirmacion/"
 {% block body %}
 
     <!-- ============================================ -->
-    <!--        Booking Flow - Confirmation           -->
+    <!--        Booking Flow - Confirmacion            -->
     <!-- ============================================ -->
 
-    <section id="booking-flow-confirmation">
-        <div class="booking-confirmation-wrapper">
-            <div class="booking-confirmation-container">
-                <!-- Left Content Area -->
-                <div class="booking-confirmation-content">
-                    <div class="booking-confirmation-header">
-                        <h1>Completa tus datos</h1>
-                    </div>
+    <section id="booking-confirmacion">
+        <div class="confirmacion-wrapper">
+            <div class="confirmacion-container">
 
-                    <div class="booking-confirmation-body">
-                        <form id="customer-info-form" class="customer-info-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="firstName" class="form-label">Nombre</label>
-                                    <input 
-                                        type="text" 
-                                        id="firstName" 
-                                        name="firstName" 
-                                        class="form-input" 
-                                        placeholder="Cristina"
-                                        required
-                                    >
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="lastName" class="form-label">Apellido</label>
-                                    <input 
-                                        type="text" 
-                                        id="lastName" 
-                                        name="lastName" 
-                                        class="form-input" 
-                                        placeholder="García"
-                                        required
-                                    >
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email</label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    name="email" 
-                                    class="form-input" 
-                                    placeholder="cristina.garcia@gmail.com"
-                                    required
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="phone" class="form-label">Teléfono</label>
-                                <input 
-                                    type="tel" 
-                                    id="phone" 
-                                    name="phone" 
-                                    class="form-input" 
-                                    placeholder="(123) 456 - 7890"
-                                    pattern="[0-9+\-() ]+"
-                                    inputmode="tel"
-                                    required
-                                >
-                            </div>
-
-                            <button type="button" class="add-note-btn" id="add-note-btn">
-                                + Agregar Nota
-                            </button>
-
-                            <div class="form-group note-group" id="note-group" style="display: none;">
-                                <label for="note" class="form-label">Nota (Opcional)</label>
-                                <textarea 
-                                    id="note" 
-                                    name="note" 
-                                    class="form-input form-textarea" 
-                                    placeholder="Agrega cualquier nota adicional sobre tu cita..."
-                                    rows="4"
-                                ></textarea>
-                            </div>
-
-                            <button type="submit" class="confirmation-btn" id="confirm-btn" disabled>
-                                Reservar Cita
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Cart Sidebar - Desktop Only -->
-                <aside class="booking-cart-sidebar booking-cart-sidebar-desktop">
-                    <div class="booking-cart-header">
-                        <h2 class="booking-cart-title">Resumen</h2>
-                    </div>
-
-                    <div class="booking-cart-items" id="cart-items-desktop">
-                        <p class="booking-cart-empty">Selecciona un servicio para comenzar</p>
-                    </div>
-
-                    <div class="booking-cart-summary">
-                        <div class="booking-cart-row">
-                            <span>Subtotal:</span>
-                            <span id="cart-subtotal-desktop">DOP 0</span>
-                        </div>
-                        <div class="booking-cart-row booking-cart-total">
-                            <span>Total:</span>
-                            <span id="cart-total-desktop">DOP 0</span>
-                        </div>
-                    </div>
-
-                    <button class="booking-cart-continue-btn" id="continue-btn-desktop" disabled>
-                        Reservar Cita
-                    </button>
-                </aside>
-            </div>
-        </div>
-
-        <!-- Mobile Cart Bottom Bar -->
-        <div class="booking-cart-bottom-bar" id="cart-bottom-bar">
-            <div class="booking-cart-bottom-content">
-                <button class="booking-cart-bottom-toggle" id="cart-bottom-toggle">
-                    <div class="booking-cart-bottom-info">
-                        <span class="booking-cart-bottom-price" id="cart-bottom-price">DOP 0</span>
-                        <div class="booking-cart-bottom-details-row">
-                            <svg class="booking-cart-bottom-icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M27.768 7.359A1 1 0 0 0 27 7H6.835l-.611-3.357A2 2 0 0 0 4.256 2H2a1 1 0 0 0 0 2h2.25l3.195 17.536a3 3 0 0 0 .666 1.409A3.5 3.5 0 1 0 13.661 24h5.678a3.5 3.5 0 1 0 3.161-2H10.396a1 1 0 0 1-.984-.821L9.016 19h14.5a3 3 0 0 0 2.952-2.464l1.52-8.357a1 1 0 0 0-.22-.82M12 25.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m12 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5-9.321a1 1 0 0 1-.988.821H8.653L7.2 9H25.8z"></path>
-                            </svg>
-                            <span class="booking-cart-bottom-details" id="cart-bottom-details">0 items</span>
-                        </div>
-                    </div>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Status Icon -->
+                <div class="confirmacion-icon-wrap">
+                    <svg class="confirmacion-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="28" cy="28" r="28" fill="#F5EFE6"/>
+                        <path d="M17 28.5L24.5 36L39 21" stroke="#705D3F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                </button>
-                <button class="booking-cart-bottom-continue-btn" id="continue-btn-mobile" disabled>
-                    Reservar Cita
-                </button>
-            </div>
-
-            <!-- Expandable Cart Panel -->
-            <div class="booking-cart-bottom-panel" id="cart-bottom-panel">
-                <div class="booking-cart-bottom-panel-header">
-                    <h2 class="booking-cart-bottom-panel-title">Desglose de precio</h2>
-                    <button class="booking-cart-bottom-panel-close" id="cart-bottom-close">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </button>
                 </div>
 
-                <div class="booking-cart-bottom-panel-items" id="cart-items-mobile">
-                    <p class="booking-cart-empty">Cargando carrito...</p>
+                <!-- Heading -->
+                <div class="confirmacion-heading">
+                    <span class="confirmacion-status-badge">
+                        <span class="confirmacion-status-dot"></span>
+                        Pendiente de confirmación
+                    </span>
+                    <h1 class="confirmacion-title">¡Tu cita fue recibida!</h1>
+                    <p class="confirmacion-subtitle">Hemos recibido tu solicitud de cita. En breve nos pondremos en contacto contigo para confirmar la fecha y hora seleccionadas.</p>
+                    <p class="confirmacion-subtitle">Hemos enviado un resumen de tu cita a <strong>tu correo electrónico</strong>.</p>
                 </div>
 
-                <div class="booking-cart-bottom-panel-footer">
-                    <hr class="booking-cart-divider">
-                    <div class="booking-cart-bottom-panel-total">
-                        <span>Total</span>
-                        <span id="cart-total-mobile">DOP 0</span>
+                <!-- Booking Summary Card -->
+                <div class="confirmacion-summary-card" id="confirmacion-summary-card">
+
+                    <div class="confirmacion-summary-header">
+                        <h2 class="confirmacion-summary-title">Resumen de tu cita</h2>
+                    </div>
+
+                    <div class="confirmacion-summary-body">
+
+                        <!-- Patient -->
+                        <div class="confirmacion-summary-row">
+                            <div class="confirmacion-summary-icon-col" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="confirmacion-summary-info">
+                                <span class="confirmacion-summary-label">Paciente</span>
+                                <span class="confirmacion-summary-value" id="confirmacion-patient-name">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Date & Time -->
+                        <div class="confirmacion-summary-row">
+                            <div class="confirmacion-summary-icon-col" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M3 9h18M8 2v3M16 2v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="confirmacion-summary-info">
+                                <span class="confirmacion-summary-label">Fecha y hora</span>
+                                <span class="confirmacion-summary-value" id="confirmacion-datetime">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Services -->
+                        <div class="confirmacion-summary-row confirmacion-summary-row--services">
+                            <div class="confirmacion-summary-icon-col" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 12h6M9 16h4M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M9 8h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="confirmacion-summary-info">
+                                <span class="confirmacion-summary-label">Servicios</span>
+                                <ul class="confirmacion-services-list" id="confirmacion-services-list">
+                                    <li>—</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="confirmacion-summary-row confirmacion-summary-row--total">
+                            <div class="confirmacion-summary-icon-col" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M12 7v1m0 8v1M9.5 9.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5c0 1.5-2.5 2.5-2.5 4m0 0v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="confirmacion-summary-info">
+                                <span class="confirmacion-summary-label">Total</span>
+                                <span class="confirmacion-summary-value confirmacion-summary-value--total" id="confirmacion-total">RD$ 0</span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
+                <!-- Actions -->
+                <div class="confirmacion-actions">
+
+                    <!-- Add to Calendar -->
+                    <button class="confirmacion-action-btn confirmacion-action-btn--calendar" id="confirmacion-calendar-btn" aria-label="Agregar cita al calendario">
+                        <span class="confirmacion-action-btn-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M3 9h18M8 2v3M16 2v3M12 13v4M10 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span>Agregar al Calendario</span>
+                    </button>
+
+                    <!-- WhatsApp + Phone row -->
+                    <div class="confirmacion-contact-row">
+                        <a 
+                            href="https://wa.me/18293163313?text=Hola%2C%20acabo%20de%20reservar%20una%20cita%20y%20quiero%20confirmar%20los%20detalles."
+                            class="confirmacion-action-btn confirmacion-action-btn--whatsapp"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Contactar por WhatsApp"
+                        >
+                            <span class="confirmacion-action-btn-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+                                </svg>
+                            </span>
+                            <span>WhatsApp</span>
+                        </a>
+
+                        <a 
+                            href="tel:+18293163313"
+                            class="confirmacion-action-btn confirmacion-action-btn--phone"
+                            aria-label="Llamar a la clínica"
+                        >
+                            <span class="confirmacion-action-btn-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 5.18 12.7a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <span>Llamar</span>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Home CTA -->
+                <a href="/" class="confirmacion-home-btn">
+                    Volver al inicio
+                </a>
+
             </div>
         </div>
     </section>
 
     <script>
-        // BookingStorage object for managing booking data
+        // BookingStorage - read-only usage on this page
         const BookingStorage = {
             storageKey: 'cristabel_booking',
-
-            init() {
-                const data = localStorage.getItem(this.storageKey);
-                if (!data) {
-                    this.set({
-                        customerType: null,
-                        services: {},
-                        dateTime: null,
-                        customerInfo: null,
-                        timestamp: new Date().toISOString(),
-                    });
-                }
-            },
-
             get() {
                 const data = localStorage.getItem(this.storageKey);
                 return data ? JSON.parse(data) : null;
             },
-
-            set(data) {
-                localStorage.setItem(this.storageKey, JSON.stringify(data));
-            },
-
-            update(field, value) {
-                const data = this.get();
-                if (data) {
-                    data[field] = value;
-                    this.set(data);
-                }
-            },
-
-            getField(field) {
-                const data = this.get();
-                return data ? data[field] : null;
-            },
-
-            setDateTime(dateTime, selectedDate = null) {
-                if (selectedDate) {
-                    return this.update("dateTime", {
-                        date: selectedDate,
-                        time: dateTime
-                    });
-                }
-                return this.update("dateTime", dateTime);
-            },
-
-            getDateTime() {
-                return this.getField("dateTime");
-            },
-
-            getServices() {
-                return this.getField("services") || {};
-            },
-
-            setServices(services) {
-                return this.update("services", services);
-            },
-
-            getCustomerType() {
-                return this.getField("customerType");
-            },
-
-            setCustomerType(type) {
-                return this.update("customerType", type);
-            },
-
-            getCustomerInfo() {
-                return this.getField("customerInfo");
-            },
-
-            setCustomerInfo(info) {
-                return this.update("customerInfo", info);
-            },
-
-            getBookingData() {
-                return this.get();
-            },
-
-            calculateTotal() {
-                const services = this.getServices();
-                return Object.values(services).reduce((sum, service) => {
-                    return sum + (service.price * (service.quantity || 1));
-                }, 0);
-            },
-
             clear() {
                 localStorage.removeItem(this.storageKey);
             }
         };
 
-        // Initialize storage
-        BookingStorage.init();
-
-        // Display cart
-        function displayCart() {
-            const services = BookingStorage.getServices();
-            const dateTimeData = BookingStorage.getDateTime();
-            
-            console.log('✓ displayCart called');
-            console.log('✓ Services:', services);
-            console.log('✓ DateTime:', dateTimeData);
-            
-            let total = 0;
-            let itemCount = 0;
-            let totalDuration = 0;
-
-            const cartItemsDesktop = document.getElementById("cart-items-desktop");
-            const cartItemsMobile = document.getElementById("cart-items-mobile");
-            const cartSubtotalDesktop = document.getElementById("cart-subtotal-desktop");
-            const cartTotalDesktop = document.getElementById("cart-total-desktop");
-            const cartTotalMobile = document.getElementById("cart-total-mobile");
-            const cartBottomPrice = document.getElementById("cart-bottom-price");
-            const cartBottomDetails = document.getElementById("cart-bottom-details");
-            const cartBottomBar = document.getElementById("cart-bottom-bar");
-
-            if (!cartItemsDesktop || !cartItemsMobile) {
-                console.error('Cart elements not found');
-                return;
-            }
-
-            cartItemsDesktop.innerHTML = "";
-            cartItemsMobile.innerHTML = "";
-
-            // Add date and time section if available
-            if (dateTimeData) {
-                const dateTimeSection = document.createElement("div");
-                dateTimeSection.className = "booking-cart-datetime-section";
-
-                let dateText = "";
-                let timeText = "";
-                let durationText = "";
-
-                if (typeof dateTimeData === 'object' && dateTimeData.date && dateTimeData.time) {
-                    dateText = dateTimeData.date.replace(/,\s*/, ', ');
-                    timeText = dateTimeData.time;
-
-                    // Calculate total duration from services
-                    Object.keys(services).forEach((serviceId) => {
-                        const service = services[serviceId];
-                        totalDuration += service.duration * (service.quantity || 1);
-                    });
-
-                    const hours = Math.floor(totalDuration / 60);
-                    const mins = totalDuration % 60;
-                    if (hours > 0 || mins > 0) {
-                        const parts = [];
-                        if (hours > 0) parts.push(hours + 'h');
-                        if (mins > 0) parts.push(mins + 'min');
-                        durationText = `( ${parts.join(' ')} )`;
-                    }
-                } else if (typeof dateTimeData === 'string') {
-                    timeText = dateTimeData;
-                }
-
-                dateTimeSection.innerHTML = `
-                    <div class="booking-cart-datetime-item">
-                        <svg class="booking-cart-datetime-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-                            <path fill-rule="evenodd" d="M10 2a1 1 0 0 1 1 1v1h10V3a1 1 0 1 1 2 0v1h3a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V3a1 1 0 0 1 1-1M9 6H6v4h20V6h-3v1a1 1 0 1 1-2 0V6H11v1a1 1 0 1 1-2 0zm17 6H6v14h20z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="booking-cart-datetime-text">${dateText || 'Selecciona una fecha'}</span>
-                    </div>
-                    <div class="booking-cart-datetime-item">
-                        <svg class="booking-cart-datetime-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-                            <path fill-rule="evenodd" d="M16 5C9.925 5 5 9.925 5 16s4.925 11 11 11 11-4.925 11-11S22.075 5 16 5M3 16C3 8.82 8.82 3 16 3s13 5.82 13 13-5.82 13-13 13S3 23.18 3 16m13-8a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-7a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1" clip-rule="evenodd"></path>
-                        </svg>
-                        <span class="booking-cart-datetime-text">${timeText || 'Selecciona una hora'} ${durationText}</span>
-                    </div>
-                `;
-                cartItemsDesktop.appendChild(dateTimeSection);
-                cartItemsMobile.appendChild(dateTimeSection.cloneNode(true));
-            }
-
-            // Add services
-            Object.keys(services).forEach((serviceId) => {
-                const service = services[serviceId];
-                const itemTotal = service.price * (service.quantity || 1);
-                total += itemTotal;
-                itemCount++;
-                totalDuration += service.duration * (service.quantity || 1);
-
-                const desktopItemEl = document.createElement("div");
-                desktopItemEl.className = "booking-cart-item";
-                desktopItemEl.innerHTML = `
-                    <div class="booking-cart-item-content">
-                        <span class="booking-cart-item-name">${service.name}</span>
-                        <span class="booking-cart-item-duration">${service.duration} min</span>
-                    </div>
-                    <span class="booking-cart-item-price">DOP ${itemTotal.toFixed(2)}</span>
-                `;
-                cartItemsDesktop.appendChild(desktopItemEl);
-                
-                const mobileItemEl = document.createElement("div");
-                mobileItemEl.className = "booking-cart-item";
-                mobileItemEl.innerHTML = `
-                    <div class="booking-cart-item-content">
-                        <span class="booking-cart-item-name">${service.name}</span>
-                        <span class="booking-cart-item-duration">${service.duration} min</span>
-                    </div>
-                    <span class="booking-cart-item-price">DOP ${itemTotal.toFixed(2)}</span>
-                `;
-                cartItemsMobile.appendChild(mobileItemEl);
-            });
-
-            // Update totals
-            const totalFormatted = total.toFixed(2);
-            if (cartSubtotalDesktop) cartSubtotalDesktop.textContent = `DOP ${totalFormatted}`;
-            cartTotalDesktop.textContent = `DOP ${totalFormatted}`;
-            cartTotalMobile.textContent = `DOP ${totalFormatted}`;
-            cartBottomPrice.textContent = `DOP ${totalFormatted}`;
-            
-            // Always show cart on confirmation page
-            cartBottomBar.classList.add("visible");
-            
-            if (itemCount === 0) {
-                cartItemsDesktop.innerHTML = '<p class="booking-cart-empty">Selecciona un servicio para comenzar</p>';
-                cartItemsMobile.innerHTML = '<p class="booking-cart-empty">Selecciona un servicio para comenzar</p>';
-                cartBottomDetails.textContent = '0 items';
-            } else {
-                const hours = Math.floor(totalDuration / 60);
-                const mins = totalDuration % 60;
-                let durationText = `${itemCount} item`;
-                if (itemCount > 1) durationText += "s";
-                if (hours > 0) durationText += ` • ${hours}h`;
-                if (mins > 0) durationText += ` ${mins}m`;
-                cartBottomDetails.textContent = durationText;
-            }
+        function formatPrice(amount) {
+            const formatted = Math.round(amount).toLocaleString('en-US');
+            return `RD$ ${formatted}`;
         }
 
-        // Handle form submission
-        function handleFormSubmit(e) {
-            e.preventDefault();
+        function populateSummary() {
+            const bookingData = BookingStorage.get();
 
-            const firstName = document.getElementById("firstName").value.trim();
-            const lastName = document.getElementById("lastName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-
-            if (!firstName || !lastName || !email || !phone) {
-                alert('Por favor completa todos los campos');
-                return;
-            }
-
-            // Save customer info to localStorage
-            const note = document.getElementById("note").value.trim();
-            const customerInfo = {
-                firstName,
-                lastName,
-                email,
-                phone,
-                note
-            };
-
-            BookingStorage.setCustomerInfo(customerInfo);
-            console.log('✓ Customer info saved to localStorage:', customerInfo);
-
-            const bookingData = BookingStorage.getBookingData();
-            console.log('Booking data saved:', bookingData);
-            alert('¡Tu cita ha sido confirmada! Te enviaremos un email con los detalles.');
-
-            // Clear storage after confirmation
-            BookingStorage.clear();
-
-            // Redirect to home
-            window.location.href = '/';
-        }
-
-        // Auto-save customer info to localStorage as user types
-        function autoSaveCustomerInfo() {
-            const firstName = document.getElementById("firstName").value.trim();
-            const lastName = document.getElementById("lastName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const note = document.getElementById("note").value.trim();
-
-            // Only save if at least one field has content
-            if (firstName || lastName || email || phone || note) {
-                const customerInfo = {
-                    firstName,
-                    lastName,
-                    email,
-                    phone,
-                    note
-                };
-                BookingStorage.setCustomerInfo(customerInfo);
-            }
-        }
-
-        // Validate form and enable/disable buttons
-        function validateForm() {
-            const firstName = document.getElementById("firstName").value.trim();
-            const lastName = document.getElementById("lastName").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-
-            // Check if phone is valid (at least 7 digits)
-            const isPhoneValid = isValidPhoneNumber(phone);
-            const isValid = firstName && lastName && email && isPhoneValid;
-
-            // Enable/disable all buttons
-            const confirmBtn = document.getElementById("confirm-btn");
-            const continueBtnDesktop = document.getElementById("continue-btn-desktop");
-            const continueBtnMobile = document.getElementById("continue-btn-mobile");
-
-            if (confirmBtn) confirmBtn.disabled = !isValid;
-            if (continueBtnDesktop) continueBtnDesktop.disabled = !isValid;
-            if (continueBtnMobile) continueBtnMobile.disabled = !isValid;
-        }
-
-        // Load existing customer info if available
-        function loadCustomerInfo() {
-            const bookingData = BookingStorage.getBookingData();
+            // --- Patient Name ---
+            const patientEl = document.getElementById('confirmacion-patient-name');
             if (bookingData && bookingData.customerInfo) {
                 const info = bookingData.customerInfo;
-                document.getElementById("firstName").value = info.firstName || '';
-                document.getElementById("lastName").value = info.lastName || '';
-                document.getElementById("email").value = info.email || '';
-                document.getElementById("phone").value = info.phone || '';
-                document.getElementById("note").value = info.note || '';
+                const fullName = [info.firstName, info.lastName].filter(Boolean).join(' ');
+                if (patientEl) patientEl.textContent = fullName || '—';
             }
-        }
 
-        // Mobile cart toggle
-        const cartBottomToggle = document.getElementById("cart-bottom-toggle");
-        const cartBottomPanel = document.getElementById("cart-bottom-panel");
-        const cartBottomClose = document.getElementById("cart-bottom-close");
-
-        if (cartBottomToggle) {
-            cartBottomToggle.addEventListener("click", function () {
-                cartBottomPanel.classList.toggle("visible");
-            });
-        }
-
-        if (cartBottomClose) {
-            cartBottomClose.addEventListener("click", function () {
-                cartBottomPanel.classList.remove("visible");
-            });
-        }
-
-        // Phone number input validation and auto-formatting
-        const phoneInput = document.getElementById("phone");
-        
-        function formatPhoneNumber(value) {
-            // Remove all non-digit characters except + at the start
-            let cleaned = value.replace(/[^\d+]/g, "");
-            
-            // If it starts with +, keep it and format the rest
-            if (cleaned.startsWith("+")) {
-                const plus = "+";
-                const digits = cleaned.slice(1).replace(/\D/g, "");
-                
-                // Format: +1 (829) 316-3313
-                // Allow up to 11 digits (1 country code + 10 phone digits)
-                if (digits.length <= 1) {
-                    return plus + digits;
-                } else if (digits.length <= 4) {
-                    return plus + digits.slice(0, 1) + " (" + digits.slice(1);
-                } else if (digits.length <= 7) {
-                    return plus + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " + digits.slice(4);
-                } else {
-                    return plus + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " + digits.slice(4, 7) + "-" + digits.slice(7, 11);
+            // --- Date & Time ---
+            const datetimeEl = document.getElementById('confirmacion-datetime');
+            if (bookingData && bookingData.dateTime) {
+                const dt = bookingData.dateTime;
+                if (typeof dt === 'object' && dt.date && dt.time) {
+                    if (datetimeEl) datetimeEl.textContent = `${dt.date} · ${dt.time}`;
+                } else if (typeof dt === 'string') {
+                    if (datetimeEl) datetimeEl.textContent = dt;
                 }
-            } else {
-                // Check if starts with 1 (country code) - format as +1 (829) 316-3313
-                const digits = cleaned.replace(/\D/g, "");
-                
-                if (digits.startsWith("1") && digits.length > 1) {
-                    // Format with country code outside parenthesis: +1 (829) 316-3313
-                    // Allow up to 11 digits (1 country code + 10 phone digits)
-                    const countryCode = digits.slice(0, 1);
-                    const areaCode = digits.slice(1, 4);
-                    const exchange = digits.slice(4, 7);
-                    const line = digits.slice(7, 11);
-                    
-                    if (digits.length <= 1) {
-                        return "+" + countryCode;
-                    } else if (digits.length <= 4) {
-                        return "+" + countryCode + " (" + areaCode;
-                    } else if (digits.length <= 7) {
-                        return "+" + countryCode + " (" + areaCode + ") " + exchange;
-                    } else {
-                        return "+" + countryCode + " (" + areaCode + ") " + exchange + "-" + line;
+            }
+
+            // --- Services ---
+            const servicesEl = document.getElementById('confirmacion-services-list');
+            if (bookingData && bookingData.services && servicesEl) {
+                const services = bookingData.services;
+                const keys = Object.keys(services);
+                if (keys.length > 0) {
+                    servicesEl.innerHTML = '';
+                    keys.forEach(key => {
+                        const s = services[key];
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span class="confirmacion-service-name">${s.name}</span><span class="confirmacion-service-price">${formatPrice(s.price * (s.quantity || 1))}</span>`;
+                        servicesEl.appendChild(li);
+                    });
+                }
+            }
+
+            // --- Total ---
+            const totalEl = document.getElementById('confirmacion-total');
+            if (bookingData && bookingData.services && totalEl) {
+                const total = Object.values(bookingData.services).reduce((sum, s) => {
+                    return sum + (s.price * (s.quantity || 1));
+                }, 0);
+                totalEl.textContent = formatPrice(total);
+            }
+
+            // --- Calendar Button ---
+            setupCalendarDownload(bookingData);
+        }
+
+        function setupCalendarDownload(bookingData) {
+            const calBtn = document.getElementById('confirmacion-calendar-btn');
+            if (!calBtn || !bookingData) return;
+
+            const dt = bookingData.dateTime;
+            const info = bookingData.customerInfo;
+            const services = bookingData.services || {};
+
+            // Build service names string
+            const serviceNames = Object.values(services).map(s => s.name).join(', ');
+
+            // Parse date and time
+            let startDT = null;
+            let endDT = null;
+
+            if (dt && typeof dt === 'object' && dt.date && dt.time) {
+                try {
+                    // dt.date e.g. "martes, 24 de junio de 2025"
+                    // dt.time e.g. "10:30 AM"
+                    const combinedStr = `${dt.date} ${dt.time}`;
+
+                    // Try to build a Date from the stored data
+                    // Fallback: use regex to extract the date parts
+                    const monthMap = {
+                        'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
+                        'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
+                        'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12'
+                    };
+
+                    const dateMatch = dt.date.match(/(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/i);
+                    if (dateMatch) {
+                        const day = dateMatch[1].padStart(2, '0');
+                        const monthName = dateMatch[2].toLowerCase();
+                        const year = dateMatch[3];
+                        const month = monthMap[monthName];
+
+                        // Parse time
+                        const timeMatch = dt.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/i);
+                        if (timeMatch && month) {
+                            let hours = parseInt(timeMatch[1], 10);
+                            const minutes = timeMatch[2];
+                            const ampm = timeMatch[3] ? timeMatch[3].toUpperCase() : null;
+
+                            if (ampm === 'PM' && hours !== 12) hours += 12;
+                            if (ampm === 'AM' && hours === 12) hours = 0;
+
+                            const hh = String(hours).padStart(2, '0');
+                            const isoStart = `${year}${month}${day}T${hh}${minutes}00`;
+
+                            // Calculate total duration in minutes
+                            const totalDuration = Object.values(services).reduce((sum, s) => {
+                                return sum + (s.duration * (s.quantity || 1));
+                            }, 0) || 60; // default 60 min
+
+                            // End time
+                            const startDate = new Date(`${year}-${month}-${day}T${hh}:${minutes}:00`);
+                            const endDate = new Date(startDate.getTime() + totalDuration * 60000);
+                            const endY = endDate.getFullYear();
+                            const endM = String(endDate.getMonth() + 1).padStart(2, '0');
+                            const endD = String(endDate.getDate()).padStart(2, '0');
+                            const endH = String(endDate.getHours()).padStart(2, '0');
+                            const endMin = String(endDate.getMinutes()).padStart(2, '0');
+                            const isoEnd = `${endY}${endM}${endD}T${endH}${endMin}00`;
+
+                            startDT = isoStart;
+                            endDT = isoEnd;
+                        }
                     }
-                } else {
-                    // Format without country code: (829) 316-3313
-                    // Allow up to 10 digits
-                    if (digits.length <= 3) {
-                        return digits;
-                    } else if (digits.length <= 6) {
-                        return "(" + digits.slice(0, 3) + ") " + digits.slice(3);
-                    } else {
-                        return "(" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6, 10);
-                    }
+                } catch (err) {
+                    console.warn('Could not parse date/time for calendar:', err);
                 }
             }
-        }
-        
-        function isValidPhoneNumber(value) {
-            // Remove all non-digit characters except +
-            const cleaned = value.replace(/[^\d+]/g, "");
-            const allDigits = cleaned.replace(/\D/g, "");
-            
-            // Only accept Dominican Republic, USA, and Canada (+1 country code)
-            // All require exactly 10 digits
-            
-            if (cleaned.startsWith("+")) {
-                // International format: +1 followed by 10 digits
-                if (allDigits.startsWith("1")) {
-                    const digitsAfterCode = allDigits.slice(1);
-                    return digitsAfterCode.length === 10;
-                }
-                // Invalid country code
-                return false;
-            } else {
-                // Domestic format: 10 digits (no country code)
-                return allDigits.length === 10;
-            }
-        }
-        
-        if (phoneInput) {
-            phoneInput.addEventListener("input", function (e) {
-                // Format the phone number as user types
-                const formatted = formatPhoneNumber(e.target.value);
-                e.target.value = formatted;
-                
-                // Validate and update button state
-                validateForm();
-            });
 
-            phoneInput.addEventListener("keypress", function (e) {
-                const char = String.fromCharCode(e.which);
-                // Allow only valid phone characters
-                if (!/[0-9+\-() ]/.test(char)) {
-                    e.preventDefault();
-                }
-            });
-        }
+            calBtn.addEventListener('click', function () {
+                const patientName = info ? `${info.firstName || ''} ${info.lastName || ''}`.trim() : '';
+                const summary = encodeURIComponent(`Cita - Dr. Cristabel Hernandez`);
+                const description = encodeURIComponent(
+                    `Paciente: ${patientName}\nServicios: ${serviceNames}\nClínica: Dr. Cristabel Hernandez\nTeléfono: (829) 316-3313\nDirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`
+                );
+                const location = encodeURIComponent('Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO');
 
-        // Add note button toggle
-        const addNoteBtn = document.getElementById("add-note-btn");
-        const noteGroup = document.getElementById("note-group");
+                if (startDT && endDT) {
+                    // Generate .ics file
+                    const icsContent = [
+                        'BEGIN:VCALENDAR',
+                        'VERSION:2.0',
+                        'PRODID:-//Cristabel Hernandez//Booking//ES',
+                        'BEGIN:VEVENT',
+                        `DTSTART:${startDT}`,
+                        `DTEND:${endDT}`,
+                        `SUMMARY:Cita - Dr. Cristabel Hernandez`,
+                        `DESCRIPTION:Paciente: ${patientName}\\nServicios: ${serviceNames}\\nTeléfono: (829) 316-3313\\nDirección: Calle Beller No. 129\\, Plaza Metropolis 2ndo Nivel\\, Puerto Plata`,
+                        `LOCATION:Calle Beller No. 129\\, Plaza Metropolis 2ndo Nivel\\, Puerto Plata 57000`,
+                        'STATUS:TENTATIVE',
+                        'END:VEVENT',
+                        'END:VCALENDAR'
+                    ].join('\r\n');
 
-        if (addNoteBtn) {
-            addNoteBtn.addEventListener("click", function (e) {
-                e.preventDefault();
-                noteGroup.classList.toggle("visible");
-                
-                // Change button text based on state
-                if (noteGroup.classList.contains("visible")) {
-                    addNoteBtn.textContent = "- Cerrar Nota";
+                    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'cita-cristabel-hernandez.ics';
+                    a.click();
+                    URL.revokeObjectURL(url);
                 } else {
-                    addNoteBtn.textContent = "+ Agregar Nota";
-                }
-                
-                // Focus textarea when opened
-                if (noteGroup.classList.contains("visible")) {
-                    document.getElementById("note").focus();
+                    // Fallback: open Google Calendar
+                    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${summary}&details=${description}&location=${location}`;
+                    window.open(gcalUrl, '_blank', 'noopener,noreferrer');
                 }
             });
         }
 
-        // Form submission
-        const customerInfoForm = document.getElementById("customer-info-form");
-        if (customerInfoForm) {
-            customerInfoForm.addEventListener("submit", handleFormSubmit);
-        }
-
-        // Mobile cart continue button
-        const continueBtnMobile = document.getElementById("continue-btn-mobile");
-        if (continueBtnMobile) {
-            continueBtnMobile.addEventListener("click", function () {
-                customerInfoForm.dispatchEvent(new Event('submit'));
-            });
-        }
-
-        // Initialize on page load
-        document.addEventListener("DOMContentLoaded", function () {
-            displayCart();
-            loadCustomerInfo();
-            
-            // Add event listeners to form inputs for real-time validation and auto-save
-            const formInputs = document.querySelectorAll(".form-input");
-            formInputs.forEach(input => {
-                input.addEventListener("input", function() {
-                    validateForm();
-                    autoSaveCustomerInfo();
-                });
-                input.addEventListener("change", function() {
-                    validateForm();
-                    autoSaveCustomerInfo();
-                });
-            });
-            
-            // Initial validation and load saved data
-            validateForm();
-            loadCustomerInfo();
+        document.addEventListener('DOMContentLoaded', function () {
+            populateSummary();
+            // Clear booking data after reading it for the summary
+            // Small delay so data is read first
+            setTimeout(function () {
+                BookingStorage.clear();
+            }, 500);
         });
     </script>
 

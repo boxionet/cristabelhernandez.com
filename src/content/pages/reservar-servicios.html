@@ -28,128 +28,448 @@ permalink: "/reservar/servicios/"
             <!-- Services List -->
             <div class="booking-services-content">
                 <h1 class="booking-services-title">Selecciona un servicio</h1>
-                
-                <div class="booking-services-list">
-                    <!-- Service Card 1 -->
-                    <div class="booking-service-card" data-service-id="1">
-                        <div class="booking-service-content">
-                            <div class="booking-service-info">
-                                <h3 class="booking-service-name">Botox Preventivo</h3>
-                                <p class="booking-service-duration">30 min</p>
-                                <p class="booking-service-description">Botox preventivo personalizado respaldado por ciencia</p>
-                            </div>
-                            <div class="booking-service-footer">
-                                <span class="booking-service-price">$425</span>
-                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Service Card 2 -->
-                    <div class="booking-service-card" data-service-id="2">
-                        <div class="booking-service-content">
-                            <div class="booking-service-info">
-                                <h3 class="booking-service-name">Relleno de Labios</h3>
-                                <p class="booking-service-duration">45 min</p>
-                                <p class="booking-service-description">Aumento y definición de labios con ácido hialurónico</p>
-                            </div>
-                            <div class="booking-service-footer">
-                                <span class="booking-service-price">$350</span>
-                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="booking-services-tabs" id="services-tabs">
+                    <button class="booking-services-tab active" data-target="destacados">Destacados</button>
+                    <button class="booking-services-tab" data-target="facial">Facial</button>
+                    <button class="booking-services-tab" data-target="rejuvenecimiento">Rejuvenecimiento</button>
+                    <button class="booking-services-tab" data-target="vascular">Vascular</button>
+                    <button class="booking-services-tab" data-target="laser">Láser</button>
+                </div>
 
-                    <!-- Service Card 3 -->
-                    <div class="booking-service-card" data-service-id="3">
-                        <div class="booking-service-content">
-                            <div class="booking-service-info">
-                                <h3 class="booking-service-name">Relleno de Mejillas</h3>
-                                <p class="booking-service-duration">45 min</p>
-                                <p class="booking-service-description">Restaura volumen y define los pómulos</p>
+                <div class="booking-services-categories">
+                    <!-- Destacados -->
+                    <section class="booking-services-category" id="destacados">
+                        <h2 class="booking-services-category-title">Destacados</h2>
+                        <div class="booking-services-list">
+                            <div class="booking-service-card" data-service-id="toxina-botulinica">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Toxina Botulínica</h3>
+                                        <p class="booking-service-duration">30 min</p>
+                                        <p class="booking-service-description">Suaviza líneas de expresión y arrugas dinámicas</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 15,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="booking-service-footer">
-                                <span class="booking-service-price">$400</span>
-                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Service Card 4 -->
-                    <div class="booking-service-card" data-service-id="4">
-                        <div class="booking-service-content">
-                            <div class="booking-service-info">
-                                <h3 class="booking-service-name">Microagujas</h3>
-                                <p class="booking-service-duration">60 min</p>
-                                <p class="booking-service-description">Rejuvenecimiento de piel con microneedling</p>
+                            <div class="booking-service-card" data-service-id="acido-hialuronico">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Ácido Hialurónico</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Relleno labial con hidratación y volumen natural</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 12,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="booking-service-footer">
-                                <span class="booking-service-price">$300</span>
-                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Service Card 5 -->
-                    <div class="booking-service-card" data-service-id="5">
-                        <div class="booking-service-content">
-                            <div class="booking-service-info">
-                                <h3 class="booking-service-name">Peeling Químico</h3>
-                                <p class="booking-service-duration">30 min</p>
-                                <p class="booking-service-description">Exfoliación profunda para renovación de piel</p>
+                            <div class="booking-service-card" data-service-id="microneedling">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Microneedling</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Estimula colágeno para mejorar textura y luminosidad</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 6,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="booking-service-footer">
-                                <span class="booking-service-price">$250</span>
-                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Service Card 6 -->
-                    <div class="booking-service-card" data-service-id="6">
-                        <div class="booking-service-content">
-                            <div class="booking-service-info">
-                                <h3 class="booking-service-name">Consulta Complementaria</h3>
-                                <p class="booking-service-duration">30 min</p>
-                                <p class="booking-service-description">Consulta inicial con la Dra. Cristabel</p>
+                            <div class="booking-service-card" data-service-id="prp-facial">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">PRP Facial</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Plasma rico en plaquetas para rejuvenecimiento</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 9,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="booking-service-footer">
-                                <span class="booking-service-price">Gratis</span>
-                                <button class="booking-service-add-btn" aria-label="Agregar servicio">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                    </svg>
-                                </button>
+
+                            <div class="booking-service-card" data-service-id="escleroterapia">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Escleroterapia</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Tratamiento de arañitas vasculares</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 5,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
+
+                    <!-- Medicina estética facial -->
+                    <section class="booking-services-category" id="facial">
+                        <h2 class="booking-services-category-title">Medicina estética facial</h2>
+                        <div class="booking-services-list">
+                            <div class="booking-service-card" data-service-id="toxina-botulinica">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Toxina Botulínica</h3>
+                                        <p class="booking-service-duration">30 min</p>
+                                        <p class="booking-service-description">Suaviza líneas de expresión y arrugas dinámicas</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 15,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="acido-hialuronico">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Ácido Hialurónico</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Relleno labial con hidratación y volumen natural</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 12,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="rellenos-dermicos">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Rellenos Dérmicos</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Restaura volumen en pómulos, mentón y surcos</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 10,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="hilos-tensores">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Hilos Tensores</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Lifting no quirúrgico para reafirmar el rostro</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 8,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="microneedling">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Microneedling</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Estimula colágeno para mejorar textura y luminosidad</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 6,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="mesoterapia-facial">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Mesoterapia Facial</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Vitaminas e hidratación para piel revitalizada</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 5,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="prp-facial">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Plasma Rico en Plaquetas (PRP)</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Regeneración celular con plasma autólogo</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 9,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="peelings-quimicos">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Peelings Químicos</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Exfoliación médica para renovar la piel</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 4,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Rejuvenecimiento integral -->
+                    <section class="booking-services-category" id="rejuvenecimiento">
+                        <h2 class="booking-services-category-title">Rejuvenecimiento integral</h2>
+                        <div class="booking-services-list">
+                            <div class="booking-service-card" data-service-id="rejuvenecimiento-cuello">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Rejuvenecimiento de Cuello</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Tratamiento personalizado según valoración médica</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 7,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="rejuvenecimiento-escote">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Rejuvenecimiento de Escote</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Mejora textura y firmeza de la zona del escote</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 7,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="rejuvenecimiento-manos">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Rejuvenecimiento de Manos</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Devuelve juventud y volumen a las manos</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 8,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Medicina vascular -->
+                    <section class="booking-services-category" id="vascular">
+                        <h2 class="booking-services-category-title">Medicina vascular</h2>
+                        <div class="booking-services-list">
+                            <div class="booking-service-card" data-service-id="flebologia-linfologia">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Flebología y Linfología</h3>
+                                        <p class="booking-service-duration">30 min</p>
+                                        <p class="booking-service-description">Consulta especializada para evaluación vascular</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 3,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="escleroterapia">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Escleroterapia</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Tratamiento de arañitas vasculares</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 5,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tecnología láser -->
+                    <section class="booking-services-category" id="laser">
+                        <h2 class="booking-services-category-title">Tecnología láser</h2>
+                        <div class="booking-services-list">
+                            <div class="booking-service-card" data-service-id="laser-facial">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Láser Facial</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Tratamiento con láser para renovación cutánea</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 8,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="laser-manchas">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Láser para Manchas</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Elimina manchas y pigmentación irregular</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 6,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="laser-lesiones-vasculares">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Láser para Lesiones Vasculares</h3>
+                                        <p class="booking-service-duration">45 min</p>
+                                        <p class="booking-service-description">Tratamiento de lesiones vasculares en la piel</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 7,500</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="booking-service-card" data-service-id="rejuvenecimiento-laser">
+                                <div class="booking-service-content">
+                                    <div class="booking-service-info">
+                                        <h3 class="booking-service-name">Rejuvenecimiento con Láser</h3>
+                                        <p class="booking-service-duration">60 min</p>
+                                        <p class="booking-service-description">Láser para rejuvenecimiento global de la piel</p>
+                                    </div>
+                                    <div class="booking-service-footer">
+                                        <span class="booking-service-price">RD$ 12,000</span>
+                                        <button class="booking-service-add-btn" aria-label="Agregar servicio">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
 
             <!-- Cart Sidebar - Desktop Only -->
             <aside class="booking-cart-sidebar booking-cart-sidebar-desktop">
                 <div class="booking-cart-header">
-                    <h2 class="booking-cart-title">Resumen</h2>
+                    <h2 class="booking-cart-title">Resumen de Cita</h2>
                 </div>
 
                 <div class="booking-cart-items" id="cart-items-desktop">
@@ -298,8 +618,8 @@ permalink: "/reservar/servicios/"
             const storedServices = BookingStorage.getServices();
             if (storedServices && Object.keys(storedServices).length > 0) {
                 Object.keys(storedServices).forEach((serviceId) => {
-                    const serviceCard = document.querySelector(`[data-service-id="${serviceId}"]`);
-                    if (serviceCard) {
+                    const serviceCards = document.querySelectorAll(`[data-service-id="${serviceId}"]`);
+                    serviceCards.forEach((serviceCard) => {
                         serviceCard.classList.add("selected");
                         const addBtn = serviceCard.querySelector(".booking-service-add-btn");
                         if (addBtn) {
@@ -311,7 +631,7 @@ permalink: "/reservar/servicios/"
                                 </svg>
                             `;
                         }
-                    }
+                    });
                 });
             }
         });

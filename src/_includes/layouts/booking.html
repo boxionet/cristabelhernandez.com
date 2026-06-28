@@ -17,6 +17,7 @@
     <link rel="preload" as="font" type="font/otf" href="/assets/fonts/Gordita-Regular.otf" crossorigin>
     
     <link rel="stylesheet" href="/assets/css/root.css">
+    <link rel="stylesheet" href="/assets/css/booking-colors.css">
     <link rel="stylesheet" href="/assets/css/booking-header.css">
     
     {% block head %}{% endblock %}
@@ -38,11 +39,18 @@
     </header>
 
     <script>
+        // Hide back button on thank-you page (no going back after submission)
+        (function() {
+            if (window.location.pathname === '/reservar/confirmacion/') {
+                document.getElementById('booking-back-btn').style.visibility = 'hidden';
+            }
+        })();
+
         // Handle back button navigation based on current page
         document.getElementById('booking-back-btn').addEventListener('click', function() {
             const currentPath = window.location.pathname;
             
-            if (currentPath.includes('/reservar/confirmacion')) {
+            if (currentPath.includes('/reservar/datos')) {
                 window.location.href = '/reservar/fecha-hora/';
             } else if (currentPath.includes('/reservar/fecha-hora')) {
                 window.location.href = '/reservar/servicios/';
