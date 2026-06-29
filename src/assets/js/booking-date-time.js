@@ -22,22 +22,57 @@ document.addEventListener("DOMContentLoaded", function () {
   const calendarPrevMonth = document.getElementById("calendar-prev-month");
   const calendarNextMonth = document.getElementById("calendar-next-month");
 
-  // Initialize currentCalendarDate in Dominican Republic timezone
-  const today = new Date();
-  const dominicanNow = new Date(
-    today.toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
-  );
+  // AST (Atlantic Standard Time, America/Santo_Domingo, UTC-4) helpers
+  function getNowInAST() {
+    return new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
+    );
+  }
+
+  function getTodayInAST() {
+    const astNow = getNowInAST();
+    return new Date(astNow.getFullYear(), astNow.getMonth(), astNow.getDate());
+  }
+
+  function formatDateToISO(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function formatDateToFullISO(date) {
+    return formatDateToISO(date) + "T00:00:00.000Z";
+  }
+
+  function isWeekendDate(date) {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  }
+
+  function isDateBeforeToday(date, todayInAST) {
+    const y = date.getFullYear();
+    const m = date.getMonth();
+    const d = date.getDate();
+    const ty = todayInAST.getFullYear();
+    const tm = todayInAST.getMonth();
+    const td = todayInAST.getDate();
+    return y < ty || (y === ty && m < tm) || (y === ty && m === tm && d < td);
+  }
+
+  // Initialize currentCalendarDate to first day of current AST month
+  const astToday = getTodayInAST();
   let currentCalendarDate = new Date(
-    dominicanNow.getFullYear(),
-    dominicanNow.getMonth(),
+    astToday.getFullYear(),
+    astToday.getMonth(),
     1,
   );
 
   let selectedDate = null;
   let selectedTime = null;
-  let carouselStartDate = new Date();
+  let carouselStartDate = new Date(astToday);
   carouselStartDate.setDate(carouselStartDate.getDate() - 7);
-  let carouselEndDate = new Date();
+  let carouselEndDate = new Date(astToday);
   carouselEndDate.setDate(carouselEndDate.getDate() + 7);
 
   // Handle unavailable dates
@@ -124,26 +159,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Start from the next day after the clicked date
     checkDate.setDate(checkDate.getDate() + 1);
 
-    // Get today's date in Dominican Republic timezone
-    const nowUTC = new Date();
-    const dominicanToday = new Date(
-      nowUTC.toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
-    );
-    const todayYear = dominicanToday.getFullYear();
-    const todayMonth = dominicanToday.getMonth();
-    const todayDay = dominicanToday.getDate();
+    const todayInAST = getTodayInAST();
 
     // Keep checking until we find an available date (not weekend, not past)
     while (true) {
-      const dayOfWeek = checkDate.getDay();
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      const isPast =
-        checkDate.getFullYear() < todayYear ||
-        (checkDate.getFullYear() === todayYear &&
-          checkDate.getMonth() < todayMonth) ||
-        (checkDate.getFullYear() === todayYear &&
-          checkDate.getMonth() === todayMonth &&
-          checkDate.getDate() < todayDay);
+      const isWeekend = isWeekendDate(checkDate);
+      const isPast = isDateBeforeToday(checkDate, todayInAST);
 
       if (!isWeekend && !isPast) {
         return checkDate;
@@ -186,10 +207,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function goToNextAvailableDate(date) {
-    const isoDate = date.toISOString().split("T")[0];
-    const fullIsoDate = isoDate + "T00:00:00.000Z";
+    const fullIsoDate = formatDateToFullISO(date);
+    const selectedDateString = formatDateToISO(date);
 
-    console.log("🔄 Going to next available date:", isoDate);
+    console.log("🔄 Going to next available date:", selectedDateString);
 
     // Update selected date
     selectedDate = fullIsoDate;
@@ -234,13 +255,9 @@ document.addEventListener("DOMContentLoaded", function () {
       let fillDate = new Date(carouselEndDate);
       fillDate.setDate(fillDate.getDate() + 1);
 
-      // Use date comparison by converting to YYYY-MM-DD strings
-      const selectedDateString = isoDate;
-
       let datesFilled = 0;
       while (true) {
-        const fillDateIso = fillDate.toISOString().split("T")[0];
-        const fillFullDateIso = fillDateIso + "T00:00:00.000Z";
+        const fillFullDateIso = formatDateToFullISO(fillDate);
 
         // Check if tile already exists
         const exists = Array.from(
@@ -294,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Stop when we reach the selected date
-        if (fillDateIso === selectedDateString) {
+        if (formatDateToISO(fillDate) === selectedDateString) {
           console.log(
             "✓ Filled",
             datesFilled,
@@ -424,47 +441,23 @@ document.addEventListener("DOMContentLoaded", function () {
       "Dic",
     ];
 
-    // Get today's date
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    const todayIso = `${year}-${month}-${day}`;
-
-    // Get today's date in Dominican Republic timezone for comparison
-    const dominicanNow = new Date(
-      today.toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
-    );
-    const todayYear = dominicanNow.getFullYear();
-    const todayMonth = dominicanNow.getMonth();
-    const todayDay = dominicanNow.getDate();
+    // Get today's date in AST
+    const todayInAST = getTodayInAST();
 
     // Create 15 dates starting from today (7 before today, today, 7 after today)
     for (let i = -7; i <= 7; i++) {
-      const dateToAdd = new Date(today);
+      const dateToAdd = new Date(todayInAST);
       dateToAdd.setDate(dateToAdd.getDate() + i);
 
-      const dateIso = dateToAdd.toISOString().split("T")[0];
-      const fullDateIso = dateIso + "T00:00:00.000Z";
+      const fullDateIso = formatDateToFullISO(dateToAdd);
 
       const dayName = dayNames[dateToAdd.getDay()];
       const dayNum = dateToAdd.getDate();
       const monthName = monthNames[dateToAdd.getMonth()];
       const dayOfWeek = dateToAdd.getDay();
-      const dateYear = dateToAdd.getFullYear();
-      const dateMonth = dateToAdd.getMonth();
-      const dateDay = dateToAdd.getDate();
 
-      // Check if date is in the past
-      const isPast =
-        dateYear < todayYear ||
-        (dateYear === todayYear && dateMonth < todayMonth) ||
-        (dateYear === todayYear &&
-          dateMonth === todayMonth &&
-          dateDay < todayDay);
-
-      // Check if weekend
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isPast = isDateBeforeToday(dateToAdd, todayInAST);
+      const isWeekend = isWeekendDate(dateToAdd);
       const isUnavailable = isWeekend || isPast;
 
       // Create wrapper
@@ -531,14 +524,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     // Add current month's days only
-    // Get today's date in Dominican Republic timezone (AST, UTC-4)
-    const nowUTC = new Date();
-    const dominicanToday = new Date(
-      nowUTC.toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
-    );
-    const todayYear = dominicanToday.getFullYear();
-    const todayMonth = dominicanToday.getMonth();
-    const todayDay = dominicanToday.getDate();
+    // Get today's date in AST (Atlantic Standard Time, UTC-4)
+    const todayInAST = getTodayInAST();
+    const todayYear = todayInAST.getFullYear();
+    const todayMonth = todayInAST.getMonth();
+    const todayDay = todayInAST.getDate();
 
     // Get the day of week for the first day of the month (0=Sunday, 6=Saturday)
     const firstDayOfMonth = new Date(year, month, 1);
@@ -599,10 +589,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
       // Check if date is in the past (before today)
-      const isPast =
-        year < todayYear ||
-        (year === todayYear && month < todayMonth) ||
-        (year === todayYear && month === todayMonth && day < todayDay);
+      const isPast = isDateBeforeToday(new Date(year, month, day), todayInAST);
 
       // Check if past dates
       if (isPast) {
@@ -714,31 +701,21 @@ document.addEventListener("DOMContentLoaded", function () {
         "Dic",
       ];
 
-      // Get today's date in Dominican Republic timezone
-      const nowUTC = new Date();
-      const dominicanToday = new Date(
-        nowUTC.toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
-      );
-      const todayYear = dominicanToday.getFullYear();
-      const todayMonth = dominicanToday.getMonth();
-      const todayDay = dominicanToday.getDate();
+      // Get today's date in AST
+      const todayInAST = getTodayInAST();
 
       // Fill in dates from carousel end to selected date
       let fillDate = new Date(carouselEndDate);
       fillDate.setDate(fillDate.getDate() + 1);
 
       // Use date comparison by converting to YYYY-MM-DD strings to avoid timezone issues
-      const selectedDateString = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      console.log(
-        "Carousel end date:",
-        carouselEndDate.toISOString().split("T")[0],
-      );
+      const selectedDateString = formatDateToISO(selectedDateObj);
+      console.log("Carousel end date:", formatDateToISO(carouselEndDate));
       console.log("Selected date string:", selectedDateString);
 
       let datesFilled = 0;
       while (true) {
-        const fillDateIso = fillDate.toISOString().split("T")[0];
-        const fillFullDateIso = fillDateIso + "T00:00:00.000Z";
+        const fillFullDateIso = formatDateToFullISO(fillDate);
 
         // Check if tile already exists
         const exists = Array.from(
@@ -749,13 +726,11 @@ document.addEventListener("DOMContentLoaded", function () {
           const fillDayName = dayNames[fillDate.getDay()];
           const fillDayNum = fillDate.getDate();
           const fillMonthName = monthNames[fillDate.getMonth()];
-          const fillDayOfWeek = fillDate.getDay();
           const fillDateYear = fillDate.getFullYear();
-          const fillDateMonth = fillDate.getMonth();
-          const fillDateDay = fillDate.getDate();
 
-          // Check if weekend
-          const fillIsWeekend = fillDayOfWeek === 0 || fillDayOfWeek === 6;
+          // Check if weekend or past
+          const fillIsWeekend = isWeekendDate(fillDate);
+          const fillIsPast = isDateBeforeToday(fillDate, todayInAST);
 
           const wrapper = document.createElement("div");
           wrapper.className = "booking-date-tile-wrapper";
@@ -771,7 +746,8 @@ document.addEventListener("DOMContentLoaded", function () {
           let buttonClass = "booking-date-tile";
           if (fillFullDateIso === fullIsoDate)
             buttonClass += " booking-date-tile--selected";
-          if (fillIsWeekend) buttonClass += " booking-date-tile--unavailable";
+          if (fillIsWeekend || fillIsPast)
+            buttonClass += " booking-date-tile--unavailable";
           button.className = buttonClass;
           button.setAttribute(
             "aria-pressed",
@@ -795,7 +771,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Stop when we reach the selected date
-        if (fillDateIso === selectedDateString) {
+        if (formatDateToISO(fillDate) === selectedDateString) {
           console.log(
             "✓ Filled",
             datesFilled,
@@ -1016,11 +992,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Set today's date as initial selection and scroll carousel to show it at the start
-  const todayDate = new Date();
-  const year = todayDate.getFullYear();
-  const month = String(todayDate.getMonth() + 1).padStart(2, "0");
-  const day = String(todayDate.getDate()).padStart(2, "0");
-  const todayIso = `${year}-${month}-${day}T00:00:00.000Z`;
+  const todayDate = getTodayInAST();
+  const todayIso = formatDateToFullISO(todayDate);
   const todayTile = Array.from(
     document.querySelectorAll(".booking-date-tile-wrapper"),
   ).find((w) => w.getAttribute("data-iso-date") === todayIso);
@@ -1127,14 +1100,8 @@ document.addEventListener("DOMContentLoaded", function () {
       "Dic",
     ];
 
-    // Get today's date in Dominican Republic timezone for comparison
-    const nowUTC = new Date();
-    const dominicanNow = new Date(
-      nowUTC.toLocaleString("en-US", { timeZone: "America/Santo_Domingo" }),
-    );
-    const todayYear = dominicanNow.getFullYear();
-    const todayMonth = dominicanNow.getMonth();
-    const todayDay = dominicanNow.getDate();
+    // Get today's date in AST for comparison
+    const todayInAST = getTodayInAST();
 
     if (direction === "prev") {
       // Add dates before the current start
@@ -1142,8 +1109,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const dateToAdd = new Date(carouselStartDate);
         dateToAdd.setDate(dateToAdd.getDate() - i);
 
-        const dateIso = dateToAdd.toISOString().split("T")[0];
-        const fullDateIso = dateIso + "T00:00:00.000Z";
+        const fullDateIso = formatDateToFullISO(dateToAdd);
 
         // Check if tile already exists
         const exists = Array.from(
@@ -1156,19 +1122,9 @@ document.addEventListener("DOMContentLoaded", function () {
           const monthName = monthNames[dateToAdd.getMonth()];
           const dayOfWeek = dateToAdd.getDay();
           const dateYear = dateToAdd.getFullYear();
-          const dateMonth = dateToAdd.getMonth();
-          const dateDay = dateToAdd.getDate();
 
-          // Check if date is in the past
-          const isPast =
-            dateYear < todayYear ||
-            (dateYear === todayYear && dateMonth < todayMonth) ||
-            (dateYear === todayYear &&
-              dateMonth === todayMonth &&
-              dateDay < todayDay);
-
-          // Check if weekend
-          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          const isPast = isDateBeforeToday(dateToAdd, todayInAST);
+          const isWeekend = isWeekendDate(dateToAdd);
           const isUnavailable = isWeekend || isPast;
 
           const wrapper = document.createElement("div");
@@ -1206,8 +1162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const dateToAdd = new Date(carouselEndDate);
         dateToAdd.setDate(dateToAdd.getDate() + i);
 
-        const dateIso = dateToAdd.toISOString().split("T")[0];
-        const fullDateIso = dateIso + "T00:00:00.000Z";
+        const fullDateIso = formatDateToFullISO(dateToAdd);
 
         // Check if tile already exists
         const exists = Array.from(
@@ -1220,19 +1175,9 @@ document.addEventListener("DOMContentLoaded", function () {
           const monthName = monthNames[dateToAdd.getMonth()];
           const dayOfWeek = dateToAdd.getDay();
           const dateYear = dateToAdd.getFullYear();
-          const dateMonth = dateToAdd.getMonth();
-          const dateDay = dateToAdd.getDate();
 
-          // Check if date is in the past
-          const isPast =
-            dateYear < todayYear ||
-            (dateYear === todayYear && dateMonth < todayMonth) ||
-            (dateYear === todayYear &&
-              dateMonth === todayMonth &&
-              dateDay < todayDay);
-
-          // Check if weekend
-          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          const isPast = isDateBeforeToday(dateToAdd, todayInAST);
+          const isWeekend = isWeekendDate(dateToAdd);
           const isUnavailable = isWeekend || isPast;
 
           const wrapper = document.createElement("div");

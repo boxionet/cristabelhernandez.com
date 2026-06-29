@@ -211,7 +211,7 @@ permalink: "/reservar/fecha-hora/"
                             <span class="booking-cart-bottom-details" id="cart-bottom-details">0 items</span>
                         </div>
                     </div>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="booking-cart-toggle-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
@@ -511,17 +511,19 @@ permalink: "/reservar/fecha-hora/"
             // Initial validation
             validateDateTimeSelection();
             
-            // Function to format date for storage
+            // Function to format date for storage (parsed as local wall-clock date to avoid UTC offset)
             function formatDateForStorage(isoDate) {
-                const dateObj = new Date(isoDate);
+                const dateString = isoDate.split("T")[0];
+                const [year, month, day] = dateString.split("-").map(Number);
+                const dateObj = new Date(year, month - 1, day);
                 const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
                 const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-                
+
                 const dayName = dayNames[dateObj.getDay()];
                 const monthName = monthNames[dateObj.getMonth()];
-                const day = dateObj.getDate();
-                
-                return `${dayName}, ${monthName} ${day}`;
+                const dayNum = dateObj.getDate();
+
+                return `${dayName}, ${monthName} ${dayNum}`;
             }
             
             // Function to attach date and time listeners
@@ -619,6 +621,7 @@ permalink: "/reservar/fecha-hora/"
                     if (cartBottomPanel) {
                         cartBottomPanel.classList.toggle("visible");
                     }
+                    cartBottomToggle.classList.toggle("is-open");
                 });
             }
             
@@ -627,6 +630,7 @@ permalink: "/reservar/fecha-hora/"
                     if (cartBottomPanel) {
                         cartBottomPanel.classList.remove("visible");
                     }
+                    cartBottomToggle.classList.remove("is-open");
                 });
             }
             

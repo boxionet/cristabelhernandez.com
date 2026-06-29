@@ -113,15 +113,40 @@ permalink: "/reservar/confirmacion/"
                 <div class="confirmacion-actions">
 
                     <!-- Add to Calendar -->
-                    <button class="confirmacion-action-btn confirmacion-action-btn--calendar" id="confirmacion-calendar-btn" aria-label="Agregar cita al calendario">
-                        <span class="confirmacion-action-btn-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M3 9h18M8 2v3M16 2v3M12 13v4M10 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </span>
-                        <span>Agregar al Calendario</span>
-                    </button>
+                    <p class="confirmacion-calendar-heading">Agregar al calendario</p>
+                    <div class="confirmacion-calendar-row" id="confirmacion-calendar-row">
+                        <button
+                            class="confirmacion-action-btn confirmacion-action-btn--google"
+                            id="confirmacion-google-calendar-btn"
+                            type="button"
+                        >
+                            <span class="confirmacion-action-btn-icon" aria-hidden="true">
+                                <svg data-name="Layer 1" height="32" id="Layer_1" viewBox="0 0 32 32" width="32" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22,4.5v6H10v11H4V6.5a2.0059,2.0059,0,0,1,2-2Z" fill="#4285f4"/>
+                                    <polygon fill="#ea4435" points="22 27.5 22 21.5 28 21.5 22 27.5"/>
+                                    <rect fill="#ffba00" height="12" width="6" x="22" y="9.5"/>
+                                    <rect fill="#00ac47" height="12" transform="translate(40.5 8.5) rotate(90)" width="6" x="13" y="18.5"/>
+                                    <path d="M28,6.5v4H22v-6h4A2.0059,2.0059,0,0,1,28,6.5Z" fill="#0066da"/>
+                                    <path d="M10,21.5v6H6a2.0059,2.0059,0,0,1-2-2v-4Z" fill="#188038"/>
+                                    <path d="M15.69,17.09c0,.89-.66,1.79-2.15,1.79a3.0026,3.0026,0,0,1-1.52-.39l-.08-.06.29-.82.13.08a2.3554,2.3554,0,0,0,1.17.34,1.191,1.191,0,0,0,.88-.31.8586.8586,0,0,0,.25-.65c-.01-.73-.68-.99-1.31-.99h-.54v-.81h.54c.45,0,1.12-.22,1.12-.82,0-.45-.31-.71-.85-.71a1.8865,1.8865,0,0,0-1.04.34l-.14.1-.28-.79.07-.06a2.834,2.834,0,0,1,1.53-.45c1.19,0,1.72.73,1.72,1.45a1.4369,1.4369,0,0,1-.81,1.3A1.52,1.52,0,0,1,15.69,17.09Z" fill="#4285f4"/>
+                                    <polygon fill="#4285f4" points="18.71 12.98 18.71 18.79 17.73 18.79 17.73 14 16.79 14.51 16.58 13.69 17.95 12.98 18.71 12.98"/>
+                                </svg>
+                            </span>
+                            <span>Google Calendario</span>
+                        </button>
+                        <button
+                            class="confirmacion-action-btn confirmacion-action-btn--apple"
+                            id="confirmacion-apple-calendar-btn"
+                            type="button"
+                        >
+                            <span class="confirmacion-action-btn-icon" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">
+                                    <path fill="currentColor" d="M 44.527344 34.75 C 43.449219 37.144531 42.929688 38.214844 41.542969 40.328125 C 39.601563 43.28125 36.863281 46.96875 33.480469 46.992188 C 30.46875 47.019531 29.691406 45.027344 25.601563 45.0625 C 21.515625 45.082031 20.664063 47.03125 17.648438 47 C 14.261719 46.96875 11.671875 43.648438 9.730469 40.699219 C 4.300781 32.429688 3.726563 22.734375 7.082031 17.578125 C 9.457031 13.921875 13.210938 11.773438 16.738281 11.773438 C 20.332031 11.773438 22.589844 13.746094 25.558594 13.746094 C 28.441406 13.746094 30.195313 11.769531 34.351563 11.769531 C 37.492188 11.769531 40.8125 13.480469 43.1875 16.433594 C 35.421875 20.691406 36.683594 31.78125 44.527344 34.75 Z M 31.195313 8.46875 C 32.707031 6.527344 33.855469 3.789063 33.4375 1 C 30.972656 1.167969 28.089844 2.742188 26.40625 4.78125 C 24.878906 6.640625 23.613281 9.398438 24.105469 12.066406 C 26.796875 12.152344 29.582031 10.546875 31.195313 8.46875 Z"></path>
+                                </svg>
+                            </span>
+                            <span>Apple Calendario</span>
+                        </button>
+                    </div>
 
                     <!-- WhatsApp + Phone row -->
                     <div class="confirmacion-contact-row">
@@ -165,6 +190,7 @@ permalink: "/reservar/confirmacion/"
         </div>
     </section>
 
+    <script src="/assets/js/calendar.js"></script>
     <script>
         // BookingStorage - read-only usage on this page
         const BookingStorage = {
@@ -230,121 +256,38 @@ permalink: "/reservar/confirmacion/"
                 totalEl.textContent = formatPrice(total);
             }
 
-            // --- Calendar Button ---
-            setupCalendarDownload(bookingData);
-        }
+            // --- Calendar Icons ---
+            if (typeof CalendarUtils !== 'undefined') {
+                console.log('✓ CalendarUtils loaded, wiring calendar icons');
+                const googleBtn = document.getElementById('confirmacion-google-calendar-btn');
+                const appleBtn = document.getElementById('confirmacion-apple-calendar-btn');
+                const hasData = !!CalendarUtils.parseBookingData(bookingData);
 
-        function setupCalendarDownload(bookingData) {
-            const calBtn = document.getElementById('confirmacion-calendar-btn');
-            if (!calBtn || !bookingData) return;
-
-            const dt = bookingData.dateTime;
-            const info = bookingData.customerInfo;
-            const services = bookingData.services || {};
-
-            // Build service names string
-            const serviceNames = Object.values(services).map(s => s.name).join(', ');
-
-            // Parse date and time
-            let startDT = null;
-            let endDT = null;
-
-            if (dt && typeof dt === 'object' && dt.date && dt.time) {
-                try {
-                    // dt.date e.g. "martes, 24 de junio de 2025"
-                    // dt.time e.g. "10:30 AM"
-                    const combinedStr = `${dt.date} ${dt.time}`;
-
-                    // Try to build a Date from the stored data
-                    // Fallback: use regex to extract the date parts
-                    const monthMap = {
-                        'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
-                        'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
-                        'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12'
-                    };
-
-                    const dateMatch = dt.date.match(/(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/i);
-                    if (dateMatch) {
-                        const day = dateMatch[1].padStart(2, '0');
-                        const monthName = dateMatch[2].toLowerCase();
-                        const year = dateMatch[3];
-                        const month = monthMap[monthName];
-
-                        // Parse time
-                        const timeMatch = dt.time.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/i);
-                        if (timeMatch && month) {
-                            let hours = parseInt(timeMatch[1], 10);
-                            const minutes = timeMatch[2];
-                            const ampm = timeMatch[3] ? timeMatch[3].toUpperCase() : null;
-
-                            if (ampm === 'PM' && hours !== 12) hours += 12;
-                            if (ampm === 'AM' && hours === 12) hours = 0;
-
-                            const hh = String(hours).padStart(2, '0');
-                            const isoStart = `${year}${month}${day}T${hh}${minutes}00`;
-
-                            // Calculate total duration in minutes
-                            const totalDuration = Object.values(services).reduce((sum, s) => {
-                                return sum + (s.duration * (s.quantity || 1));
-                            }, 0) || 60; // default 60 min
-
-                            // End time
-                            const startDate = new Date(`${year}-${month}-${day}T${hh}:${minutes}:00`);
-                            const endDate = new Date(startDate.getTime() + totalDuration * 60000);
-                            const endY = endDate.getFullYear();
-                            const endM = String(endDate.getMonth() + 1).padStart(2, '0');
-                            const endD = String(endDate.getDate()).padStart(2, '0');
-                            const endH = String(endDate.getHours()).padStart(2, '0');
-                            const endMin = String(endDate.getMinutes()).padStart(2, '0');
-                            const isoEnd = `${endY}${endM}${endD}T${endH}${endMin}00`;
-
-                            startDT = isoStart;
-                            endDT = isoEnd;
-                        }
+                if (googleBtn) {
+                    if (hasData) {
+                        googleBtn.addEventListener('click', function () {
+                            const url = CalendarUtils.createGoogleCalendarUrl(bookingData);
+                            if (url) window.open(url, '_blank', 'noopener,noreferrer');
+                        });
+                    } else {
+                        googleBtn.disabled = true;
+                        googleBtn.setAttribute('aria-disabled', 'true');
                     }
-                } catch (err) {
-                    console.warn('Could not parse date/time for calendar:', err);
                 }
+
+                if (appleBtn) {
+                    if (hasData) {
+                        appleBtn.addEventListener('click', function () {
+                            CalendarUtils.downloadICS(bookingData);
+                        });
+                    } else {
+                        appleBtn.disabled = true;
+                        appleBtn.setAttribute('aria-disabled', 'true');
+                    }
+                }
+            } else {
+                console.warn('✗ CalendarUtils not loaded; calendar.js may not be available');
             }
-
-            calBtn.addEventListener('click', function () {
-                const patientName = info ? `${info.firstName || ''} ${info.lastName || ''}`.trim() : '';
-                const summary = encodeURIComponent(`Cita - Dr. Cristabel Hernandez`);
-                const description = encodeURIComponent(
-                    `Paciente: ${patientName}\nServicios: ${serviceNames}\nClínica: Dr. Cristabel Hernandez\nTeléfono: (829) 316-3313\nDirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`
-                );
-                const location = encodeURIComponent('Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO');
-
-                if (startDT && endDT) {
-                    // Generate .ics file
-                    const icsContent = [
-                        'BEGIN:VCALENDAR',
-                        'VERSION:2.0',
-                        'PRODID:-//Cristabel Hernandez//Booking//ES',
-                        'BEGIN:VEVENT',
-                        `DTSTART:${startDT}`,
-                        `DTEND:${endDT}`,
-                        `SUMMARY:Cita - Dr. Cristabel Hernandez`,
-                        `DESCRIPTION:Paciente: ${patientName}\\nServicios: ${serviceNames}\\nTeléfono: (829) 316-3313\\nDirección: Calle Beller No. 129\\, Plaza Metropolis 2ndo Nivel\\, Puerto Plata`,
-                        `LOCATION:Calle Beller No. 129\\, Plaza Metropolis 2ndo Nivel\\, Puerto Plata 57000`,
-                        'STATUS:TENTATIVE',
-                        'END:VEVENT',
-                        'END:VCALENDAR'
-                    ].join('\r\n');
-
-                    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'cita-cristabel-hernandez.ics';
-                    a.click();
-                    URL.revokeObjectURL(url);
-                } else {
-                    // Fallback: open Google Calendar
-                    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${summary}&details=${description}&location=${location}`;
-                    window.open(gcalUrl, '_blank', 'noopener,noreferrer');
-                }
-            });
         }
 
         document.addEventListener('DOMContentLoaded', function () {

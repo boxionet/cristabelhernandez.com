@@ -126,6 +126,7 @@
             &:hover {
                 border-color: var(--booking-secondary-button);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transform: translateY(-1px);
 
                 .booking-service-add-btn {
                     border-color: var(--booking-secondary-button);
@@ -442,6 +443,11 @@
             gap: calc(12 / 16 * 1rem);
         }
 
+        .booking-cart-bottom-toggle.is-open .booking-cart-toggle-arrow {
+            transform: rotate(180deg);
+            transition: transform 0.2s ease;
+        }
+
         .booking-cart-bottom-info {
             display: flex;
             flex-direction: column;
@@ -496,16 +502,24 @@
         }
 
         .booking-cart-bottom-panel {
-            display: none;
+            display: flex;
             flex-direction: column;
-            max-height: calc(60vh);
-            overflow-y: auto;
-            padding: calc(20 / 16 * 1rem) calc(16 / 16 * 1rem);
-            border-top: 1px solid #F0E6D8;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            padding: 0 calc(16 / 16 * 1rem);
+            border-top: 0 solid #F0E6D8;
             background-color: #fafbfc;
+            transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease, padding 0.3s ease, border-top-width 0.3s ease;
 
             &.visible {
-                display: flex;
+                max-height: calc(60vh);
+                overflow-y: auto;
+                opacity: 1;
+                transform: translateY(0);
+                padding: calc(20 / 16 * 1rem) calc(16 / 16 * 1rem);
+                border-top: 1px solid #F0E6D8;
             }
         }
 
@@ -664,6 +678,7 @@
 
             &:hover {
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transform: translateY(-1px);
             }
         }
 
@@ -725,6 +740,11 @@
             padding: calc(14 / 16 * 1rem) calc(20 / 16 * 1rem);
             font-size: calc(15 / 16 * 1rem);
             flex-shrink: 0;
+            background-color: var(--booking-primary-button);
+
+            &:hover:not(:disabled) {
+                background-color: var(--booking-primary-button-hover);
+            }
         }
 
         .booking-cart-bottom-bar {

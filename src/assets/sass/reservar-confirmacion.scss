@@ -260,6 +260,32 @@
             }
         }
 
+        /* Calendar row */
+        .confirmacion-calendar-heading {
+            margin: 0 0 calc(10 / 16 * 1rem);
+            font-size: calc(13 / 16 * 1rem);
+            font-weight: 600;
+            color: var(--booking-secondary-text);
+            text-align: center;
+        }
+
+        .confirmacion-calendar-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: calc(10 / 16 * 1rem);
+            width: 100%;
+        }
+
+        .confirmacion-action-btn--google,
+        .confirmacion-action-btn--apple {
+            justify-content: center;
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
         /* Contact row: WhatsApp + Phone side by side */
         .confirmacion-contact-row {
             display: grid;
@@ -336,7 +362,8 @@
             height: calc(80 / 16 * 1rem);
         }
 
-        .confirmacion-contact-row .confirmacion-action-btn {
+        .confirmacion-contact-row .confirmacion-action-btn,
+        .confirmacion-calendar-row .confirmacion-action-btn {
             justify-content: center;
         }
     }

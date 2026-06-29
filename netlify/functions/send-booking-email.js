@@ -38,11 +38,212 @@ function calculateTotal(services) {
   }, 0);
 }
 
+const MONTH_MAP = {
+  enero: "01",
+  febrero: "02",
+  marzo: "03",
+  abril: "04",
+  mayo: "05",
+  junio: "06",
+  julio: "07",
+  agosto: "08",
+  septiembre: "09",
+  octubre: "10",
+  noviembre: "11",
+  diciembre: "12",
+};
+
+function parseDateString(dateStr) {
+  if (!dateStr) return null;
+  let match = dateStr.match(/(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/i);
+  if (match) {
+    return {
+      day: match[1].padStart(2, "0"),
+      month: MONTH_MAP[match[2].toLowerCase()],
+      year: match[3],
+    };
+  }
+  match = dateStr.match(/(\w+)\s+(\d{1,2})/i);
+  if (match) {
+    return {
+      day: match[2].padStart(2, "0"),
+      month: MONTH_MAP[match[1].toLowerCase()],
+      year: String(new Date().getFullYear()),
+    };
+  }
+  return null;
+}
+
+function parseTimeString(timeStr) {
+  if (!timeStr) return null;
+  const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?/i);
+  if (!match) return null;
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const ampm = match[3] ? match[3].toUpperCase() : null;
+  if (ampm === "PM" && hours !== 12) hours += 12;
+  if (ampm === "AM" && hours === 12) hours = 0;
+  return { hours: String(hours).padStart(2, "0"), minutes };
+}
+
+function getTotalDuration(services) {
+  return (
+    Object.values(services || {}).reduce((sum, service) => {
+      return sum + (service.duration || 0) * (service.quantity || 1);
+    }, 0) || 60
+  );
+}
+
+function parseBookingDateTime(booking) {
+  const dt = booking?.dateTime;
+  if (!dt || typeof dt !== "object" || !dt.date || !dt.time) return null;
+
+  const dateParts = parseDateString(dt.date);
+  if (!dateParts || !dateParts.month) return null;
+
+  const timeParts = parseTimeString(dt.time);
+  if (!timeParts) return null;
+
+  const startDate = new Date(
+    `${dateParts.year}-${dateParts.month}-${dateParts.day}T${timeParts.hours}:${timeParts.minutes}:00`,
+  );
+  if (isNaN(startDate.getTime())) return null;
+
+  const duration = getTotalDuration(booking.services);
+  const endDate = new Date(startDate.getTime() + duration * 60000);
+  return { startDate, endDate };
+}
+
+function formatUTC(date) {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+  return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+}
+
+function createGoogleCalendarUrl(booking) {
+  const data = parseBookingDateTime(booking);
+  if (!data) return null;
+
+  const info = booking.customerInfo || {};
+  const services = booking.services || {};
+  const serviceNames = Object.values(services)
+    .map((s) => s.name)
+    .join(", ");
+  const patientName = `${info.firstName || ""} ${info.lastName || ""}`.trim();
+
+  const summary = encodeURIComponent("Cita - Dr. Cristabel Hernandez");
+  const dates = `${formatUTC(data.startDate)}/${formatUTC(data.endDate)}`;
+  const details = encodeURIComponent(
+    [
+      `Paciente: ${patientName || "N/A"}`,
+      `Servicios: ${serviceNames || "No especificado"}`,
+      `Clínica: Dr. Cristabel Hernandez`,
+      `Teléfono: (829) 316-3313`,
+      `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
+    ].join("\n"),
+  );
+  const location = encodeURIComponent(
+    "Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO",
+  );
+
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${summary}&dates=${dates}&details=${details}&location=${location}`;
+}
+
+function createICSContent(booking) {
+  const data = parseBookingDateTime(booking);
+  if (!data) return null;
+
+  const info = booking.customerInfo || {};
+  const services = booking.services || {};
+  const serviceNames = Object.values(services)
+    .map((s) => s.name)
+    .join(", ");
+  const patientName = `${info.firstName || ""} ${info.lastName || ""}`.trim();
+
+  const description = [
+    `Paciente: ${patientName || "N/A"}`,
+    `Servicios: ${serviceNames || "No especificado"}`,
+    `Clínica: Dr. Cristabel Hernandez`,
+    `Teléfono: (829) 316-3313`,
+    `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
+  ].join("\\n");
+
+  const uid = `cristabel-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Cristabel Hernandez//Booking//ES",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTAMP:${formatUTC(new Date())}`,
+    `DTSTART:${formatUTC(data.startDate)}`,
+    `DTEND:${formatUTC(data.endDate)}`,
+    "SUMMARY:Cita - Dr. Cristabel Hernandez",
+    `DESCRIPTION:${description}`,
+    "LOCATION:Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO",
+    "STATUS:CONFIRMED",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+}
+
+function getICSFilename(booking) {
+  const dt = booking?.dateTime;
+  if (dt && typeof dt === "object" && dt.date) {
+    const dateParts = parseDateString(dt.date);
+    if (dateParts) {
+      return `Cristabel-Reservation-${dateParts.year}-${dateParts.month}-${dateParts.day}.ics`;
+    }
+  }
+  const now = new Date();
+  return `Cristabel-Reservation-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}.ics`;
+}
+
+function buildCalendarAttachment(booking) {
+  const content = createICSContent(booking);
+  if (!content) return null;
+  return {
+    filename: getICSFilename(booking),
+    content: Buffer.from(content).toString("base64"),
+    content_type: "text/calendar; method=PUBLISH",
+  };
+}
+
+function buildCalendarSection(booking) {
+  const googleUrl = createGoogleCalendarUrl(booking);
+  if (!googleUrl) return { html: "", text: "" };
+
+  return {
+    html: `
+      <h3>Agregar al calendario</h3>
+      <p>
+        <a href="${googleUrl}" target="_blank" rel="noopener noreferrer">Google Calendario</a>
+        &nbsp;|&nbsp;
+        <span>Adjuntamos también un archivo .ics para Apple Calendario, Outlook, etc.</span>
+      </p>
+    `,
+    text: `
+Agregar al calendario:
+- Google Calendario: ${googleUrl}
+- También adjuntamos un archivo .ics para Apple Calendario, Outlook, etc.
+    `.trim(),
+  };
+}
+
 function buildOwnerNotificationEmail(booking) {
   const info = booking.customerInfo || {};
   const services = booking.services || {};
   const total = calculateTotal(services);
   const dateTime = formatDateTime(booking.dateTime);
+  const calendar = buildCalendarSection(booking);
+  const attachment = buildCalendarAttachment(booking);
 
   return {
     subject: `Nueva reserva: ${info.firstName || ""} ${info.lastName || ""}`,
@@ -56,6 +257,7 @@ function buildOwnerNotificationEmail(booking) {
       <h3>Servicios</h3>
       <ul>${buildServicesList(services)}</ul>
       <p><strong>Total:</strong> ${formatPrice(total)}</p>
+      ${calendar.html}
       ${info.note ? `<h3>Nota del paciente</h3><p>${info.note.replace(/\n/g, "<br>")}</p>` : ""}
     `,
     text: `
@@ -76,8 +278,11 @@ ${Object.values(services)
   .join("\n")}
 
 Total: ${formatPrice(total)}
+
+${calendar.text}
 ${info.note ? `\nNota del paciente:\n${info.note}` : ""}
     `.trim(),
+    attachments: attachment ? [attachment] : [],
   };
 }
 
@@ -88,6 +293,8 @@ function buildPatientConfirmationEmail(booking) {
   const dateTime = formatDateTime(booking.dateTime);
   const patientName =
     `${info.firstName || ""} ${info.lastName || ""}`.trim() || "Paciente";
+  const calendar = buildCalendarSection(booking);
+  const attachment = buildCalendarAttachment(booking);
 
   return {
     subject: "Confirmación de tu cita — Dr. Cristabel Hernandez",
@@ -98,6 +305,7 @@ function buildPatientConfirmationEmail(booking) {
       <h3>Servicios</h3>
       <ul>${buildServicesList(services)}</ul>
       <p><strong>Total:</strong> ${formatPrice(total)}</p>
+      ${calendar.html}
       <p>Te contactaremos pronto para confirmar tu cita.</p>
       <p>Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp.</p>
       <hr>
@@ -122,6 +330,8 @@ ${Object.values(services)
 
 Total: ${formatPrice(total)}
 
+${calendar.text}
+
 Te contactaremos pronto para confirmar tu cita.
 Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp.
 
@@ -130,6 +340,7 @@ Dr. Cristabel Hernandez
 Teléfono: (829) 316-3313
 Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata
     `.trim(),
+    attachments: attachment ? [attachment] : [],
   };
 }
 
@@ -182,6 +393,7 @@ exports.handler = async (event, context) => {
         subject: ownerEmail.subject,
         html: ownerEmail.html,
         text: ownerEmail.text,
+        attachments: ownerEmail.attachments,
       }),
       resend.emails.send({
         from: FROM_EMAIL,
@@ -190,6 +402,7 @@ exports.handler = async (event, context) => {
         subject: patientEmail.subject,
         html: patientEmail.html,
         text: patientEmail.text,
+        attachments: patientEmail.attachments,
       }),
     ]);
 

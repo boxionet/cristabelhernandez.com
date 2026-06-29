@@ -83,12 +83,12 @@ permalink: "/reservar/datos/"
                                 + Agregar Nota
                             </button>
 
-                            <div class="form-group note-group" id="note-group" style="display: none;">
+                            <div class="form-group note-group" id="note-group">
                                 <label for="note" class="form-label">Nota (Opcional)</label>
-                                <textarea 
-                                    id="note" 
-                                    name="note" 
-                                    class="form-input form-textarea" 
+                                <textarea
+                                    id="note"
+                                    name="note"
+                                    class="form-input form-textarea"
                                     placeholder="Agrega cualquier nota adicional sobre tu cita..."
                                     rows="4"
                                 ></textarea>
@@ -139,7 +139,7 @@ permalink: "/reservar/datos/"
                             <span class="booking-cart-bottom-details" id="cart-bottom-details">0 items</span>
                         </div>
                     </div>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="booking-cart-toggle-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </button>
@@ -540,12 +540,14 @@ permalink: "/reservar/datos/"
         if (cartBottomToggle) {
             cartBottomToggle.addEventListener("click", function () {
                 cartBottomPanel.classList.toggle("visible");
+                cartBottomToggle.classList.toggle("is-open");
             });
         }
 
         if (cartBottomClose) {
             cartBottomClose.addEventListener("click", function () {
                 cartBottomPanel.classList.remove("visible");
+                cartBottomToggle.classList.remove("is-open");
             });
         }
 

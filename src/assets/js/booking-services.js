@@ -262,12 +262,14 @@ function updateCardStates() {
 if (cartBottomToggle) {
   cartBottomToggle.addEventListener("click", function () {
     cartBottomPanel.classList.toggle("visible");
+    cartBottomToggle.classList.toggle("is-open");
   });
 }
 
 if (cartBottomClose) {
   cartBottomClose.addEventListener("click", function () {
     cartBottomPanel.classList.remove("visible");
+    cartBottomToggle.classList.remove("is-open");
   });
 }
 
