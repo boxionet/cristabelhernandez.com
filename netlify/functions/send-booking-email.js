@@ -239,13 +239,13 @@ function buildCalendarSection(booking, includeICS = false) {
 
   return {
     html: `
-      <h3>Agregar al calendario</h3>
+      <h3>Agregar tu cita al calendario</h3>
       <p>
         <a href="${googleUrl}" target="_blank" rel="noopener noreferrer">Google Calendario</a>${icsHtml}
       </p>
     `,
     text: `
-Agregar al calendario:
+Agregar tu cita al calendario:
 - Google Calendario: ${googleUrl}${icsText}
     `.trim(),
   };
@@ -308,9 +308,10 @@ function buildPatientConfirmationEmail(booking) {
   const patientName =
     `${info.firstName || ""} ${info.lastName || ""}`.trim() || "Paciente";
   const calendar = buildCalendarSection(booking, false);
+  const attachment = buildCalendarAttachment(booking);
 
   return {
-    subject: "Confirmación de tu cita — Dr. Cristabel Hernandez",
+    subject: "Confirmación de tu cita — Dra. Cristabel Hernandez",
     html: `
       <h2>Hola ${patientName},</h2>
       <p>Tu cita ha sido recibida. A continuación te compartimos los detalles:</p>
@@ -320,7 +321,7 @@ function buildPatientConfirmationEmail(booking) {
       <p><strong>Total:</strong> ${formatPrice(total)}</p>
       ${calendar.html}
       <p>Te contactaremos pronto para confirmar tu cita.</p>
-      <p>Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp.</p>
+      <p>Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp. al (829) 316-3313</p>
       <hr>
       <p><strong>Dra. Cristabel Hernandez</strong><br>
       Teléfono: (829) 316-3313<br>
@@ -346,13 +347,14 @@ Total: ${formatPrice(total)}
 ${calendar.text}
 
 Te contactaremos pronto para confirmar tu cita.
-Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp.
+Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp al (829) 316-3313.
 
 ---
 Dra. Cristabel Hernandez
 Teléfono: (829) 316-3313
 Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata
     `.trim(),
+    attachments: attachment ? [attachment] : [],
   };
 }
 

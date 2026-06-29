@@ -10,30 +10,30 @@ description: How to create a new page in the Cristabel Hernandez website
 
 ```html
 ---
-title: "Page Title | Dr. Cristabel Hernandez"
+title: "Page Title | Dra. Cristabel Hernandez"
 description: "Meta description in Spanish for SEO"
 permalink: "/<page-slug>/"
 ---
 
-{% extends "layouts/base.html" %}
-
-{% block head %}
-    <link rel="stylesheet" href="/assets/css/<page-name>.css">
-{% endblock %}
-
-{% block body %}
-    <!-- Page sections go here -->
+{% extends "layouts/base.html" %} {% block head %}
+<link rel="stylesheet" href="/assets/css/<page-name>.css" />
+{% endblock %} {% block body %}
+<!-- Page sections go here -->
 {% endblock %}
 ```
 
 2. Create a corresponding SCSS file at `src/assets/sass/<page-name>.scss`
 
 3. Add the navigation link in `src/_includes/sections/header.html` following the pattern:
+
 ```html
 <li class="cs-li">
-    <a href="/<page-slug>/" class="cs-li-link {% if page.url == '/<page-slug>/' %} cs-active {% endif %}">
-        Link Text
-    </a>
+  <a
+    href="/<page-slug>/"
+    class="cs-li-link {% if page.url == '/<page-slug>/' %} cs-active {% endif %}"
+  >
+    Link Text
+  </a>
 </li>
 ```
 
@@ -42,6 +42,7 @@ permalink: "/<page-slug>/"
 5. The page is automatically added to the sitemap via `content/content.json` (tags: "sitemap").
 
 ## Notes
+
 - Permalinks must have trailing slashes
 - Use Spanish text for titles, descriptions, and content
 - Page-specific CSS is loaded via the `{% block head %}` block
