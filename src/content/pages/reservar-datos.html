@@ -290,6 +290,12 @@ permalink: "/reservar/datos/"
             let itemCount = 0;
             let totalDuration = 0;
 
+            // Calculate total duration once from services
+            Object.keys(services).forEach((serviceId) => {
+                const service = services[serviceId];
+                totalDuration += service.duration * (service.quantity || 1);
+            });
+
             const cartItemsDesktop = document.getElementById("cart-items-desktop");
             const cartItemsMobile = document.getElementById("cart-items-mobile");
             const cartSubtotalDesktop = document.getElementById("cart-subtotal-desktop");
@@ -319,12 +325,6 @@ permalink: "/reservar/datos/"
                 if (typeof dateTimeData === 'object' && dateTimeData.date && dateTimeData.time) {
                     dateText = dateTimeData.date.replace(/,\s*/, ', ');
                     timeText = dateTimeData.time;
-
-                    // Calculate total duration from services
-                    Object.keys(services).forEach((serviceId) => {
-                        const service = services[serviceId];
-                        totalDuration += service.duration * (service.quantity || 1);
-                    });
 
                     const hours = Math.floor(totalDuration / 60);
                     const mins = totalDuration % 60;
@@ -362,7 +362,6 @@ permalink: "/reservar/datos/"
                 const itemTotal = service.price * (service.quantity || 1);
                 total += itemTotal;
                 itemCount++;
-                totalDuration += service.duration * (service.quantity || 1);
 
                 const desktopItemEl = document.createElement("div");
                 desktopItemEl.className = "booking-cart-item";

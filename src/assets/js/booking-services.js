@@ -343,7 +343,7 @@ if ("IntersectionObserver" in window && categorySections.length > 0) {
     if (isProgrammaticScroll) return;
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        updateActiveTab(entry.target.id);
+        updateActiveTab(entry.target.id, true);
       }
     });
   }, observerOptions);

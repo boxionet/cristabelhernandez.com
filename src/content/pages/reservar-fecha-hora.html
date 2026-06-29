@@ -389,29 +389,29 @@ permalink: "/reservar/fecha-hora/"
                 let total = 0;
                 let itemCount = 0;
                 let totalDuration = 0;
-                
+
+                // Calculate total duration once from services
+                Object.keys(services).forEach((serviceId) => {
+                    const service = services[serviceId];
+                    totalDuration += service.duration * (service.quantity || 1);
+                });
+
                 cartItemsDesktop.innerHTML = "";
                 cartItemsMobile.innerHTML = "";
-                
+
                 // Add date and time section if available
                 if (dateTimeData) {
                     const dateTimeSection = document.createElement("div");
                     dateTimeSection.className = "booking-cart-datetime-section";
-                    
+
                     let dateText = "";
                     let timeText = "";
                     let durationText = "";
-                    
+
                     if (typeof dateTimeData === 'object' && dateTimeData.date && dateTimeData.time) {
                         dateText = dateTimeData.date.replace(/,\s*/, ', ');
                         timeText = dateTimeData.time;
-                        
-                        // Calculate total duration from services
-                        Object.keys(services).forEach((serviceId) => {
-                            const service = services[serviceId];
-                            totalDuration += service.duration * (service.quantity || 1);
-                        });
-                        
+
                         const hours = Math.floor(totalDuration / 60);
                         const mins = totalDuration % 60;
                         if (hours > 0 || mins > 0) {
@@ -447,8 +447,7 @@ permalink: "/reservar/fecha-hora/"
                     const itemTotal = service.price * (service.quantity || 1);
                     total += itemTotal;
                     itemCount++;
-                    totalDuration += service.duration * (service.quantity || 1);
-                    
+
                     const desktopItemEl = document.createElement("div");
                     desktopItemEl.className = "booking-cart-item";
                     desktopItemEl.innerHTML = `
