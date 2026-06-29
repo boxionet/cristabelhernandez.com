@@ -271,13 +271,12 @@
 
         .confirmacion-calendar-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: calc(10 / 16 * 1rem);
             width: 100%;
         }
 
-        .confirmacion-action-btn--google,
-        .confirmacion-action-btn--apple {
+        .confirmacion-action-btn--google {
             justify-content: center;
 
             &:disabled {

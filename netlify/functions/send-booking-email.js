@@ -3,6 +3,9 @@ const { Resend } = require("resend");
 const OWNER_EMAIL = "cristabel@cristabelhernandez.com";
 const FROM_EMAIL = "cristabel@mail.cristabelhernandez.com";
 
+// Dominican Republic (Puerto Plata) is UTC-4 all year (no DST)
+const CLINIC_UTC_OFFSET_HOURS = -4;
+
 function formatPrice(amount) {
   if (amount === undefined || amount === null) return "RD$ 0";
   return `RD$ ${Math.round(amount).toLocaleString("en-US")}`;
@@ -86,6 +89,12 @@ function parseTimeString(timeStr) {
   return { hours: String(hours).padStart(2, "0"), minutes };
 }
 
+function applyClinicOffsetToUTC(date) {
+  // The parsed date/time is in the clinic's local timezone (UTC-4).
+  // Server Date constructors run in UTC, so shift by the offset to get the correct UTC instant.
+  return new Date(date.getTime() - CLINIC_UTC_OFFSET_HOURS * 60 * 60 * 1000);
+}
+
 function getTotalDuration(services) {
   return (
     Object.values(services || {}).reduce((sum, service) => {
@@ -104,12 +113,13 @@ function parseBookingDateTime(booking) {
   const timeParts = parseTimeString(dt.time);
   if (!timeParts) return null;
 
-  const startDate = new Date(
+  const parsedStart = new Date(
     `${dateParts.year}-${dateParts.month}-${dateParts.day}T${timeParts.hours}:${timeParts.minutes}:00`,
   );
-  if (isNaN(startDate.getTime())) return null;
+  if (isNaN(parsedStart.getTime())) return null;
 
   const duration = getTotalDuration(booking.services);
+  const startDate = applyClinicOffsetToUTC(parsedStart);
   const endDate = new Date(startDate.getTime() + duration * 60000);
   return { startDate, endDate };
 }
@@ -135,13 +145,13 @@ function createGoogleCalendarUrl(booking) {
     .join(", ");
   const patientName = `${info.firstName || ""} ${info.lastName || ""}`.trim();
 
-  const summary = encodeURIComponent("Cita - Dr. Cristabel Hernandez");
+  const summary = encodeURIComponent("Cita - Dra. Cristabel Hernandez");
   const dates = `${formatUTC(data.startDate)}/${formatUTC(data.endDate)}`;
   const details = encodeURIComponent(
     [
       `Paciente: ${patientName || "N/A"}`,
       `Servicios: ${serviceNames || "No especificado"}`,
-      `Clínica: Dr. Cristabel Hernandez`,
+      `Clínica: Dra. Cristabel Hernandez`,
       `Teléfono: (829) 316-3313`,
       `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
     ].join("\n"),
@@ -167,7 +177,7 @@ function createICSContent(booking) {
   const description = [
     `Paciente: ${patientName || "N/A"}`,
     `Servicios: ${serviceNames || "No especificado"}`,
-    `Clínica: Dr. Cristabel Hernandez`,
+    `Clínica: Dra. Cristabel Hernandez`,
     `Teléfono: (829) 316-3313`,
     `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
   ].join("\\n");
@@ -185,7 +195,7 @@ function createICSContent(booking) {
     `DTSTAMP:${formatUTC(new Date())}`,
     `DTSTART:${formatUTC(data.startDate)}`,
     `DTEND:${formatUTC(data.endDate)}`,
-    "SUMMARY:Cita - Dr. Cristabel Hernandez",
+    "SUMMARY:Cita - Dra. Cristabel Hernandez",
     `DESCRIPTION:${description}`,
     "LOCATION:Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO",
     "STATUS:CONFIRMED",
@@ -216,23 +226,27 @@ function buildCalendarAttachment(booking) {
   };
 }
 
-function buildCalendarSection(booking) {
+function buildCalendarSection(booking, includeICS = false) {
   const googleUrl = createGoogleCalendarUrl(booking);
   if (!googleUrl) return { html: "", text: "" };
+
+  const icsHtml = includeICS
+    ? `&nbsp;|&nbsp;<span>Adjuntamos también un archivo .ics para Apple Calendario, Outlook, etc.</span>`
+    : "";
+  const icsText = includeICS
+    ? "\n- También adjuntamos un archivo .ics para Apple Calendario, Outlook, etc."
+    : "";
 
   return {
     html: `
       <h3>Agregar al calendario</h3>
       <p>
-        <a href="${googleUrl}" target="_blank" rel="noopener noreferrer">Google Calendario</a>
-        &nbsp;|&nbsp;
-        <span>Adjuntamos también un archivo .ics para Apple Calendario, Outlook, etc.</span>
+        <a href="${googleUrl}" target="_blank" rel="noopener noreferrer">Google Calendario</a>${icsHtml}
       </p>
     `,
     text: `
 Agregar al calendario:
-- Google Calendario: ${googleUrl}
-- También adjuntamos un archivo .ics para Apple Calendario, Outlook, etc.
+- Google Calendario: ${googleUrl}${icsText}
     `.trim(),
   };
 }
@@ -242,7 +256,7 @@ function buildOwnerNotificationEmail(booking) {
   const services = booking.services || {};
   const total = calculateTotal(services);
   const dateTime = formatDateTime(booking.dateTime);
-  const calendar = buildCalendarSection(booking);
+  const calendar = buildCalendarSection(booking, true);
   const attachment = buildCalendarAttachment(booking);
 
   return {
@@ -293,8 +307,7 @@ function buildPatientConfirmationEmail(booking) {
   const dateTime = formatDateTime(booking.dateTime);
   const patientName =
     `${info.firstName || ""} ${info.lastName || ""}`.trim() || "Paciente";
-  const calendar = buildCalendarSection(booking);
-  const attachment = buildCalendarAttachment(booking);
+  const calendar = buildCalendarSection(booking, false);
 
   return {
     subject: "Confirmación de tu cita — Dr. Cristabel Hernandez",
@@ -309,7 +322,7 @@ function buildPatientConfirmationEmail(booking) {
       <p>Te contactaremos pronto para confirmar tu cita.</p>
       <p>Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp.</p>
       <hr>
-      <p><strong>Dr. Cristabel Hernandez</strong><br>
+      <p><strong>Dra. Cristabel Hernandez</strong><br>
       Teléfono: (829) 316-3313<br>
       Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata</p>
     `,
@@ -336,11 +349,10 @@ Te contactaremos pronto para confirmar tu cita.
 Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp.
 
 ---
-Dr. Cristabel Hernandez
+Dra. Cristabel Hernandez
 Teléfono: (829) 316-3313
 Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata
     `.trim(),
-    attachments: attachment ? [attachment] : [],
   };
 }
 
@@ -393,7 +405,9 @@ exports.handler = async (event, context) => {
         subject: ownerEmail.subject,
         html: ownerEmail.html,
         text: ownerEmail.text,
-        attachments: ownerEmail.attachments,
+        ...(ownerEmail.attachments?.length
+          ? { attachments: ownerEmail.attachments }
+          : {}),
       }),
       resend.emails.send({
         from: FROM_EMAIL,
@@ -402,7 +416,9 @@ exports.handler = async (event, context) => {
         subject: patientEmail.subject,
         html: patientEmail.html,
         text: patientEmail.text,
-        attachments: patientEmail.attachments,
+        ...(patientEmail.attachments?.length
+          ? { attachments: patientEmail.attachments }
+          : {}),
       }),
     ]);
 

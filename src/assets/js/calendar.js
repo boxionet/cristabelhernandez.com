@@ -5,11 +5,13 @@
  */
 
 const CalendarUtils = {
-  BUSINESS_NAME: "Dr. Cristabel Hernandez",
+  BUSINESS_NAME: "Dra. Cristabel Hernandez",
   BUSINESS_ADDRESS:
     "Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO",
   BUSINESS_PHONE: "(829) 316-3313",
   DEFAULT_DURATION_MINUTES: 60,
+  // Puerto Plata, Dominican Republic is UTC-4 all year (no DST)
+  CLINIC_UTC_OFFSET_MINUTES: 240,
 
   MONTH_MAP: {
     enero: "01",
@@ -112,6 +114,21 @@ const CalendarUtils = {
   },
 
   /**
+   * Convert a parsed local date/time to the clinic's correct UTC instant.
+   * The browser parses the string as its own local time, so we adjust by the
+   * difference between the browser offset and the clinic offset (UTC-4).
+   * @param {Date} date
+   * @returns {Date}
+   */
+  applyClinicOffset(date) {
+    const browserOffsetMinutes = date.getTimezoneOffset();
+    return new Date(
+      date.getTime() +
+        (this.CLINIC_UTC_OFFSET_MINUTES - browserOffsetMinutes) * 60000,
+    );
+  },
+
+  /**
    * Extract booking data needed for calendar generation.
    * @param {Object} bookingData
    * @returns {Object|null}
@@ -144,11 +161,12 @@ const CalendarUtils = {
     const timeParts = this.parseTimeString(dt.time);
     if (!timeParts) return null;
 
-    const startDate = new Date(
+    const parsedStart = new Date(
       `${dateParts.year}-${dateParts.month}-${dateParts.day}T${timeParts.hours}:${timeParts.minutes}:00`,
     );
-    if (isNaN(startDate.getTime())) return null;
+    if (isNaN(parsedStart.getTime())) return null;
 
+    const startDate = this.applyClinicOffset(parsedStart);
     const durationMinutes = this.getTotalDuration(services);
     const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
 
