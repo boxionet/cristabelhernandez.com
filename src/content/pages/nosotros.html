@@ -20,14 +20,6 @@ permalink: "/nosotros/"
         <div class="cs-container">
             <span class="cs-int-title">Nosotros</span>
         </div>
-        <!--Background Image-->
-        <picture class="cs-background">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 640, height: 284 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 640, height: 284 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 1280, height: 568 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 1280, height: 568 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 1280, height: 568 }) | jpeg %}" alt="recepción de la clínica" width="1280" height="568">
-        </picture>
     </div>
 
     <!-- ============================================ -->

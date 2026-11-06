@@ -143,9 +143,8 @@
             /* 80px - 120px */
             height: clamp(5rem, 9vw, 7.5rem);
             width: auto;
-            position: absolute;
-            top: 0;
-            right: 0;
+            display: block;
+            margin: 0 auto calc(16 / 16 * 1rem);
         }
 
         .cs-h3 {
