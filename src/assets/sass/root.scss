@@ -1915,3 +1915,27 @@
 #banner-712 {
     background-color: #3e4c35;
 }
+
+/* Interior banners: shorter band (less empty space) */
+body #banner-712 {
+    padding-top: clamp(8.75rem, 9vw, 10rem);
+    padding-bottom: calc(40 / 16 * 1rem);
+}
+
+/* CTA band: solid clinic color instead of a photo background */
+#cta-2353 {
+    background-color: #3e4c35;
+
+    .cs-topper {
+        color: var(--primaryLight);
+    }
+
+    .cs-title,
+    .cs-contact {
+        color: #fff;
+    }
+
+    .cs-desc {
+        color: rgba(255, 255, 255, 0.85);
+    }
+}

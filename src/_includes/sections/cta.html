@@ -29,12 +29,5 @@
             </div>
             <a href="/reservar/" class="cs-button-solid">Reserva tu cita</a>
         </div>
-        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1170, height: 519 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1170, height: 519 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1920, height: 852 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1920, height: 852 }) | webp %}" type="image/webp">
-            <img aria-hidden="true" decoding="async" src="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1920, height: 852 }) | jpeg %}" alt="interior de la clínica" width="1920" height="852">
-        </picture>
     </div>
 </section>
