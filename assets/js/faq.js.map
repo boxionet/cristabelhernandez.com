@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/assets/js/faq.js"],
+  "sourcesContent": ["const faqItems = Array.from(document.querySelectorAll('.cs-faq-item'));\r\nfor (const item of faqItems) {\r\n    const onClick = () => {\r\n        item.classList.toggle('active');\r\n    };\r\n    item.addEventListener('click', onClick);\r\n}"],
+  "mappings": ";;AAAA,MAAM,WAAW,MAAM,KAAK,SAAS,iBAAiB,cAAc,CAAC;AACrE,aAAW,QAAQ,UAAU;AACzB,UAAM,UAAU,MAAM;AAClB,WAAK,UAAU,OAAO,QAAQ;AAAA,IAClC;AACA,SAAK,iBAAiB,SAAS,OAAO;AAAA,EAC1C;",
+  "names": []
+}

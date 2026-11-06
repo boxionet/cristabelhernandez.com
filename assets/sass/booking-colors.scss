@@ -1,0 +1,36 @@
+/*-- ======================== -->
+<---    Booking System Colors    -->
+<--- ======================== -*/
+
+:root {
+    /* Primary Button */
+    --booking-primary-button: #705D3F;
+    --booking-primary-button-hover: #5D4D34;
+    --booking-primary-button-active: #4A3D29;
+    --booking-primary-button-text: #FFFFFF;
+
+    /* Secondary Button */
+    --booking-secondary-button: #849573;
+    --booking-secondary-button-hover: #6F8060;
+
+    /* Page & Card */
+    --booking-page-background: #FAF8F5;
+    --booking-card-background: #FFFFFF;
+    --booking-card-border: #E8E2D9;
+
+    /* Text */
+    --booking-main-text: #2F2A24;
+    --booking-secondary-text: #6E665D;
+
+    /* Disabled State */
+    --booking-disabled-background: #D8D2C8;
+    --booking-disabled-text: #9C948A;
+
+    /* Links */
+    --booking-link: #705D3F;
+    --booking-link-hover: #5D4D34;
+
+    /* Messages */
+    --booking-success: #849573;
+    --booking-error: #C65B5B;
+}

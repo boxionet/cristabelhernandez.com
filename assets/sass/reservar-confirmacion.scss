@@ -1,0 +1,381 @@
+/*-- ======================== -->
+<!--    Reservar - Confirmacion     -->
+<!-- ======================== -*/
+
+@media only screen and (min-width: 0rem) {
+    #booking-confirmacion {
+        min-height: calc(100vh - calc(64 / 16 * 1rem));
+        background-color: var(--booking-page-background);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: clamp(2rem, 6vw, 4rem) 1rem clamp(3rem, 8vw, 5rem);
+
+        .confirmacion-wrapper {
+            width: 100%;
+            max-width: calc(520 / 16 * 1rem);
+            margin: 0 auto;
+        }
+
+        .confirmacion-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: calc(28 / 16 * 1rem);
+        }
+
+        /* ---- Icon ---- */
+        .confirmacion-icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmacion-icon {
+            width: calc(72 / 16 * 1rem);
+            height: calc(72 / 16 * 1rem);
+        }
+
+        /* ---- Heading block ---- */
+        .confirmacion-heading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: calc(12 / 16 * 1rem);
+            text-align: center;
+        }
+
+        .confirmacion-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: calc(8 / 16 * 1rem);
+            background-color: #FFF8EC;
+            border: 1px solid #E8D9BC;
+            border-radius: calc(100 / 16 * 1rem);
+            padding: calc(5 / 16 * 1rem) calc(14 / 16 * 1rem);
+            font-size: calc(13 / 16 * 1rem);
+            font-weight: 500;
+            color: #705D3F;
+            letter-spacing: 0.01em;
+        }
+
+        .confirmacion-status-dot {
+            width: calc(8 / 16 * 1rem);
+            height: calc(8 / 16 * 1rem);
+            border-radius: 50%;
+            background-color: #D4A843;
+            flex-shrink: 0;
+            animation: confirmacion-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes confirmacion-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.85);
+            }
+        }
+
+        .confirmacion-title {
+            font-size: clamp(calc(24 / 16 * 1rem), 5vw, calc(32 / 16 * 1rem));
+            font-weight: 700;
+            color: var(--booking-main-text);
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .confirmacion-subtitle {
+            font-size: calc(15 / 16 * 1rem);
+            color: var(--booking-secondary-text);
+            line-height: 1.6;
+            max-width: calc(420 / 16 * 1rem);
+            margin: 0;
+        }
+
+        /* ---- Summary Card ---- */
+        .confirmacion-summary-card {
+            width: 100%;
+            background-color: var(--booking-card-background);
+            border: 1px solid var(--booking-card-border);
+            border-radius: calc(16 / 16 * 1rem);
+            overflow: hidden;
+        }
+
+        .confirmacion-summary-header {
+            padding: calc(20 / 16 * 1rem) calc(24 / 16 * 1rem) calc(16 / 16 * 1rem);
+            border-bottom: 1px solid var(--booking-card-border);
+        }
+
+        .confirmacion-summary-title {
+            font-size: calc(15 / 16 * 1rem);
+            font-weight: 600;
+            color: var(--booking-main-text);
+            margin: 0;
+        }
+
+        .confirmacion-summary-body {
+            padding: calc(8 / 16 * 1rem) 0;
+        }
+
+        .confirmacion-summary-row {
+            display: flex;
+            align-items: flex-start;
+            gap: calc(14 / 16 * 1rem);
+            padding: calc(14 / 16 * 1rem) calc(24 / 16 * 1rem);
+            border-bottom: 1px solid var(--booking-card-border);
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+        .confirmacion-summary-row--total {
+            .confirmacion-summary-value--total {
+                font-weight: 700;
+                font-size: calc(17 / 16 * 1rem);
+                color: var(--booking-main-text);
+            }
+        }
+
+        .confirmacion-summary-icon-col {
+            width: calc(20 / 16 * 1rem);
+            height: calc(20 / 16 * 1rem);
+            flex-shrink: 0;
+            margin-top: calc(2 / 16 * 1rem);
+            color: var(--booking-secondary-text);
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .confirmacion-summary-info {
+            display: flex;
+            flex-direction: column;
+            gap: calc(3 / 16 * 1rem);
+            flex: 1;
+        }
+
+        .confirmacion-summary-label {
+            font-size: calc(12 / 16 * 1rem);
+            font-weight: 500;
+            color: var(--booking-secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .confirmacion-summary-value {
+            font-size: calc(15 / 16 * 1rem);
+            font-weight: 500;
+            color: var(--booking-main-text);
+            line-height: 1.4;
+        }
+
+        /* Services list inside summary */
+        .confirmacion-services-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: calc(6 / 16 * 1rem);
+
+            li {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: calc(8 / 16 * 1rem);
+                font-size: calc(14 / 16 * 1rem);
+                color: var(--booking-main-text);
+                font-weight: 500;
+            }
+        }
+
+        .confirmacion-service-name {
+            flex: 1;
+        }
+
+        .confirmacion-service-price {
+            color: var(--booking-secondary-text);
+            font-weight: 400;
+            white-space: nowrap;
+            font-size: calc(13 / 16 * 1rem);
+        }
+
+        /* ---- Actions ---- */
+        .confirmacion-actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: calc(12 / 16 * 1rem);
+        }
+
+        /* Calendar — full-width outlined */
+        .confirmacion-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: calc(10 / 16 * 1rem);
+            width: 100%;
+            padding: calc(13 / 16 * 1rem) calc(20 / 16 * 1rem);
+            border-radius: calc(10 / 16 * 1rem);
+            font-size: calc(14 / 16 * 1rem);
+            font-weight: 500;
+            cursor: pointer;
+            border: 1.5px solid var(--booking-card-border);
+            text-decoration: none;
+            transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
+            font-family: inherit;
+            color: var(--booking-main-text);
+            background-color: var(--booking-card-background);
+
+            &:hover {
+                background-color: #F5EFE6;
+                border-color: #C8B99A;
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+
+        .confirmacion-action-btn-icon {
+            width: calc(20 / 16 * 1rem);
+            height: calc(20 / 16 * 1rem);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        /* Calendar row */
+        .confirmacion-calendar-heading {
+            margin: 0 0 calc(10 / 16 * 1rem);
+            font-size: calc(13 / 16 * 1rem);
+            font-weight: 600;
+            color: var(--booking-secondary-text);
+            text-align: center;
+        }
+
+        .confirmacion-calendar-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: calc(10 / 16 * 1rem);
+            width: 100%;
+        }
+
+        .confirmacion-action-btn--google {
+            justify-content: center;
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        /* Contact row: WhatsApp + Phone side by side */
+        .confirmacion-contact-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: calc(10 / 16 * 1rem);
+            width: 100%;
+        }
+
+        .confirmacion-action-btn--whatsapp {
+            background-color: #25D366;
+            border-color: #25D366;
+            color: #FFFFFF;
+            border-radius: calc(10 / 16 * 1rem);
+
+            &:hover {
+                background-color: #1EBD5A;
+                border-color: #1EBD5A;
+            }
+        }
+
+        .confirmacion-action-btn--phone {
+            background-color: var(--booking-card-background);
+            border-color: var(--booking-card-border);
+            color: var(--booking-main-text);
+            border-radius: calc(10 / 16 * 1rem);
+
+            &:hover {
+                background-color: #F5EFE6;
+                border-color: #C8B99A;
+            }
+        }
+
+        /* ---- Home CTA ---- */
+        .confirmacion-home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: calc(8 / 16 * 1rem);
+            width: 100%;
+            padding: calc(15 / 16 * 1rem) calc(24 / 16 * 1rem);
+            background-color: var(--booking-primary-button);
+            color: var(--booking-primary-button-text);
+            border-radius: calc(10 / 16 * 1rem);
+            font-size: calc(15 / 16 * 1rem);
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            text-decoration: none;
+            border: none;
+            transition: background-color 0.18s ease, transform 0.1s ease;
+            font-family: inherit;
+
+            &:hover {
+                background-color: var(--booking-primary-button-hover);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+    }
+}
+
+/* ---- Desktop ---- */
+@media only screen and (min-width: 64rem) {
+    #booking-confirmacion {
+        padding: clamp(3rem, 6vw, 5rem) 1rem clamp(4rem, 8vw, 6rem);
+
+        .confirmacion-wrapper {
+            max-width: calc(560 / 16 * 1rem);
+        }
+
+        .confirmacion-icon {
+            width: calc(80 / 16 * 1rem);
+            height: calc(80 / 16 * 1rem);
+        }
+
+        .confirmacion-contact-row .confirmacion-action-btn,
+        .confirmacion-calendar-row .confirmacion-action-btn {
+            justify-content: center;
+        }
+    }
+}
+/* Estimate note under cart totals (desde / per-unit prices) */
+.booking-cart-estimate-note {
+    margin-top: calc(8/16 * 1rem);
+    font-size: calc(13/16 * 1rem);
+    line-height: 1.45;
+    color: var(--bodyTextColor, #5d5546);
+    opacity: 0.85;
+
+    &[hidden] {
+        display: none;
+    }
+}
