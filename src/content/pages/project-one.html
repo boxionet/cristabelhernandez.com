@@ -1,7 +1,7 @@
 ---
-title: "Project One | Code Stitch Web Designs"
-description: "Meta description for the page"
-permalink: "/project-one/"
+title: "Tratamientos Faciales | Clínica Estética Dra. Cristabel Hernández"
+description: "Tratamientos faciales en Puerto Plata: limpieza profunda, hidratación intensiva y facial antiedad para una piel sana y luminosa. Reserva tu cita."
+permalink: "/tratamientos-faciales/"
 ---
 
 {% extends "layouts/base.html" %}
@@ -13,109 +13,89 @@ permalink: "/project-one/"
 {% block body %}
 
     <!-- ============================================ -->
-    <!--                   Banner                     -->
+    <!--                  Interior Page               -->
     <!-- ============================================ -->
 
-    <div id="banner-310">
+    <div id="banner-712">
         <div class="cs-container">
-            <span class="cs-int-title">Project One Gallery</span>
-            <div class="cs-breadcrumbs">
-                <a href="/" class="cs-link">Home</a>
-                <a href="/project-one/" class="cs-link cs-active">Project One Gallery</a>
-            </div>
+            <span class="cs-int-title">Tratamientos Faciales</span>
         </div>
         <!--Background Image-->
-
         <picture class="cs-background">
-            <!--Mobile Image-->
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 640, height: 600 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 640, height: 600 }) | webp %}" type="image/webp">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 640, height: 600 }) | jpeg %}" type="image/jpeg">
-            <!--Tablet Image-->
-            <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2048, height: 942 }) | avif %}" type="image/avif">
-            <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2048, height: 942 }) | webp %}" type="image/webp">
-            <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2048, height: 942 }) | jpeg %}" type="image/jpeg">
-            <!--Desktop Image-->
-            <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | avif %}" type="image/avif">
-            <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | webp %}" type="image/webp">
-            <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | jpeg %}" type="image/jpeg">
-            <img src="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | jpeg %}" alt="library" width="1920" height="482" loading="eager" decoding="async">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 640, height: 284 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 640, height: 284 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1280, height: 568 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1280, height: 568 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1280, height: 568 }) | jpeg %}" alt="tratamiento facial" width="1280" height="568">
         </picture>
     </div>
 
     <!-- ============================================ -->
-    <!--                   Gallery                    -->
+    <!--             Side By Side (Left)              -->
     <!-- ============================================ -->
 
-    <section id="gallery-48">
+    <section id="sbs-2525">
         <div class="cs-container">
+            <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 576, height: 477 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 576, height: 477 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 960, height: 796 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 960, height: 796 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 960, height: 796 }) | jpeg %}" alt="tratamiento facial en la clínica" width="960" height="796">
+        </picture>
             <div class="cs-content">
-                <span class="cs-topper">Our Portfolio</span>
-                <h2 class="cs-title">Et orci volutpat, back up generator installations</h2>
+                <span class="cs-topper">Faciales</span>
+                <h2 class="cs-title">Una piel limpia, hidratada y luminosa</h2>
+                <p class="cs-text">
+                    Nuestros tratamientos faciales combinan limpieza profunda, exfoliación suave e hidratación intensiva para devolverle a tu piel su brillo natural. Cada sesión comienza con una evaluación para adaptar el protocolo a tu tipo de piel y a lo que tu piel necesita ese día.
+                </p>
+                <p class="cs-text">
+                    Son ideales para pieles apagadas, con poros congestionados, manchas leves o primeros signos de la edad, y también como mantenimiento mensual para mantener tu piel sana todo el año.
+                </p>
+                <h3 class="cs-h3">Beneficios:</h3>
+                <ul class="cs-card-group">
+                    <li class="cs-item">Limpieza profunda</li>
+                    <li class="cs-item">Hidratación intensiva</li>
+                    <li class="cs-item">Más luminosidad</li>
+                    <li class="cs-item">Poros más limpios</li>
+                    <li class="cs-item">Para todo tipo de piel</li>
+                </ul>
             </div>
-            <div class="cs-image-group">
-                <div class="cs-row cs-row-1">
-                    <!-- Row 1-->
-                    <picture class="cs-picture cs-picture-1">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port1.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port1.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port1.jpg" alt="new hallway" width="420" height="567">
-                    </picture>
-                    <picture class="cs-picture cs-picture-2">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port4.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port4.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port4.jpg" alt="new home construction" width="420" height="630">
-                    </picture>
-                    <picture class="cs-picture cs-picture-3">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port7.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port7.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port7.jpg" alt="building a new wall" width="420" height="512">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-                <!-- Row 2 -->
-                <div class="cs-row cs-row-2">
-                    <picture class="cs-picture cs-picture-1">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port2.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port2.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port2.jpg" alt="new kitchen" width="420" height="492">
-                    </picture>
-                    <picture class="cs-picture cs-picture-2">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port5.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port5.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port5.jpg" alt="apartment addition" width="420" height="517">
-                    </picture>
-                    <picture class="cs-picture cs-picture-3">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port8.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port8.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port8.jpg" alt="kew kitchen cabinets" width="420" height="629">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-                <!-- Row 3 -->
-                <div class="cs-row cs-row-3">
-                    <picture class="cs-picture cs-picture-1">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port3.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port3.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port3.jpg" alt="new black window structure" width="420" height="625">
-                    </picture>
-                    <picture class="cs-picture cs-picture-2">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port6.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port6.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port6.jpg" alt="kitchen rebovation" width="420" height="452">
-                    </picture>
-                    <picture class="cs-picture cs-picture-3">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port9.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port9.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port9.jpg" alt="bathroom renovation" width="420" height="629">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-            </div>
-            <a href="/contact/" class="cs-button-solid">Get Started</a>
         </div>
     </section>
 
-    {% include 'sections/cta.html' %}
+    <!-- ============================================ -->
+    <!--                   Services                   -->
+    <!-- ============================================ -->
+
+    <section id="services-2371">
+        <div class="cs-container">
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/calendar-check.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Limpieza Profunda</h3>
+                    <p class="cs-item-text">
+                        Elimina impurezas y puntos negros, y deja tu piel fresca, suave y lista para absorber mejor tus productos.
+                    </p>
+                </li>
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/inject_icon.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Hidratación Intensiva</h3>
+                    <p class="cs-item-text">
+                        Recupera la humedad y elasticidad de tu piel con activos hidratantes aplicados en profundidad.
+                    </p>
+                </li>
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/lips_icon.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Facial Antiedad</h3>
+                    <p class="cs-item-text">
+                        Tratamiento enfocado en firmeza y luminosidad para atenuar líneas de expresión y signos de cansancio.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    {% include "sections/cta.html" %}
 
 {% endblock %}

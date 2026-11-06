@@ -1,25 +1,228 @@
 ---
-title: "Restultados | Antes y Después"
-description: "Meta description for the page"
+title: "Resultados | Antes y Después | Clínica Estética Dra. Cristabel Hernández"
+description: "Resultados antes y después de tratamientos faciales y corporales en Puerto Plata: rejuvenecimiento, manchas, firmeza y marcas de acné. Reserva tu evaluación."
 permalink: "/resultados/"
 ---
 
 {% extends "layouts/base.html" %}
 
+{% block head %}
     <link rel="stylesheet" href="/assets/css/resultados.css">
-
+{% endblock %}
 
 {% block body %}
 
+    <!-- ============================================ -->
+    <!--                  Interior Page               -->
+    <!-- ============================================ -->
+
+    <div id="banner-712">
+        <div class="cs-container">
+            <span class="cs-int-title">Resultados</span>
+        </div>
+        <!--Background Image-->
+        <picture class="cs-background">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 640, height: 284 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 640, height: 284 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 1280, height: 568 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 1280, height: 568 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 1280, height: 568 }) | jpeg %}" alt="resultados de tratamientos" width="1280" height="568">
+        </picture>
+    </div>
 
     <!-- ============================================ -->
-    <!--                 Side By Side                 -->
+    <!--                   Gallery                    -->
     <!-- ============================================ -->
 
-    <section id="RPsbs-313">
-
+    <section id="gallery-1897">
+        <div class="cs-container">
+            <div class="cs-content">
+                <div class="cs-flex">
+                    <span class="cs-topper">Antes y después</span>
+                    <h2 class="cs-title">Resultados que se ven y se sienten</h2>
+                </div>
+                <a class="cs-button-solid" href="/reservar/">Reserva tu cita</a>
+            </div>
+            <!--Gallery-->
+            <div class="cs-gallery">
+                <div class="cs-item">
+                    <p class="cs-item-text">Rejuvenecimiento facial</p>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del rejuvenecimiento facial" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Antes</span>
+                    </div>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del rejuvenecimiento facial" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Después</span>
+                    </div>
+                </div>
+                <div class="cs-item">
+                    <p class="cs-item-text">Firmeza y líneas de expresión</p>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del tratamiento de firmeza" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Antes</span>
+                    </div>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del tratamiento de firmeza" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Después</span>
+                    </div>
+                </div>
+                <div class="cs-item">
+                    <p class="cs-item-text">Tratamiento de manchas</p>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del tratamiento de manchas" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Antes</span>
+                    </div>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del tratamiento de manchas" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Después</span>
+                    </div>
+                </div>
+                <div class="cs-item">
+                    <p class="cs-item-text">Marcas de acné</p>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del tratamiento para marcas de acné" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Antes</span>
+                    </div>
+                    <div class="cs-picture-group">
+                        <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del tratamiento para marcas de acné" width="305" height="400">
+        </picture>
+                        <span class="cs-tag">Después</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    
+    <!-- ============================================ -->
+    <!--                   Gallery                    -->
+    <!-- ============================================ -->
+
+    <section id="gallery-1446">
+        <div class="cs-container">
+            <div class="cs-content">
+                <div class="cs-flex">
+                    <span class="cs-topper">Galería</span>
+                    <h2 class="cs-title">Conoce nuestra clínica</h2>
+                </div>
+            </div>
+            <!--Gallery-->
+            <div class="cs-gallery">
+                <!--Picture 1-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="recepción de la clínica" width="305" height="400">
+        </picture>
+                <!--Picture 2-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="sala de tratamientos" width="305" height="400">
+        </picture>
+                <!--Picture 3-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="tratamiento facial" width="305" height="400">
+        </picture>
+                <!--Picture 4-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="tratamiento corporal" width="305" height="400">
+        </picture>
+                <!--Picture 5-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/rejuvenecimiento.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/rejuvenecimiento.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/rejuvenecimiento.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/rejuvenecimiento.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/rejuvenecimiento.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="terapia de luz LED" width="305" height="400">
+        </picture>
+                <!--Picture 6-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-laser.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-laser.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-laser.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-laser.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-laser.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="depilación láser" width="305" height="400">
+        </picture>
+                <!--Picture 7-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cuidado-piel.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cuidado-piel.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/cuidado-piel.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/cuidado-piel.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/cuidado-piel.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="consulta de cuidado de la piel" width="305" height="400">
+        </picture>
+                <!--Picture 8-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="Dra. Cristabel Hernández" width="305" height="400">
+        </picture>
+            </div>
+        </div>
+    </section>
+
+    {% include "sections/cta.html" %}
 
 {% endblock %}
