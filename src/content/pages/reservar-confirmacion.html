@@ -101,10 +101,11 @@ permalink: "/reservar/confirmacion/"
                                 </svg>
                             </div>
                             <div class="confirmacion-summary-info">
-                                <span class="confirmacion-summary-label">Total</span>
+                                <span class="confirmacion-summary-label" id="confirmacion-total-label">Total</span>
                                 <span class="confirmacion-summary-value confirmacion-summary-value--total" id="confirmacion-total">RD$ 0</span>
                             </div>
                         </div>
+                        <p class="booking-cart-estimate-note" id="confirmacion-estimate-note" hidden>Total estimado: los precios «desde» y por ampolla pueden variar. El precio final se confirma en tu evaluación.</p>
 
                     </div>
                 </div>
@@ -196,6 +197,19 @@ permalink: "/reservar/confirmacion/"
             const formatted = Math.round(amount).toLocaleString('en-US');
             return `RD$ ${formatted}`;
         }
+        // Format a stored service's price with its "desde" prefix / per-unit note
+        function formatServicePrice(service) {
+            let text = formatPrice(service.price);
+            if (service.priceFrom) text = `Desde ${text}`;
+            if (service.priceNote === "c/ampolla") text += " c/ampolla";
+            else if (service.priceNote) text += ` (${service.priceNote})`;
+            return text;
+        }
+
+        function isEstimatePrice(service) {
+            return Boolean(service && (service.priceFrom || service.priceNote));
+        }
+
 
         function populateSummary() {
             const bookingData = BookingStorage.get();
@@ -229,7 +243,7 @@ permalink: "/reservar/confirmacion/"
                     keys.forEach(key => {
                         const s = services[key];
                         const li = document.createElement('li');
-                        li.innerHTML = `<span class="confirmacion-service-name">${s.name}</span><span class="confirmacion-service-price">${formatPrice(s.price * (s.quantity || 1))}</span>`;
+                        li.innerHTML = `<span class="confirmacion-service-name">${s.name}</span><span class="confirmacion-service-price">${(s.quantity || 1) > 1 ? formatPrice(s.price * (s.quantity || 1)) : formatServicePrice(s)}</span>`;
                         servicesEl.appendChild(li);
                     });
                 }
@@ -242,6 +256,11 @@ permalink: "/reservar/confirmacion/"
                     return sum + (s.price * (s.quantity || 1));
                 }, 0);
                 totalEl.textContent = formatPrice(total);
+                const hasEstimate = Object.values(bookingData.services).some(isEstimatePrice);
+                const totalLabel = document.getElementById('confirmacion-total-label');
+                const estimateNote = document.getElementById('confirmacion-estimate-note');
+                if (totalLabel) totalLabel.textContent = hasEstimate ? 'Total estimado' : 'Total';
+                if (estimateNote) estimateNote.hidden = !hasEstimate;
             }
 
             // --- Google Calendar ---
