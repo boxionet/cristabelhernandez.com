@@ -1967,6 +1967,9 @@ body #banner-712 {
     overflow: hidden;
     cursor: ew-resize;
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
     background-color: #e9e4da;
 
     .ba-layer,
@@ -1979,8 +1982,14 @@ body #banner-712 {
         display: block;
     }
 
+    .ba-layer,
+    .ba-layer img {
+        pointer-events: none;
+    }
+
     .ba-layer img {
         object-fit: cover;
+        -webkit-user-drag: none;
     }
 }
 
@@ -2056,7 +2065,7 @@ body #banner-712 {
 
 .ba-body {
     padding: calc(8 / 16 * 1rem) calc(24 / 16 * 1rem) calc(28 / 16 * 1rem);
-    text-align: center;
+    text-align: left;
 }
 
 .ba-card-title {
@@ -2068,28 +2077,10 @@ body #banner-712 {
 .ba-card-text {
     color: var(--bodyTextColor);
     line-height: 1.6em;
-    margin: 0 auto;
+    margin: 0;
     max-width: calc(480 / 16 * 1rem);
 }
 
-.ba-services {
-    list-style: none;
-    margin: calc(16 / 16 * 1rem) 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: calc(8 / 16 * 1rem);
-    justify-content: center;
-
-    li {
-        background-color: rgba(132, 149, 115, 0.16);
-        color: #3e4c35;
-        font-size: calc(14 / 16 * 1rem);
-        font-weight: 700;
-        padding: calc(6 / 16 * 1rem) calc(14 / 16 * 1rem);
-        border-radius: calc(999 / 16 * 1rem);
-    }
-}
 
 /* Initial-letter avatars (replacing generated profile photos) */
 #reviews-1672 .cs-profile.cs-initials {
