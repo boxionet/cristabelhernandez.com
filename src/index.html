@@ -163,7 +163,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                 <p class="cs-text">Cada rostro y cada cuerpo son únicos. Por eso, antes de cualquier tratamiento, escuchamos lo que buscas, evaluamos tu piel y diseñamos un plan pensado solo para ti, con expectativas claras y resultados naturales.</p>
                 <h3 class="cs-h3">Nuestro compromiso contigo:</h3>
                 <p class="cs-text">Trabajamos con productos de calidad, protocolos seguros y un seguimiento cercano después de cada sesión, para que te sientas acompañada en todo el proceso.</p>
-                <ul class="cs-card-group">
+                <ul class="cs-list">
                     <li class="cs-item">Evaluación personalizada</li>
                     <li class="cs-item">Resultados naturales</li>
                     <li class="cs-item">Tecnología moderna</li>
@@ -249,7 +249,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
             <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
             <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | avif %}" type="image/avif">
             <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | jpeg %}" alt="antes del tratamiento con toxina botulínica" width="640" height="853">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | jpeg %}" draggable="false" alt="antes del tratamiento con toxina botulínica" width="640" height="853">
         </picture>
                         <div class="ba-after">
                             <picture class="ba-layer">
@@ -257,7 +257,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
             <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
             <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | avif %}" type="image/avif">
             <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | jpeg %}" alt="después del tratamiento con toxina botulínica" width="640" height="853">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | jpeg %}" draggable="false" alt="después del tratamiento con toxina botulínica" width="640" height="853">
         </picture>
                         </div>
                         <span class="ba-label ba-label-before">Antes</span>
@@ -272,10 +272,6 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     <div class="ba-body">
                         <h3 class="ba-card-title">Toxina Botulínica</h3>
                         <p class="ba-card-text">Aplicada en la frente y las patas de gallo: al sonreír y gesticular, las líneas de expresión se marcan mucho menos y el rostro se ve descansado, sin perder su expresión natural.</p>
-                        <ul class="ba-services">
-                            <li>Frente</li>
-                            <li>Patas de gallo</li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -297,6 +293,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                             setPos(((e.clientX - r.left) / r.width) * 100);
                         }
                         view.addEventListener("pointerdown", function (e) {
+                            e.preventDefault();
                             view.setPointerCapture(e.pointerId);
                             fromEvent(e);
                             function move(ev) { fromEvent(ev); }
@@ -310,6 +307,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                             view.addEventListener("pointercancel", up);
                         });
                         range.addEventListener("input", function () { setPos(parseFloat(range.value)); });
+                        view.addEventListener("dragstart", function (e) { e.preventDefault(); });
                         setPos(50);
                     });
                 })();

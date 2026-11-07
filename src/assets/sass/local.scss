@@ -310,7 +310,7 @@
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #sbsr-2526 {
-        background-color: #faf6f2;
+        background-color: #fffdf9;
         overflow: hidden;
         position: relative;
         z-index: 1;
@@ -363,21 +363,38 @@
             color: var(--headerColor);
         }
 
-        .cs-card-group {
+        .cs-list {
             margin: 0;
             padding: 0;
             display: flex;
-            flex-wrap: wrap;
-            gap: clamp(calc(16/16 * 1rem), 4vw, calc(20/16 * 1rem));
+            flex-direction: column;
+            gap: calc(12/16 * 1rem);
         }
 
         .cs-item {
             list-style: none;
-            font-size: clamp(calc(13/16 * 1rem), 3vw, calc(16/16 * 1rem));
-            line-height: 1.2em;
-            padding: calc(16/16 * 1rem) calc(24/16 * 1rem);
-            background-color: #fff;
-            box-sizing: border-box;
+            font-size: clamp(calc(15/16 * 1rem), 3vw, calc(17/16 * 1rem));
+            line-height: 1.35em;
+            color: var(--bodyTextColor);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: calc(12/16 * 1rem);
+
+            &:before {
+                content: "\2713";
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: none;
+                width: calc(26/16 * 1rem);
+                height: calc(26/16 * 1rem);
+                border-radius: 50%;
+                background-color: rgba(132, 149, 115, 0.18);
+                color: #3e4c35;
+                font-size: calc(14/16 * 1rem);
+                font-weight: 900;
+            }
         }
 
         .cs-picture {
@@ -790,7 +807,7 @@
 @media only screen and (min-width: 0rem) {
     #antes-despues {
         padding: var(--sectionPadding);
-        background-color: #f6eddf;
+        background-color: #fffdf9;
         /* stops the cs-graphics from causing an overflow */
         overflow: hidden;
         position: relative;
@@ -1508,28 +1525,3 @@
     }
 }
 
-/* Restyle: doctor commitment chips — equal sizes, aligned in a grid */
-@media only screen and (min-width: 0rem) {
-    #sbsr-2526 {
-        .cs-card-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-auto-rows: 1fr;
-            gap: calc(14 / 16 * 1rem);
-        }
-
-        .cs-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: 100%;
-            border-radius: calc(12 / 16 * 1rem);
-            box-shadow: 0 4px 14px rgba(77, 63, 40, 0.08);
-        }
-
-        .cs-item:last-child {
-            grid-column: span 2;
-        }
-    }
-}
