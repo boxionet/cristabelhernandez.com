@@ -65,7 +65,7 @@ exports.handler = async (event) => {
   const message = String(payload.message || "").trim();
   const token = String(payload.recaptchaToken || "").trim();
 
-  if (!name || !email || !email.includes("@") || !phone || !message) {
+  if (!name || !email || !email.includes("@") || !phone || !service || !message) {
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Missing or invalid form fields" }),

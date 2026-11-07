@@ -454,3 +454,19 @@
         }
     }
 }
+
+/* Required-field markers */
+@media only screen and (min-width: 0rem) {
+    #contact-1388 {
+        .cs-required {
+            color: #b3261e;
+        }
+
+        .cs-form-note {
+            margin: 0 0 calc(8 / 16 * 1rem);
+            font-size: calc(14 / 16 * 1rem);
+            line-height: 1.5em;
+            color: var(--bodyTextColor);
+        }
+    }
+}

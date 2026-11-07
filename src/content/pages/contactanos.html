@@ -69,21 +69,22 @@ permalink: "/contactanos/"
             <!--Form-->
             <form class="cs-form" id="cs-form-1388" name="Contact Form" method="post">
                 <h3 class="cs-h3">Envíanos un mensaje</h3>
+                <p class="cs-form-note">* Campos obligatorios</p>
                 <label class="cs-label">
-                    Nombre
+                    Nombre <span class="cs-required">*</span>
                     <input class="cs-input" required type="text" id="name-1388" name="name" placeholder="Tu nombre">
                 </label>
                 <label class="cs-label cs-email">
-                    Correo electrónico
+                    Correo electrónico <span class="cs-required">*</span>
                     <input class="cs-input" required type="email" id="email-1388" name="email" placeholder="Tu correo">
                 </label>
                 <label class="cs-label cs-phone">
-                    Teléfono
+                    Teléfono <span class="cs-required">*</span>
                     <input class="cs-input" required type="tel" id="phone-1388" name="phone" placeholder="Tu teléfono">
                 </label>
                 <label class="cs-label">
-                    Tratamiento de interés
-                    <select class="cs-input" id="services-1388" name="Services">
+                    Tratamiento de interés <span class="cs-required">*</span>
+                    <select class="cs-input" required id="services-1388" name="Services">
                         <option value="" disabled selected>Selecciona un tratamiento</option>
                         <option value="Tratamientos Faciales">Tratamientos Faciales</option>
                         <option value="Tratamientos Corporales">Tratamientos Corporales</option>
@@ -93,7 +94,7 @@ permalink: "/contactanos/"
                     </select>
                 </label>
                 <label class="cs-label">
-                    Mensaje
+                    Mensaje <span class="cs-required">*</span>
                     <textarea class="cs-input cs-textarea" required name="Message" id="message-1388" placeholder="¿En qué podemos ayudarte?"></textarea>
                 </label>
                 <button class="cs-button-solid cs-submit" type="submit">Enviar mensaje</button>
