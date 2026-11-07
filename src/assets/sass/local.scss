@@ -1092,7 +1092,7 @@
             box-sizing: border-box;
             display: flex;
             grid-column: span 12;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-start;
             flex-direction: column;
             position: relative;
@@ -1101,8 +1101,8 @@
         }
 
         .cs-flex-group {
-            /* this margin top auto will push everything up and force the cs-flex-group to the bottom of the container. This is to account for review cards with different heights because of more or less text and makes the cards more responsive to changing text */
-            margin-top: auto;
+            /* kept at the top of the card (no auto margin) so the name and stars start at the same height in every card, whatever the review length */
+            margin-top: 0;
             display: flex;
             align-items: flex-start;
             gap: calc(12 / 16 * 1rem);
