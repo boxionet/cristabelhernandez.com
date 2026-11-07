@@ -1240,7 +1240,7 @@
 
         .cs-image-group {
             font-size: min(2.24vw, .9rem);
-            width: calc(482/16 * 1em);
+            width: calc(413/16 * 1em);
             height: calc(616/16 * 1em);
             display: block;
             position: relative;
@@ -1415,6 +1415,7 @@
         }
 
         .cs-image-group {
+            width: calc(482/16 * 1em);
             font-size: min(1.5vw, 1rem);
             height: auto;
             min-height: calc(616/16 * 1em);
