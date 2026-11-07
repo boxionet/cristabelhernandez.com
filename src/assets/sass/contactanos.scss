@@ -431,3 +431,26 @@
         }
     }
 }
+
+/* Contact form status messages */
+@media only screen and (min-width: 0rem) {
+    #contact-1388 {
+        .cs-form-success {
+            width: 100%;
+            margin: calc(16 / 16 * 1rem) 0 0;
+            font-size: calc(16 / 16 * 1rem);
+            line-height: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .cs-form-error {
+            width: 100%;
+            margin: calc(16 / 16 * 1rem) 0 0;
+            font-size: calc(16 / 16 * 1rem);
+            line-height: 1.5em;
+            font-weight: 700;
+            color: #b3261e;
+        }
+    }
+}
