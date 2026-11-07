@@ -170,7 +170,7 @@ function createGoogleCalendarUrl(booking) {
     [
       `Paciente: ${patientName || "N/A"}`,
       `Servicios: ${serviceNames || "No especificado"}`,
-      `Clínica: Dra. Cristabel Hernandez`,
+      `Centro estético: Dra. Cristabel Hernandez`,
       `Teléfono: (829) 316-3313`,
       `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
     ].join("\n"),
@@ -196,7 +196,7 @@ function createICSContent(booking) {
   const description = [
     `Paciente: ${patientName || "N/A"}`,
     `Servicios: ${serviceNames || "No especificado"}`,
-    `Clínica: Dra. Cristabel Hernandez`,
+    `Centro estético: Dra. Cristabel Hernandez`,
     `Teléfono: (829) 316-3313`,
     `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
   ].join("\\n");
