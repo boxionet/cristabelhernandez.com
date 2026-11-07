@@ -9,7 +9,7 @@
         {%- for post in collections.featured | reverse -%}
             <a class="cs-sidebar-link" href="{{ post.url }}">
                 <picture class="cs-sidebar-img">
-                    <img src="{% getUrl post.data.image | resize({ width: 120, height: 120 }) | jpeg %}" alt="{{ post.data.alt }}" width="60" height="60" loading="lazy" decoding="async">
+                    <img src="{% getUrl post.data.image | resize({ width: 120, height: 120 }) | jpeg({ quality: 90 }) %}" alt="{{ post.data.alt }}" width="60" height="60" loading="lazy" decoding="async">
                 </picture>
                 <div class="cs-content-group">
                     <h3 class="cs-sidebar-title">{{ post.data.title }}</h3>

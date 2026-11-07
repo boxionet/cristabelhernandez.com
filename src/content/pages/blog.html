@@ -32,18 +32,18 @@ permalink: "/blog/"
                     <article class="cs-article">
                         <picture class="cs-article-image">
                             <!--Mobile Image-->
-                            <source media="(max-width: 600px)" srcset="{% getUrl post.data.image | resize({ width: 576, height: 400 }) | avif %}" type="image/avif">
-                            <source media="(max-width: 600px)" srcset="{% getUrl post.data.image | resize({ width: 576, height: 400 }) | webp %}" type="image/webp">
-                            <source media="(max-width: 600px)" srcset="{% getUrl post.data.image | resize({ width: 576, height: 400 }) | jpeg %}" type="image/jpeg">
+                            <source media="(max-width: 600px)" srcset="{% getUrl post.data.image | resize({ width: 1152, height: 800 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl post.data.image | resize({ width: 1152, height: 800 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <source media="(max-width: 600px)" srcset="{% getUrl post.data.image | resize({ width: 1152, height: 800 }) | jpeg({ quality: 90 }) %}" type="image/jpeg">
                             <!--Tablet Image-->
-                            <source media="(max-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1142, height: 614 }) | avif %}" type="image/avif">
-                            <source media="(max-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1142, height: 614 }) | webp %}" type="image/webp">
-                            <source media="(max-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1142, height: 614 }) | jpeg %}" type="image/jpeg">
+                            <source media="(max-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1713, height: 921 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(max-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1713, height: 921 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <source media="(max-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1713, height: 921 }) | jpeg({ quality: 90 }) %}" type="image/jpeg">
                             <!--Desktop Image-->
-                            <source media="(min-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | avif %}" type="image/avif">
-                            <source media="(min-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | webp %}" type="image/webp">
-                            <source media="(min-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | jpeg %}" type="image/jpeg">
-                            <img src="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | jpeg %}" alt="{{ post.data.alt }}" width="824" height="400" decoding="async">
+                            <source media="(min-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(min-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <source media="(min-width: 1024px)" srcset="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | jpeg({ quality: 90 }) %}" type="image/jpeg">
+                            <img src="{% getUrl post.data.image | resize({ width: 1648, height: 800 }) | jpeg({ quality: 90 }) %}" alt="{{ post.data.alt }}" width="824" height="400" decoding="async">
                         </picture>
                         <div class="cs-article-group">
                             <div class="cs-author-group">
