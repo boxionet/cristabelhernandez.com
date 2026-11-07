@@ -1,6 +1,6 @@
 ---
-title: "Blog | Code Stitch Web Designs"
-description: "Meta description for the page"
+title: "Blog | Centro Estético Dra. Cristabel Hernández"
+description: "Blog del Centro Estético Dra. Cristabel Hernández en Puerto Plata: consejos sobre cuidado de la piel, tratamientos faciales y corporales, y novedades de nuestro centro."
 permalink: "/blog/"
 ---
 
@@ -15,8 +15,10 @@ permalink: "/blog/"
     <!--                   Banner                     -->
     <!-- ============================================ -->
 
-    <div id="banner-310">
-
+    <div id="banner-712">
+        <div class="cs-container">
+            <span class="cs-int-title">Blog</span>
+        </div>
     </div>
 
     <!-- ============================================ -->
@@ -26,7 +28,7 @@ permalink: "/blog/"
     <div id="blog-listing">
         <div class="cs-container">
             {% if collections.post | length == 0 %}
-                <h1 class="cs-title">No Recent Posts</h1>
+                <h1 class="cs-title">Aún no hay artículos publicados — pronto compartiremos el primero.</h1>
             {% else %}
                 {%- for post in collections.post | reverse -%}
                     <article class="cs-article">
