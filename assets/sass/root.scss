@@ -1927,7 +1927,11 @@ body #banner-712 {
     background-color: #3e4c35;
 
     .cs-topper {
-        color: var(--primaryLight);
+        color: var(--primary);
+    }
+
+    .cs-icon {
+        filter: brightness(0) invert(1);
     }
 
     .cs-title,
