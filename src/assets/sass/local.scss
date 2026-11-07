@@ -788,7 +788,7 @@
 
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
-    #gallery-1897 {
+    #antes-despues {
         padding: var(--sectionPadding);
         background-color: #f6eddf;
         /* stops the cs-graphics from causing an overflow */
@@ -960,7 +960,7 @@
 
 /* Tablet - 600px */
 @media only screen and (min-width: 37.5rem) {
-    #gallery-1897 {
+    #antes-despues {
         .cs-content {
             text-align: left;
             flex-direction: row;
@@ -986,7 +986,7 @@
 
 /* Desktop - 1600px */
 @media only screen and (min-width: 100rem) {
-    #gallery-1897 {
+    #antes-despues {
         .cs-graphic-top {
             margin-left: calc(240/16 * 1rem);
             left: 50%;
@@ -1003,7 +1003,7 @@
 /* Dark Mode */
 @media only screen and (min-width: 0rem) {
     body.dark-mode {
-        #gallery-1897 {
+        #antes-despues {
             background-color: var(--dark);
 
             .cs-title,

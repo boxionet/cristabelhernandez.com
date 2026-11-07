@@ -231,110 +231,89 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
     <!--                   Gallery                    -->
     <!-- ============================================ -->
 
-    <section id="gallery-1897">
+    <section id="antes-despues">
         <div class="cs-container">
             <div class="cs-content">
                 <div class="cs-flex">
                     <span class="cs-topper">Resultados</span>
                     <h2 class="cs-title">Antes y después de nuestros tratamientos</h2>
+                    <p class="cs-text ba-intro">Desliza el control de la tarjeta para comparar el antes y el después de este tratamiento real.</p>
                 </div>
                 <a class="cs-button-solid" href="/resultados/">Ver más resultados</a>
             </div>
-            <!--Gallery-->
-            <div class="cs-gallery">
-                <div class="cs-item">
-                    <p class="cs-item-text">Rejuvenecimiento facial</p>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-1.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del rejuvenecimiento facial" width="305" height="400">
+            <div class="ba-wrap">
+                <div class="ba-card">
+                    <div class="ba-view">
+                        <picture class="ba-layer">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 640, height: 853 }) | jpeg %}" alt="antes del tratamiento con toxina botulínica" width="640" height="853">
         </picture>
-                        <span class="cs-tag">Antes</span>
+                        <div class="ba-after">
+                            <picture class="ba-layer">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | avif %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | avif %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | webp %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 640, height: 853 }) | jpeg %}" alt="después del tratamiento con toxina botulínica" width="640" height="853">
+        </picture>
+                        </div>
+                        <span class="ba-label ba-label-before">Antes</span>
+                        <span class="ba-label ba-label-after">Después</span>
+                        <div class="ba-handle" aria-hidden="true">
+                            <span class="ba-knob">
+                                <svg width="22" height="14" viewBox="0 0 22 14" fill="none" aria-hidden="true"><path d="M6.5 1.5L1.5 7l5 5.5M15.5 1.5l5 5.5-5 5.5" stroke="#705d3f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </div>
                     </div>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del rejuvenecimiento facial" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Después</span>
-                    </div>
-                </div>
-                <div class="cs-item">
-                    <p class="cs-item-text">Firmeza y líneas de expresión</p>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-2.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del tratamiento de firmeza" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Antes</span>
-                    </div>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del tratamiento de firmeza" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Después</span>
-                    </div>
-                </div>
-                <div class="cs-item">
-                    <p class="cs-item-text">Tratamiento de manchas</p>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-3.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del tratamiento de manchas" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Antes</span>
-                    </div>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del tratamiento de manchas" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Después</span>
-                    </div>
-                </div>
-                <div class="cs-item">
-                    <p class="cs-item-text">Marcas de acné</p>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-4.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="antes del tratamiento para marcas de acné" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Antes</span>
-                    </div>
-                    <div class="cs-picture-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | webp %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-4.jpg" | resize({ width: 305, height: 400 }) | jpeg %}" alt="después del tratamiento para marcas de acné" width="305" height="400">
-        </picture>
-                        <span class="cs-tag">Después</span>
+                    <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="Desliza para comparar el antes y el después">
+                    <div class="ba-body">
+                        <h3 class="ba-card-title">Toxina Botulínica</h3>
+                        <p class="ba-card-text">Aplicada en la frente y las patas de gallo: al sonreír y gesticular, las líneas de expresión se marcan mucho menos y el rostro se ve descansado, sin perder su expresión natural.</p>
+                        <ul class="ba-services">
+                            <li>Frente</li>
+                            <li>Patas de gallo</li>
+                        </ul>
                     </div>
                 </div>
             </div>
+            <script>
+                (function () {
+                    document.querySelectorAll(".ba-card").forEach(function (card) {
+                        var view = card.querySelector(".ba-view");
+                        var after = card.querySelector(".ba-after");
+                        var handle = card.querySelector(".ba-handle");
+                        var range = card.querySelector(".ba-range");
+                        function setPos(pct) {
+                            pct = Math.max(2, Math.min(98, pct));
+                            after.style.clipPath = "inset(0 0 0 " + pct + "%)";
+                            handle.style.left = pct + "%";
+                            range.value = pct;
+                        }
+                        function fromEvent(e) {
+                            var r = view.getBoundingClientRect();
+                            setPos(((e.clientX - r.left) / r.width) * 100);
+                        }
+                        view.addEventListener("pointerdown", function (e) {
+                            view.setPointerCapture(e.pointerId);
+                            fromEvent(e);
+                            function move(ev) { fromEvent(ev); }
+                            function up() {
+                                view.removeEventListener("pointermove", move);
+                                view.removeEventListener("pointerup", up);
+                                view.removeEventListener("pointercancel", up);
+                            }
+                            view.addEventListener("pointermove", move);
+                            view.addEventListener("pointerup", up);
+                            view.addEventListener("pointercancel", up);
+                        });
+                        range.addEventListener("input", function () { setPos(parseFloat(range.value)); });
+                        setPos(50);
+                    });
+                })();
+            </script>
         </div>
     </section>
 
@@ -351,13 +330,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
             <ul class="cs-card-group">
                 <li class="cs-item">
                     <div class="cs-flex-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 50, height: 50 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 50, height: 50 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 50, height: 50 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 50, height: 50 }) | webp %}" type="image/webp">
-            <img class="cs-profile" loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-1.jpg" | resize({ width: 50, height: 50 }) | jpeg %}" alt="paciente" width="50" height="50">
-        </picture>
+                        <span class="cs-profile cs-initials" aria-hidden="true">M</span>
                         <span class="cs-name">
                             María G.
                             <span class="cs-job">Tratamiento facial</span>
@@ -374,13 +347,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                 </li>
                 <li class="cs-item">
                     <div class="cs-flex-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 50, height: 50 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 50, height: 50 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 50, height: 50 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 50, height: 50 }) | webp %}" type="image/webp">
-            <img class="cs-profile" loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-3.jpg" | resize({ width: 50, height: 50 }) | jpeg %}" alt="paciente" width="50" height="50">
-        </picture>
+                        <span class="cs-profile cs-initials" aria-hidden="true">C</span>
                         <span class="cs-name">
                             Carmen R.
                             <span class="cs-job">Microneedling</span>
@@ -397,13 +364,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                 </li>
                 <li class="cs-item">
                     <div class="cs-flex-group">
-                        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 50, height: 50 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 50, height: 50 }) | webp %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 50, height: 50 }) | avif %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 50, height: 50 }) | webp %}" type="image/webp">
-            <img class="cs-profile" loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-2.jpg" | resize({ width: 50, height: 50 }) | jpeg %}" alt="paciente" width="50" height="50">
-        </picture>
+                        <span class="cs-profile cs-initials" aria-hidden="true">Y</span>
                         <span class="cs-name">
                             Yudelka M.
                             <span class="cs-job">Rejuvenecimiento facial</span>
