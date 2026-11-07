@@ -1,25 +1,197 @@
 ---
-title: "Restultados | Antes y Después"
-description: "Meta description for the page"
+title: "Resultados | Antes y Después | Centro Estético Dra. Cristabel Hernández"
+description: "Resultados reales antes y después en Puerto Plata: toxina botulínica en frente y patas de gallo. Compara el antes y el después y reserva tu evaluación."
 permalink: "/resultados/"
 ---
 
 {% extends "layouts/base.html" %}
 
+{% block head %}
     <link rel="stylesheet" href="/assets/css/resultados.css">
-
+{% endblock %}
 
 {% block body %}
 
+    <!-- ============================================ -->
+    <!--                  Interior Page               -->
+    <!-- ============================================ -->
+
+    <div id="banner-712">
+        <div class="cs-container">
+            <span class="cs-int-title">Resultados</span>
+        </div>
+    </div>
 
     <!-- ============================================ -->
-    <!--                 Side By Side                 -->
+    <!--                   Gallery                    -->
     <!-- ============================================ -->
 
-    <section id="RPsbs-313">
-
+    <section id="antes-despues">
+        <div class="cs-container">
+            <div class="cs-content">
+                <div class="cs-flex">
+                    <span class="cs-topper">Antes y después</span>
+                    <h2 class="cs-title">Resultados que se ven y se sienten</h2>
+                    <p class="cs-text ba-intro">Un resultado real de este tratamiento: el antes y el después.</p>
+                </div>
+                <a class="cs-button-solid" href="/reservar/">Reserva tu cita</a>
+            </div>
+            <div class="ba-wrap">
+                <div class="ba-card">
+                    <div class="ba-view">
+                        <picture class="ba-layer">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1280, height: 1706 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1280, height: 1706 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1280, height: 1706 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1280, height: 1706 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1280, height: 1706 }) | jpeg({ quality: 90 }) %}" draggable="false" alt="antes del tratamiento con toxina botulínica" width="640" height="853">
+        </picture>
+                        <div class="ba-after">
+                            <picture class="ba-layer">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1280, height: 1706 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1280, height: 1706 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1280, height: 1706 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1280, height: 1706 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1280, height: 1706 }) | jpeg({ quality: 90 }) %}" draggable="false" alt="después del tratamiento con toxina botulínica" width="640" height="853">
+        </picture>
+                        </div>
+                        <span class="ba-label ba-label-before">Antes</span>
+                        <span class="ba-label ba-label-after">Después</span>
+                        <div class="ba-handle" aria-hidden="true">
+                            <span class="ba-knob">
+                                <svg width="22" height="14" viewBox="0 0 22 14" fill="none" aria-hidden="true"><path d="M6.5 1.5L1.5 7l5 5.5M15.5 1.5l5 5.5-5 5.5" stroke="#705d3f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </div>
+                    </div>
+                    <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="Desliza para comparar el antes y el después">
+                    <div class="ba-body">
+                        <h3 class="ba-card-title">Toxina Botulínica</h3>
+                        <p class="ba-card-text">Aplicada en la frente y las patas de gallo: al sonreír y gesticular, las líneas de expresión se marcan mucho menos y el rostro se ve descansado, sin perder su expresión natural.</p>
+                    </div>
+                </div>
+            </div>
+            <script>
+                (function () {
+                    document.querySelectorAll(".ba-card").forEach(function (card) {
+                        var view = card.querySelector(".ba-view");
+                        var after = card.querySelector(".ba-after");
+                        var handle = card.querySelector(".ba-handle");
+                        var range = card.querySelector(".ba-range");
+                        function setPos(pct) {
+                            pct = Math.max(2, Math.min(98, pct));
+                            after.style.clipPath = "inset(0 0 0 " + pct + "%)";
+                            handle.style.left = pct + "%";
+                            range.value = pct;
+                        }
+                        function fromEvent(e) {
+                            var r = view.getBoundingClientRect();
+                            setPos(((e.clientX - r.left) / r.width) * 100);
+                        }
+                        view.addEventListener("pointerdown", function (e) {
+                            e.preventDefault();
+                            view.setPointerCapture(e.pointerId);
+                            fromEvent(e);
+                            function move(ev) { fromEvent(ev); }
+                            function up() {
+                                view.removeEventListener("pointermove", move);
+                                view.removeEventListener("pointerup", up);
+                                view.removeEventListener("pointercancel", up);
+                            }
+                            view.addEventListener("pointermove", move);
+                            view.addEventListener("pointerup", up);
+                            view.addEventListener("pointercancel", up);
+                        });
+                        range.addEventListener("input", function () { setPos(parseFloat(range.value)); });
+                        view.addEventListener("dragstart", function (e) { e.preventDefault(); });
+                        setPos(50);
+                    });
+                })();
+            </script>
+        </div>
     </section>
 
-    
+    <!-- ============================================ -->
+    <!--                   Gallery                    -->
+    <!-- ============================================ -->
+
+    <section id="gallery-1446">
+        <div class="cs-container">
+            <div class="cs-content">
+                <div class="cs-flex">
+                    <span class="cs-topper">Galería</span>
+                    <h2 class="cs-title">Conoce nuestro centro</h2>
+                </div>
+            </div>
+            <!--Gallery-->
+            <div class="cs-gallery">
+                <!--Picture 1-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="recepción del centro" width="305" height="400">
+        </picture>
+                <!--Picture 2-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="sala de tratamientos" width="305" height="400">
+        </picture>
+                <!--Picture 3-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="tratamiento facial" width="305" height="400">
+        </picture>
+                <!--Picture 4-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="tratamiento corporal" width="305" height="400">
+        </picture>
+                <!--Picture 5-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/microneedling.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/microneedling.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/microneedling.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/microneedling.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/microneedling.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="microneedling" width="305" height="400">
+        </picture>
+                <!--Picture 6-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="interior del centro" width="305" height="400">
+        </picture>
+                <!--Picture 7-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="productos profesionales del centro" width="305" height="400">
+        </picture>
+                <!--Picture 8-->
+                <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 915, height: 1200 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 915, height: 1200 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-retrato.jpg" | resize({ width: 915, height: 1200 }) | jpeg({ quality: 90 }) %}" alt="Dra. Cristabel Hernández" width="305" height="400">
+        </picture>
+            </div>
+        </div>
+    </section>
+
+    {% include "sections/cta.html" %}
 
 {% endblock %}

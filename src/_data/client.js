@@ -1,6 +1,6 @@
 module.exports = {
   name: "Dra. Cristabel Hernandez",
-  email: "cristabelhdez@gmail.com",
+  email: "hola@cristabelhernandez.com",
   phoneForTel: "829-316-3313",
   phoneFormatted: "(829) 316-3313",
   address: {

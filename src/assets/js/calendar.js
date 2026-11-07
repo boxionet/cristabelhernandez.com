@@ -201,7 +201,7 @@ const CalendarUtils = {
     const detailsParts = [
       `Paciente: ${patientName || "N/A"}`,
       `Servicios: ${serviceNames || "No especificado"}`,
-      `Clínica: ${this.BUSINESS_NAME}`,
+      `Centro estético: ${this.BUSINESS_NAME}`,
       `Teléfono: ${this.BUSINESS_PHONE}`,
       `Dirección: ${this.BUSINESS_ADDRESS}`,
     ];
@@ -236,7 +236,7 @@ const CalendarUtils = {
     const descriptionParts = [
       `Paciente: ${patientName || "N/A"}`,
       `Servicios: ${serviceNames || "No especificado"}`,
-      `Clínica: ${this.BUSINESS_NAME}`,
+      `Centro estético: ${this.BUSINESS_NAME}`,
       `Teléfono: ${this.BUSINESS_PHONE}`,
       `Dirección: ${this.BUSINESS_ADDRESS}`,
     ];

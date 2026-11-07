@@ -1,0 +1,121 @@
+---
+title: "Tratamientos | Centro Estético Dra. Cristabel Hernández"
+description: "Medicina estética facial y corporal en Puerto Plata, República Dominicana: toxina botulínica, microneedling, plasma rico en plaquetas, escleroterapia y más. Conoce nuestros tratamientos y precios y reserva tu cita."
+permalink: "/tratamientos/"
+---
+
+{% extends "layouts/base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/assets/css/tratamientos.css">
+{% endblock %}
+
+{% block body %}
+
+    <!-- ============================================ -->
+    <!--                  Interior Page               -->
+    <!-- ============================================ -->
+
+    <div id="banner-712">
+        <div class="cs-container">
+            <span class="cs-int-title">Tratamientos</span>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!--                   Services                   -->
+    <!-- ============================================ -->
+
+    <section id="services-2371">
+        <div class="cs-container">
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/valor-evaluacion.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Evaluación personalizada</h3>
+                    <p class="cs-item-text">
+                        Antes de empezar, la doctora evalúa tu piel y escucha lo que buscas para recomendarte el tratamiento ideal.
+                    </p>
+                </li>
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/valor-medida.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Tratamientos a tu medida</h3>
+                    <p class="cs-item-text">
+                        Cada plan se ajusta a tu tipo de piel, tus objetivos y tu estilo de vida, sin paquetes genéricos.
+                    </p>
+                </li>
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/valor-natural.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Resultados naturales</h3>
+                    <p class="cs-item-text">
+                        Buscamos que te veas descansada, fresca y segura, manteniendo siempre tu esencia.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+
+
+    <!-- ============================================ -->
+    <!--            Facial y Corporal                 -->
+    <!-- ============================================ -->
+
+    <section id="services-2699">
+        <div class="cs-container">
+            <div class="cs-content">
+                <span class="cs-topper">Tratamientos</span>
+                <h2 class="cs-title">Tratamientos faciales y corporales</h2>
+                <p class="cs-text">
+                    Cada tratamiento comienza con una evaluación personalizada. Elige el área que quieres cuidar y descubre lo que podemos hacer por ti.
+                </p>
+            </div>
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <a href="/tratamientos-faciales/" class="cs-link">
+                        <picture class="cs-picture">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1280, height: 960 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1280, height: 960 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1320, height: 990 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1320, height: 990 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1320, height: 990 }) | jpeg({ quality: 90 }) %}" alt="tratamiento facial" width="880" height="660">
+                        </picture>
+                        <div class="cs-info">
+                            <h3 class="cs-h3">Tratamientos Faciales</h3>
+                            <p class="cs-item-text">
+                                Toxina botulínica, microneedling, plasma rico en plaquetas, mesoterapia y peelings para una piel fresca, firme y luminosa.
+                            </p>
+                            <span class="cs-fake-link">
+                                Ver tratamientos faciales
+                                <img class="cs-arrow" loading="lazy" decoding="async" src="/assets/svgs/chevron-sage.svg" alt="flecha" width="18" height="18">
+                            </span>
+                        </div>
+                    </a>
+                </li>
+                <li class="cs-item">
+                    <a href="/tratamientos-corporales/" class="cs-link">
+                        <picture class="cs-picture">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 1280, height: 960 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 1280, height: 960 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 1320, height: 990 }) | avif({ quality: 82 }) %}" type="image/avif">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 1320, height: 990 }) | webp({ quality: 88 }) %}" type="image/webp">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 1320, height: 990 }) | jpeg({ quality: 90 }) %}" alt="sala de tratamientos" width="880" height="660">
+                        </picture>
+                        <div class="cs-info">
+                            <h3 class="cs-h3">Tratamientos Corporales</h3>
+                            <p class="cs-item-text">
+                                Lipólisis de mentón y localizada, anticelulítico, escleroterapia y rejuvenecimiento para moldear y cuidar tu figura.
+                            </p>
+                            <span class="cs-fake-link">
+                                Ver tratamientos corporales
+                                <img class="cs-arrow" loading="lazy" decoding="async" src="/assets/svgs/chevron-sage.svg" alt="flecha" width="18" height="18">
+                            </span>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    {% include "sections/cta.html" %}
+
+{% endblock %}

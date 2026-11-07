@@ -1,117 +1,93 @@
 ---
-title: "Nosotros| Quienes somos"
-description: "Meta description for the page"
+title: "Nosotros | Centro Estético Dra. Cristabel Hernández"
+description: "Conoce a la Dra. Cristabel Hernández y su centro estético en Puerto Plata, República Dominicana: atención personalizada, productos de calidad y resultados naturales."
 permalink: "/nosotros/"
 ---
 
 {% extends "layouts/base.html" %}
 
+{% block head %}
     <link rel="stylesheet" href="/assets/css/nosotros.css">
-
+{% endblock %}
 
 {% block body %}
 
-
     <!-- ============================================ -->
-    <!--                 Side By Side                 -->
+    <!--                  Interior Page               -->
     <!-- ============================================ -->
 
-   <!-- ============================================ -->
-<!--                     FAQ                      -->
-<!-- ============================================ -->
-
-<section id="faq-1458">
-    <div class="cs-container">
-        <div class="cs-image-group">
-            <picture class="cs-picture">
-                <!--Mobile Image-->
-                <source media="(max-width: 600px)" srcset="https://csimages2.nyc3.digitaloceanspaces.com/Images/MISC/environment-slogan.jpg">
-                <!--Tablet and above Image-->
-                <source media="(min-width: 601px)" srcset="https://csimages2.nyc3.digitaloceanspaces.com/Images/MISC/environment-slogan.jpg">
-                <img loading="lazy" decoding="async" src="https://csimages2.nyc3.digitaloceanspaces.com/Images/MISC/environment-slogan.jpg" alt="body shop" width="522" height="609" aria-hidden="true">
-            </picture>
+    <div id="banner-712">
+        <div class="cs-container">
+            <span class="cs-int-title">Nosotros</span>
         </div>
-        <div class="cs-content">
-            <span class="cs-topper">Asked Questions</span>
-            <h2 class="cs-title">Frequently Asked Questions</h2>
-            <ul class="cs-faq-group">
-                <!-- Active class added as default -->
-                <li class="cs-faq-item active">
-                    <button class="cs-button">
-                        <span class="cs-button-text">
-                            How does climate change affect people?
-                        </span>
-                    </button>
-                    <p class="cs-item-p">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+    </div>
+
+    <!-- ============================================ -->
+    <!--             Side By Side (Left)              -->
+    <!-- ============================================ -->
+
+    <section id="sbs-2525">
+        <div class="cs-container">
+            <picture class="cs-picture">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1152, height: 954 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1152, height: 954 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1440, height: 1194 }) | avif({ quality: 82 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1440, height: 1194 }) | webp({ quality: 88 }) %}" type="image/webp">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1440, height: 1194 }) | jpeg({ quality: 90 }) %}" alt="Dra. Cristabel Hernández" width="960" height="796">
+        </picture>
+            <div class="cs-content">
+                <span class="cs-topper">Nuestro centro</span>
+                <h2 class="cs-title">Cuidamos tu piel con trato humano y profesional</h2>
+                <p class="cs-text">
+                    En el corazón de Puerto Plata, nuestro centro estético nació con una idea sencilla: que cada paciente se sienta escuchado, bien informado y en manos seguras. La Dra. Cristabel Hernández dirige personalmente cada evaluación y cada plan de tratamiento.
+                </p>
+                <p class="cs-text">
+                    Creemos en la belleza natural y en los resultados progresivos: nada de cambios exagerados ni promesas imposibles. Trabajamos con productos de calidad, tecnología moderna y protocolos seguros, en un espacio pensado para que te relajes desde que entras.
+                </p>
+                <h3 class="cs-h3">Lo que nos define:</h3>
+                <ul class="cs-card-group">
+                    <li class="cs-item">Atención personalizada</li>
+                    <li class="cs-item">Resultados naturales</li>
+                    <li class="cs-item">Productos de calidad</li>
+                    <li class="cs-item">Tecnología moderna</li>
+                    <li class="cs-item">Ambiente relajante</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--                   Services                   -->
+    <!-- ============================================ -->
+
+    <section id="services-2371">
+        <div class="cs-container">
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/valor-escuchar.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Primero, escucharte</h3>
+                    <p class="cs-item-text">
+                        Cada tratamiento empieza con una conversación: qué te preocupa, qué esperas y qué es posible lograr.
                     </p>
                 </li>
-                <li class="cs-faq-item">
-                    <button class="cs-button">
-                        <span class="cs-button-text">
-                            What is being done about climate change?
-                        </span>
-                    </button>
-                    <p class="cs-item-p">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/valor-seguridad.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Seguridad ante todo</h3>
+                    <p class="cs-item-text">
+                        Protocolos higiénicos estrictos y productos profesionales en cada sesión, sin excepciones.
                     </p>
                 </li>
-                <li class="cs-faq-item">
-                    <button class="cs-button">
-                        <span class="cs-button-text">
-                            What is being done about climate change?
-                        </span>
-                    </button>
-                    <p class="cs-item-p">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
-                    </p>
-                </li>
-                <li class="cs-faq-item">
-                    <button class="cs-button">
-                        <span class="cs-button-text">
-                            Is it hopeless to stop climate change?
-                        </span>
-                    </button>
-                    <p class="cs-item-p">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
-                    </p>
-                </li>
-                <li class="cs-faq-item">
-                    <button class="cs-button">
-                        <span class="cs-button-text">
-                            How is climate change affecting wildlife?
-                        </span>
-                    </button>
-                    <p class="cs-item-p">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
-                    </p>
-                </li>
-                <li class="cs-faq-item">
-                    <button class="cs-button">
-                        <span class="cs-button-text">
-                            How do I join the volunteer team?
-                        </span>
-                    </button>
-                    <p class="cs-item-p">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit convallis nunc neque, bibendum pulvinar vitae commodo velit. Proin diam tortor sed malesuada nunc, habitant. Dignissim ipsum porta enim, magna urna, quam. 
+                <li class="cs-item">
+                    <img class="cs-icon" src="/assets/svgs/valor-acompanamiento.svg" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">Acompañamiento real</h3>
+                    <p class="cs-item-text">
+                        No desaparecemos después de tu sesión: hacemos seguimiento hasta que veas tus resultados.
                     </p>
                 </li>
             </ul>
         </div>
-    </div>
-</section>
-     
-<script>
-    const faqItems = Array.from(document.querySelectorAll('.cs-faq-item'));
-        for (const item of faqItems) {
-            const onClick = () => {
-            item.classList.toggle('active')
-        }
-        item.addEventListener('click', onClick)
-        }
-                                
-</script>
+    </section>
 
-    
+    {% include "sections/cta.html" %}
 
 {% endblock %}

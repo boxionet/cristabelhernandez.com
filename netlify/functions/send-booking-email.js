@@ -10,6 +10,24 @@ function formatPrice(amount) {
   if (amount === undefined || amount === null) return "RD$ 0";
   return `RD$ ${Math.round(amount).toLocaleString("en-US")}`;
 }
+// Format a service's price with its "desde" prefix / per-unit note
+function formatServicePrice(service) {
+  let text = formatPrice(service.price);
+  if (service.priceFrom) text = `Desde ${text}`;
+  if (service.priceNote === "c/ampolla") text += " c/ampolla";
+  else if (service.priceNote) text += ` (${service.priceNote})`;
+  return text;
+}
+
+function hasEstimatePrices(services) {
+  return Object.values(services || {}).some(
+    (s) => s && (s.priceFrom || s.priceNote),
+  );
+}
+
+const ESTIMATE_NOTE =
+  "Nota: los precios «desde» y por ampolla son referenciales; el precio final se confirma en la evaluación.";
+
 
 function formatDateTime(dateTime) {
   if (!dateTime) return "—";
@@ -29,8 +47,9 @@ function buildServicesList(services) {
   return items
     .map((service) => {
       const qty = service.quantity || 1;
-      const total = service.price * qty;
-      return `<li>${service.name} × ${qty} — ${formatPrice(total)}</li>`;
+      const label =
+        qty > 1 ? formatPrice(service.price * qty) : formatServicePrice(service);
+      return `<li>${service.name} × ${qty} — ${label}</li>`;
     })
     .join("");
 }
@@ -151,7 +170,7 @@ function createGoogleCalendarUrl(booking) {
     [
       `Paciente: ${patientName || "N/A"}`,
       `Servicios: ${serviceNames || "No especificado"}`,
-      `Clínica: Dra. Cristabel Hernandez`,
+      `Centro estético: Dra. Cristabel Hernandez`,
       `Teléfono: (829) 316-3313`,
       `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
     ].join("\n"),
@@ -177,7 +196,7 @@ function createICSContent(booking) {
   const description = [
     `Paciente: ${patientName || "N/A"}`,
     `Servicios: ${serviceNames || "No especificado"}`,
-    `Clínica: Dra. Cristabel Hernandez`,
+    `Centro estético: Dra. Cristabel Hernandez`,
     `Teléfono: (829) 316-3313`,
     `Dirección: Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata`,
   ].join("\\n");
@@ -270,7 +289,8 @@ function buildOwnerNotificationEmail(booking) {
       <p><strong>Fecha y hora:</strong> ${dateTime}</p>
       <h3>Servicios</h3>
       <ul>${buildServicesList(services)}</ul>
-      <p><strong>Total:</strong> ${formatPrice(total)}</p>
+      <p><strong>${hasEstimatePrices(services) ? "Total estimado" : "Total"}:</strong> ${formatPrice(total)}</p>
+      ${hasEstimatePrices(services) ? `<p><em>${ESTIMATE_NOTE}</em></p>` : ""}
       ${calendar.html}
       ${info.note ? `<h3>Nota del paciente</h3><p>${info.note.replace(/\n/g, "<br>")}</p>` : ""}
     `,
@@ -287,11 +307,15 @@ Servicios:
 ${Object.values(services)
   .map(
     (s) =>
-      `- ${s.name} × ${s.quantity || 1} — ${formatPrice(s.price * (s.quantity || 1))}`,
+      `- ${s.name} × ${s.quantity || 1} — ${
+        (s.quantity || 1) > 1
+          ? formatPrice(s.price * (s.quantity || 1))
+          : formatServicePrice(s)
+      }`,
   )
   .join("\n")}
 
-Total: ${formatPrice(total)}
+${hasEstimatePrices(services) ? "Total estimado" : "Total"}: ${formatPrice(total)}${hasEstimatePrices(services) ? `\n${ESTIMATE_NOTE}` : ""}
 
 ${calendar.text}
 ${info.note ? `\nNota del paciente:\n${info.note}` : ""}
@@ -318,7 +342,8 @@ function buildPatientConfirmationEmail(booking) {
       <p><strong>Fecha y hora:</strong> ${dateTime}</p>
       <h3>Servicios</h3>
       <ul>${buildServicesList(services)}</ul>
-      <p><strong>Total:</strong> ${formatPrice(total)}</p>
+      <p><strong>${hasEstimatePrices(services) ? "Total estimado" : "Total"}:</strong> ${formatPrice(total)}</p>
+      ${hasEstimatePrices(services) ? `<p><em>${ESTIMATE_NOTE}</em></p>` : ""}
       ${calendar.html}
       <p>Te contactaremos pronto para confirmar tu cita.</p>
       <p>Si tienes alguna pregunta, puedes responder a este correo o escribirnos por WhatsApp. al (829) 316-3313</p>
@@ -338,11 +363,15 @@ Servicios:
 ${Object.values(services)
   .map(
     (s) =>
-      `- ${s.name} × ${s.quantity || 1} — ${formatPrice(s.price * (s.quantity || 1))}`,
+      `- ${s.name} × ${s.quantity || 1} — ${
+        (s.quantity || 1) > 1
+          ? formatPrice(s.price * (s.quantity || 1))
+          : formatServicePrice(s)
+      }`,
   )
   .join("\n")}
 
-Total: ${formatPrice(total)}
+${hasEstimatePrices(services) ? "Total estimado" : "Total"}: ${formatPrice(total)}${hasEstimatePrices(services) ? `\n${ESTIMATE_NOTE}` : ""}
 
 ${calendar.text}
 

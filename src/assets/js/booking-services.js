@@ -26,81 +26,114 @@ function formatPrice(amount) {
   return `RD$ ${formatted}`;
 }
 
+// Format a service's price with its "desde" prefix / per-unit note.
+// Accepts a catalog entry or a stored cart item (same field names).
+function formatServicePrice(service) {
+  let text = formatPrice(service.price);
+  if (service.priceFrom) text = `Desde ${text}`;
+  if (service.priceNote === "c/ampolla") text += " c/ampolla";
+  else if (service.priceNote) text += ` (${service.priceNote})`;
+  return text;
+}
+
+// True when a service's price is a starting-from or per-unit estimate
+function isEstimatePrice(service) {
+  return Boolean(service && (service.priceFrom || service.priceNote));
+}
+
 const services = {
-  "toxina-botulinica": {
-    name: "Toxina Botulínica",
-    price: 15000,
+  "toxina-frontal": {
+    name: "Toxina Botulínica Frontal",
+    price: 13000,
     duration: 30,
   },
-  "acido-hialuronico": {
-    name: "Ácido Hialurónico",
-    price: 12000,
-    duration: 45,
+  "toxina-full-face": {
+    name: "Toxina Botulínica Full Face",
+    price: 18000,
+    duration: 40,
   },
-  "rellenos-dermicos": {
-    name: "Rellenos Dérmicos",
-    price: 10000,
-    duration: 45,
-  },
-  "hilos-tensores": { name: "Hilos Tensores", price: 8000, duration: 60 },
-  microneedling: { name: "Microneedling", price: 6000, duration: 60 },
-  "mesoterapia-facial": {
-    name: "Mesoterapia Facial",
-    price: 5000,
+  microneedling: {
+    name: "Microneedling",
+    price: 3500,
+    priceFrom: true,
     duration: 45,
   },
   "prp-facial": {
-    name: "Plasma Rico en Plaquetas (PRP)",
-    price: 9000,
+    name: "Plasma Rico en Plaquetas Facial",
+    price: 8000,
     duration: 60,
+  },
+  escleroterapia: {
+    name: "Escleroterapia",
+    price: 3500,
+    priceFrom: true,
+    duration: 40,
+  },
+  "mesoterapia-facial": {
+    name: "Mesoterapia Facial",
+    price: 4000,
+    priceFrom: true,
+    duration: 45,
   },
   "peelings-quimicos": {
     name: "Peelings Químicos",
+    price: 4000,
+    priceFrom: true,
+    duration: 60,
+  },
+  "lipolisis-menton": {
+    name: "Lipólisis de Mentón",
+    price: 28000,
+    priceNote: "3 sesiones",
+    duration: 45,
+  },
+  "lipolisis-localizada": {
+    name: "Lipólisis Localizada (Aqualyx)",
+    price: 7000,
+    priceNote: "c/ampolla",
+    duration: 45,
+  },
+  "anticelulitico-alidya": {
+    name: "Anticelulítico (Alidya)",
     price: 4500,
+    priceNote: "c/ampolla",
     duration: 45,
   },
   "rejuvenecimiento-cuello": {
     name: "Rejuvenecimiento de Cuello",
-    price: 7000,
+    price: 9000,
+    priceFrom: true,
     duration: 60,
   },
   "rejuvenecimiento-escote": {
     name: "Rejuvenecimiento de Escote",
-    price: 7500,
+    price: 9000,
+    priceFrom: true,
     duration: 60,
   },
   "rejuvenecimiento-manos": {
     name: "Rejuvenecimiento de Manos",
-    price: 8500,
-    duration: 60,
-  },
-  "flebologia-linfologia": {
-    name: "Flebología y Linfología",
-    price: 3000,
-    duration: 30,
-  },
-  escleroterapia: { name: "Escleroterapia", price: 5500, duration: 45 },
-  "laser-facial": { name: "Láser Facial", price: 8000, duration: 60 },
-  "laser-manchas": { name: "Láser para Manchas", price: 6500, duration: 45 },
-  "laser-lesiones-vasculares": {
-    name: "Láser para Lesiones Vasculares",
-    price: 7500,
-    duration: 45,
-  },
-  "rejuvenecimiento-laser": {
-    name: "Rejuvenecimiento con Láser",
-    price: 12000,
+    price: 9000,
+    priceFrom: true,
     duration: 60,
   },
 };
 
-// Load cart from localStorage on page load
+// Load cart from localStorage on page load.
+// Services no longer in the catalog are dropped (and the cleaned cart is
+// written back) so stale saved carts can't break the other booking steps.
 function loadCartFromStorage() {
   const storedServices = BookingStorage.getServices();
   cart = {};
+  let droppedStale = false;
   Object.keys(storedServices).forEach((serviceId) => {
-    cart[serviceId] = storedServices[serviceId].quantity || 1;
+    if (services[serviceId]) {
+      cart[serviceId] = storedServices[serviceId].quantity || 1;
+    } else {
+      droppedStale = true;
+    }
   });
+  if (droppedStale) saveCartToStorage();
 }
 
 // Save cart to localStorage
@@ -111,6 +144,8 @@ function saveCartToStorage() {
     servicesData[serviceId] = {
       name: service.name,
       price: service.price,
+      priceFrom: Boolean(service.priceFrom),
+      priceNote: service.priceNote || "",
       duration: service.duration,
       quantity: cart[serviceId],
     };
@@ -133,10 +168,14 @@ function updateCart() {
     cartItemsMobile.innerHTML = "";
   }
 
+  let hasEstimate = false;
+
   Object.keys(cart).forEach((serviceId) => {
     const service = services[serviceId];
+    if (!service) return;
     const quantity = cart[serviceId];
     const itemTotal = service.price * quantity;
+    if (isEstimatePrice(service)) hasEstimate = true;
     total += itemTotal;
     itemCount++;
     totalDuration += service.duration * quantity;
@@ -150,7 +189,7 @@ function updateCart() {
                     <span class="booking-cart-item-name">${service.name}</span>
                     <span class="booking-cart-item-duration">${service.duration} min</span>
                   </div>
-                  <span class="booking-cart-item-price">${formatPrice(itemTotal)}</span>
+                  <span class="booking-cart-item-price">${quantity > 1 ? formatPrice(itemTotal) : formatServicePrice(service)}</span>
                   <button class="booking-cart-item-remove" data-service-id="${serviceId}" aria-label="Eliminar servicio">×</button>
               `;
       cartItemsDesktop.appendChild(desktopItemEl);
@@ -165,7 +204,7 @@ function updateCart() {
                     <span class="booking-cart-item-name">${service.name}</span>
                     <span class="booking-cart-item-duration">${service.duration} min</span>
                   </div>
-                  <span class="booking-cart-item-price">${formatPrice(itemTotal)}</span>
+                  <span class="booking-cart-item-price">${quantity > 1 ? formatPrice(itemTotal) : formatServicePrice(service)}</span>
                   <button class="booking-cart-item-remove" data-service-id="${serviceId}" aria-label="Eliminar servicio">×</button>
               `;
       cartItemsMobile.appendChild(mobileItemEl);
@@ -177,6 +216,16 @@ function updateCart() {
   if (cartTotalDesktop) cartTotalDesktop.textContent = formatPrice(total);
   if (cartTotalMobile) cartTotalMobile.textContent = formatPrice(total);
   if (cartBottomPrice) cartBottomPrice.textContent = formatPrice(total);
+
+  // Flag the totals as estimates when the cart has "desde" / per-unit prices
+  const noteDesktop = document.getElementById("cart-estimate-note-desktop");
+  const noteMobile = document.getElementById("cart-estimate-note-mobile");
+  const labelDesktop = document.getElementById("cart-total-label-desktop");
+  const labelMobile = document.getElementById("cart-total-label-mobile");
+  if (noteDesktop) noteDesktop.hidden = !hasEstimate;
+  if (noteMobile) noteMobile.hidden = !hasEstimate;
+  if (labelDesktop) labelDesktop.textContent = hasEstimate ? "Total estimado:" : "Total:";
+  if (labelMobile) labelMobile.textContent = hasEstimate ? "Total estimado" : "Total";
 
   if (itemCount === 0) {
     if (cartItemsDesktop) {

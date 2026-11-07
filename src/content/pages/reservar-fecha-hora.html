@@ -187,9 +187,10 @@ permalink: "/reservar/fecha-hora/"
                         <span id="cart-subtotal-desktop">$0</span>
                     </div>
                     <div class="booking-cart-row booking-cart-total">
-                        <span>Total:</span>
+                        <span id="cart-total-label-desktop">Total:</span>
                         <span id="cart-total-desktop">$0</span>
                     </div>
+                    <p class="booking-cart-estimate-note" id="cart-estimate-note-desktop" hidden>Total estimado: los precios «desde» y por ampolla pueden variar. El precio final se confirma en tu evaluación.</p>
                 </div>
 
                 <button class="booking-cart-continue-btn" id="continue-btn-desktop" disabled>
@@ -238,9 +239,10 @@ permalink: "/reservar/fecha-hora/"
                 <div class="booking-cart-bottom-panel-footer">
                     <hr class="booking-cart-divider">
                     <div class="booking-cart-bottom-panel-total">
-                        <span>Total</span>
+                        <span id="cart-total-label-mobile">Total</span>
                         <span id="cart-total-mobile">$0</span>
                     </div>
+                    <p class="booking-cart-estimate-note" id="cart-estimate-note-mobile" hidden>Total estimado: los precios «desde» y por ampolla pueden variar. El precio final se confirma en tu evaluación.</p>
                 </div>
             </div>
         </div>
@@ -367,6 +369,19 @@ permalink: "/reservar/fecha-hora/"
                 const formatted = Math.round(amount).toLocaleString('en-US');
                 return `RD$ ${formatted}`;
             }
+            // Format a stored service's price with its "desde" prefix / per-unit note
+            function formatServicePrice(service) {
+                let text = formatPrice(service.price);
+                if (service.priceFrom) text = `Desde ${text}`;
+                if (service.priceNote === "c/ampolla") text += " c/ampolla";
+                else if (service.priceNote) text += ` (${service.priceNote})`;
+                return text;
+            }
+
+            function isEstimatePrice(service) {
+                return Boolean(service && (service.priceFrom || service.priceNote));
+            }
+
             
             // Load and display cart from localStorage
             const cartItemsDesktop = document.getElementById("cart-items-desktop");
@@ -387,6 +402,7 @@ permalink: "/reservar/fecha-hora/"
                 console.log('✓ Date/Time loaded from storage:', dateTimeData);
                 
                 let total = 0;
+                let hasEstimate = false;
                 let itemCount = 0;
                 let totalDuration = 0;
 
@@ -445,6 +461,7 @@ permalink: "/reservar/fecha-hora/"
                 Object.keys(services).forEach((serviceId) => {
                     const service = services[serviceId];
                     const itemTotal = service.price * (service.quantity || 1);
+                    if (isEstimatePrice(service)) hasEstimate = true;
                     total += itemTotal;
                     itemCount++;
 
@@ -455,7 +472,7 @@ permalink: "/reservar/fecha-hora/"
                             <span class="booking-cart-item-name">${service.name}</span>
                             <span class="booking-cart-item-duration">${service.duration} min</span>
                         </div>
-                        <span class="booking-cart-item-price">${formatPrice(itemTotal)}</span>
+                        <span class="booking-cart-item-price">${(service.quantity || 1) > 1 ? formatPrice(itemTotal) : formatServicePrice(service)}</span>
                     `;
                     cartItemsDesktop.appendChild(desktopItemEl);
                     
@@ -466,7 +483,7 @@ permalink: "/reservar/fecha-hora/"
                             <span class="booking-cart-item-name">${service.name}</span>
                             <span class="booking-cart-item-duration">${service.duration} min</span>
                         </div>
-                        <span class="booking-cart-item-price">${formatPrice(itemTotal)}</span>
+                        <span class="booking-cart-item-price">${(service.quantity || 1) > 1 ? formatPrice(itemTotal) : formatServicePrice(service)}</span>
                     `;
                     cartItemsMobile.appendChild(mobileItemEl);
                 });
@@ -474,6 +491,16 @@ permalink: "/reservar/fecha-hora/"
                 cartSubtotalDesktop.textContent = formatPrice(total);
                 cartTotalDesktop.textContent = formatPrice(total);
                 cartTotalMobile.textContent = formatPrice(total);
+                // Flag totals as estimates when the cart has "desde" / per-unit prices
+                const noteDesktop = document.getElementById("cart-estimate-note-desktop");
+                const noteMobile = document.getElementById("cart-estimate-note-mobile");
+                const labelDesktop = document.getElementById("cart-total-label-desktop");
+                const labelMobile = document.getElementById("cart-total-label-mobile");
+                if (noteDesktop) noteDesktop.hidden = !hasEstimate;
+                if (noteMobile) noteMobile.hidden = !hasEstimate;
+                if (labelDesktop) labelDesktop.textContent = hasEstimate ? "Total estimado:" : "Total:";
+                if (labelMobile) labelMobile.textContent = hasEstimate ? "Total estimado" : "Total";
+
                 cartBottomPrice.textContent = formatPrice(total);
                 
                 if (itemCount === 0) {

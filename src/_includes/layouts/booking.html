@@ -44,7 +44,7 @@
     <script>
         // Hide back button on thank-you page (no going back after submission)
         (function() {
-            if (window.location.pathname === '/reservar/confirmacion/') {
+            if (window.location.pathname === '/reservar/confirmacion/' || /(^|\/)reservar\/?$/.test(window.location.pathname)) {
                 document.getElementById('booking-back-btn').style.visibility = 'hidden';
             }
         })();

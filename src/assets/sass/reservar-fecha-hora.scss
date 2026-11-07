@@ -1039,3 +1039,15 @@
         }
     }
 }
+/* Estimate note under cart totals (desde / per-unit prices) */
+.booking-cart-estimate-note {
+    margin-top: calc(8/16 * 1rem);
+    font-size: calc(13/16 * 1rem);
+    line-height: 1.45;
+    color: var(--bodyTextColor, #5d5546);
+    opacity: 0.85;
+
+    &[hidden] {
+        display: none;
+    }
+}
