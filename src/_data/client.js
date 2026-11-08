@@ -10,7 +10,7 @@ module.exports = {
     state: "Puerto Plata",
     zip: "57000",
     country: "DO",
-    mapLink: "https://maps.app.goo.gl/6Uwe9BHyzRARJeNF8",
+    mapLink: "https://www.google.com/maps/place/Dra.+Cristabel+Hern%C3%A1ndez+-+Medicina+Est%C3%A9tica,+regenerativa+y+antienvejecimiento/@19.7948341,-70.6881958,678m/data=!3m1!1e3!4m6!3m5!1s0x8eb1ef32ad8b0575:0x38e44379a6429fa7!8m2!3d19.7946178!4d-70.6871262!16s%2Fg%2F11zgy_vn4p?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D",
   },
   socials: {
     instagram:
