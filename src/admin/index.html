@@ -10,6 +10,73 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <title>Content Manager</title>
+
+    <!-- Clinic branding: fit the tall reservar logo in Decap's login slot and
+         match the page background to the home page's Antes y Después section -->
+    <style>
+        body,
+        #nc-root,
+        #nc-root > div {
+            background: #fffdf9 !important;
+        }
+
+        img[src*="cristabel-hernandez-logo"] {
+            display: block !important;
+            width: auto !important;
+            height: 120px !important;
+            max-width: 88% !important;
+            margin: 0 auto !important;
+            object-fit: contain;
+        }
+
+        /* Decap pulls the login form up with a -80px top margin, over the
+           bottom of the logo; reset it so the form starts below the logo,
+           and tighten Decap's wide 50px gap so logo + form read as one group */
+        #nc-root > div > section {
+            gap: 24px !important;
+        }
+
+        #nc-root > div > section form {
+            margin-top: 0 !important;
+        }
+
+        /* Inputs: white fill with a soft sage frame so they read on the
+           cream background; deep sage when focused (replaces Decap's blue) */
+        #nc-root > div > section form input {
+            background-color: #ffffff !important;
+            border: 1px solid rgba(132, 149, 115, 0.55) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 1px 3px rgba(62, 76, 53, 0.10) !important;
+        }
+
+        #nc-root > div > section form input::placeholder {
+            color: #8a8378 !important;
+        }
+
+        #nc-root > div > section form input:focus {
+            border-color: #3e4c35 !important;
+            box-shadow: 0 0 0 3px rgba(132, 149, 115, 0.28) !important;
+            outline: none !important;
+        }
+
+        /* Login button: the site's deep sage instead of Decap's slate */
+        #nc-root > div > section form button {
+            background-color: #3e4c35 !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+        }
+
+        #nc-root > div > section form button:hover {
+            background-color: #2f3d29 !important;
+        }
+
+        /* Quiet the pink Decap credit at the bottom of the login screen */
+        #nc-root > div > section > a,
+        #nc-root > div > section a[href*="decap"] {
+            filter: grayscale(1) !important;
+            opacity: 0.5 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,7 +94,7 @@
                 const date = typeof rawDate === "string" ? new Date(rawDate) : rawDate;
                 let formattedDate = "";
                 if (date) {
-                    formattedDate = Intl.DateTimeFormat("en-US", {
+                    formattedDate = Intl.DateTimeFormat("es", {
                         month: "long",
                         day: "numeric",
                         year: "numeric"
