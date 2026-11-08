@@ -10,6 +10,25 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <title>Content Manager</title>
+
+    <!-- Clinic branding: fit the tall reservar logo in Decap's login slot and
+         match the page background to the home page's Antes y Después section -->
+    <style>
+        body,
+        #nc-root,
+        #nc-root > div {
+            background: #fffdf9 !important;
+        }
+
+        img[src*="cristabel-hernandez-logo"] {
+            display: block !important;
+            width: auto !important;
+            height: 104px !important;
+            max-width: 88% !important;
+            margin: 0 auto !important;
+            object-fit: contain;
+        }
+    </style>
 </head>
 
 <body>
