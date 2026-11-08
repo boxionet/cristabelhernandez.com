@@ -28,6 +28,12 @@
             margin: 0 auto !important;
             object-fit: contain;
         }
+
+        /* Decap pulls the login form up with a -80px top margin, over the
+           bottom of the logo; reset it so the form starts below the logo */
+        #nc-root > div > section form {
+            margin-top: 0 !important;
+        }
     </style>
 </head>
 
