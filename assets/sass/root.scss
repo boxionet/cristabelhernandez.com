@@ -311,16 +311,14 @@
         font-family: "Gordita";
         font-weight: 400;
         font-display: swap;
-        src: local(""), url("/assets/fonts/gordita-regular.otf") format("opentype"),
-            /* Chrome 26+, Opera 23+, Firefox 39+ */ url("/assets/fonts/gordita-regular.otf") format("opentype"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+        src: url("/assets/fonts/gordita-regular.woff2") format("woff2");
     }
     @font-face {
         font-style: normal;
         font-family: "Gordita";
         font-weight: 500;
         font-display: swap;
-        src: local(""), url("/assets/fonts/gordita-medium.otf") format("opentype"),
-            /* Chrome 26+, Opera 23+, Firefox 39+ */ url("/assets/fonts/gordita-medium.otf") format("opentype"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+        src: url("/assets/fonts/gordita-medium.woff2") format("woff2");
     }
 
     /* Gordita-700 - latin */
@@ -329,8 +327,7 @@
         font-family: "Gordita";
         font-weight: 700;
         font-display: swap;
-        src: local(""), url("/assets/fonts/gordita-black.otf") format("opentype"),
-            /* Chrome 26+, Opera 23+, Firefox 39+ */ url("/assets/fonts/gordita-black.otf") format("opentype"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+        src: url("/assets/fonts/gordita-black.woff2") format("woff2");
     }
 
     /* Gordita-900 - latin */
@@ -339,8 +336,7 @@
         font-family: "Gordita";
         font-weight: 900;
         font-display: swap;
-        src: local(""), url("/assets/fonts/gordita-black.otf") format("opentype"),
-            /* Chrome 26+, Opera 23+, Firefox 39+ */ url("/assets/fonts/Gordita-v29-latin-900.otf") format("opentype"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+        src: url("/assets/fonts/gordita-black.woff2") format("woff2");
     }
 }
 
