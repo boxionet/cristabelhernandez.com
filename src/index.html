@@ -506,4 +506,19 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 
     {% include "sections/cta.html" %}
 
+    <!-- Netlify Identity: processes CMS invite links that land on the homepage
+         (the signup dialog opens here), then sends the user to the editor -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", function (user) {
+                if (!user) {
+                    window.netlifyIdentity.on("login", function () {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
 {% endblock %}
