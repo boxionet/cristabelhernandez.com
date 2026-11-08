@@ -76,6 +76,64 @@
             filter: grayscale(1) !important;
             opacity: 0.5 !important;
         }
+
+        /* Phones and small tablets only (desktop keeps Decap's default
+           layout): Decap enforces an 800px minimum width, which leaves the
+           editor half off-screen on a phone. Fit the app to the screen and
+           stack the preview under the form instead of beside it. */
+        @media (max-width: 900px) {
+            /* Small overflows in Decap's chrome (header actions) would
+               otherwise give phones a few pixels of horizontal wiggle */
+            body {
+                overflow-x: hidden !important;
+            }
+
+            [class*="AppHeaderContent"],
+            [class*="EditorContainer"],
+            [class*="ToolbarContainer"],
+            [class*="AppMainContainer"] {
+                min-width: 0 !important;
+                width: 100% !important;
+            }
+
+            /* Collections page: the sidebar is fixed at the left on desktop
+               with the entries offset beside it; on phones, stack the
+               sidebar on top and let the entries use the full width */
+            [class*="SidebarContainer"] {
+                position: static !important;
+                width: auto !important;
+                margin-bottom: 16px !important;
+            }
+
+            /* The entries area clears the fixed sidebar with a 280px left
+               padding, and the empty-state message has a fixed desktop
+               width; both come off on phones */
+            [class*="CollectionMain"] {
+                padding-left: 0 !important;
+            }
+
+            [class*="PaginationMessage"] {
+                width: auto !important;
+            }
+
+            [class*="StyledSplitPane"] {
+                flex-direction: column !important;
+                overflow-y: auto !important;
+            }
+
+            [class*="StyledSplitPane"] .Pane {
+                width: 100% !important;
+                flex: none !important;
+            }
+
+            [class*="StyledSplitPane"] .Pane2 {
+                min-height: 60vh;
+            }
+
+            [class*="StyledSplitPane"] .Resizer {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
