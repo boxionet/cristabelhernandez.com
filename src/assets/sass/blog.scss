@@ -648,3 +648,21 @@
         }
     }
 }
+
+/*-- -------------------------- -->
+<---     Article Banner Band     -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    /* Article pages only (this stylesheet loads after root.css): the
+       banner is a plain deep-sage band instead of the template's photo
+       banner, so it is shorter than the root #banner-310 sizing */
+    #banner-310 {
+        background-color: #3e4c35;
+        /* 112px - 160px */
+        padding-top: clamp(7rem, 18vw, 10rem);
+        /* 40px - 64px */
+        padding-bottom: clamp(2.5rem, 6vw, 4rem);
+    }
+}
