@@ -7,7 +7,7 @@ backend:
 local_backend: true
 
 # change url to a link to the image you want to use, no file paths, must be a URL
-logo_url: https://codestitch.app/frontend/images/logo.png
+logo_url: https://cristabelhernandez.com/assets/svgs/cristabel_logo_horizontal.svg
 
 # Image folders
 media_folder: "src/assets/images/blog"
