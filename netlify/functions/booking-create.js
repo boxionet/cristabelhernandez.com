@@ -5,6 +5,7 @@
 // database errors to API errors, and sends the emails.
 const { serviceClient, getAuthUser, isVerified, json, siteOrigin } = require("./_booking/supabase");
 const { sendNewBookingEmails } = require("./_booking/email");
+const { verifyRecaptcha } = require("./_booking/captcha");
 const { clinicNow } = require("./_booking/time");
 const { randomUUID } = require("crypto");
 
@@ -47,6 +48,20 @@ exports.handler = async (event) => {
     }
     const verified = isVerified(user);
     const email = verified ? user.email : String(body.email).trim().toLowerCase();
+
+    // Bot protection (Phase 6): guest creates must pass reCAPTCHA.
+    // Verified sessions are identity-bound and skip it. When the check
+    // fails the client falls back to the legacy email flow (until the
+    // Phase 7 cutover removes that path).
+    if (!user) {
+      const captcha = await verifyRecaptcha(
+        body.captchaToken,
+        event.headers["x-nf-client-connection-ip"] || event.headers["client-ip"],
+      );
+      if (captcha.configured && !captcha.success) {
+        return json(403, { error: "captcha_failed" });
+      }
+    }
 
     const supabase = serviceClient();
     const { data: appointment, error } = await supabase.rpc("create_booking", {

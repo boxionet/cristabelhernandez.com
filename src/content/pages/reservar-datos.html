@@ -97,6 +97,7 @@ permalink: "/reservar/datos/"
                             <button type="submit" class="confirmation-btn" id="confirm-btn" disabled>
                                 Reservar Cita
                             </button>
+                            <div id="booking-recaptcha"></div>
                         </form>
                     </div>
                 </div>
@@ -177,6 +178,44 @@ permalink: "/reservar/datos/"
     </section>
 
     <script src="/assets/js/booking-api.js"></script>
+    <script>
+        // Invisible reCAPTCHA v2 for the booking engine (Phase 6) —
+        // same site key as the contact form. getBookingCaptchaToken()
+        // resolves the token, or null when the script is blocked or
+        // times out (the server then rejects and the legacy email
+        // flow takes over for that submission).
+        window.__bookingCaptchaWidget = null;
+        window.__bookingCaptchaResolvers = [];
+        function onBookingCaptchaLoad() {
+            try {
+                window.__bookingCaptchaWidget = grecaptcha.render('booking-recaptcha', {
+                    sitekey: '6Lc7RxUuAAAAAG4ixBIT1XhyFRemeELPADIXthm4',
+                    size: 'invisible',
+                    callback: function (token) {
+                        window.__bookingCaptchaResolvers.splice(0).forEach(function (r) { r(token); });
+                    },
+                    'error-callback': function () {
+                        window.__bookingCaptchaResolvers.splice(0).forEach(function (r) { r(null); });
+                    }
+                });
+            } catch (e) { /* widget unavailable */ }
+        }
+        window.getBookingCaptchaToken = function () {
+            return new Promise(function (resolve) {
+                if (window.__bookingCaptchaWidget === null || typeof grecaptcha === 'undefined') {
+                    resolve(null);
+                    return;
+                }
+                let settled = false;
+                const done = function (v) { if (!settled) { settled = true; resolve(v); } };
+                window.__bookingCaptchaResolvers.push(done);
+                try { grecaptcha.execute(window.__bookingCaptchaWidget); }
+                catch (e) { done(null); }
+                setTimeout(function () { done(null); }, 8000);
+            });
+        };
+    </script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onBookingCaptchaLoad&render=explicit" async defer></script>
     <script>
         // BookingStorage object for managing booking data
         const BookingStorage = {
@@ -531,6 +570,7 @@ permalink: "/reservar/datos/"
                             sessionStorage.setItem('cristabel_idem', idemKey);
                         }
                         try {
+                            const captchaToken = await window.getBookingCaptchaToken();
                             const created = await window.BookingAPI.createBooking({
                                 name: `${firstName} ${lastName}`,
                                 email,
@@ -540,6 +580,7 @@ permalink: "/reservar/datos/"
                                 date: dateISO,
                                 startTime,
                                 idempotencyKey: idemKey,
+                                captchaToken,
                             });
                             if (created.ok) {
                                 sessionStorage.setItem('cristabel_result', JSON.stringify(created.data));

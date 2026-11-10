@@ -172,6 +172,41 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl 
   return results;
 }
 
+// 24-hour reminder (plan §5): date/time, the cash total due at the
+// centro, and the portal link to manage the cita.
+async function sendReminderEmail({ appointment, items, portalUrl, to }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      reply_to: OWNER_EMAIL,
+      subject: `Recordatorio de tu cita — ${appointment.reference_code}`,
+      text: [
+        `Hola,`,
+        ``,
+        `Te recordamos tu cita en ${CLINIC_NAME}:`,
+        ``,
+        `Referencia: ${appointment.reference_code}`,
+        `Fecha: ${when}`,
+        `Servicios:`,
+        itemsListText(items),
+        `${totalLabel}: ${formatPrice(appointment.total_price)}`,
+        `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
+        ``,
+        `Si necesitas cambiar o cancelar, hazlo desde tu cuenta: ${portalUrl}`,
+        `Recuerda que los cambios desde la cuenta están disponibles hasta 24 horas antes; después de eso, llámanos o responde a este correo.`,
+      ].join("\n"),
+    });
+    return true;
+  } catch (e) {
+    console.error("reminder email failed", e);
+    return false;
+  }
+}
+
 async function sendSimpleEmail({ to, subject, text }) {
   try {
     const resend = resendClient();
@@ -188,5 +223,6 @@ module.exports = {
   FROM_EMAIL,
   formatPrice,
   sendNewBookingEmails,
+  sendReminderEmail,
   sendSimpleEmail,
 };
