@@ -7,6 +7,7 @@
     "watch:cms": "npx decap-server",
     "watch:eleventy": "cross-env ELEVENTY_ENV=DEV eleventy --serve",
     "build:eleventy": "cross-env ELEVENTY_ENV=PROD eleventy",
+ "build:app": "npm --prefix app ci && npm --prefix app run build",
     "start": "run-p watch:*",
     "build": "run-s build:*"
   },
