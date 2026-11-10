@@ -1,0 +1,26 @@
+import AppointmentCard from "../components/AppointmentCard";
+import { isUpcoming } from "../lib/format";
+import { useAppointments } from "../lib/useAppointments";
+
+export default function Historial() {
+  const { rows, error } = useAppointments();
+
+  if (error) return <p className="error">{error}</p>;
+  if (!rows) return <p className="muted">Cargando tu historial…</p>;
+
+  const past = rows.filter((r) => !isUpcoming(r)).slice().reverse();
+
+  return (
+    <>
+      <h2 className="section-title">Historial de citas</h2>
+      {past.length === 0 && (
+        <section className="card empty">
+          <p>Todavía no tienes citas anteriores.</p>
+        </section>
+      )}
+      {past.map((appt) => (
+        <AppointmentCard key={appt.id} appointment={appt} readOnly />
+      ))}
+    </>
+  );
+}
