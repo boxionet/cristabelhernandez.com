@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../auth";
 import { clinicToday, usePanelData } from "../lib/panel";
 
@@ -14,7 +15,14 @@ const NAV = [
 
 export default function PanelLayout() {
   const { user, signOut } = useAuth();
-  const { appointments } = usePanelData();
+  const { appointments, reload } = usePanelData();
+  const location = useLocation();
+
+  // The layout keeps its own data copy for the sidebar badges; refresh
+  // it on navigation so actions taken on a page don't leave stale counts.
+  useEffect(() => {
+    void reload();
+  }, [location.pathname, reload]);
   const today = clinicToday();
   const todayCount = (appointments ?? []).filter(
     (a) =>

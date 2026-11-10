@@ -66,7 +66,10 @@ export default function Clientes() {
               {count} {count === 1 ? "cita" : "citas"}
               {last ? ` · Última: ${last}` : ""}
             </p>
-            <p className="treat-spent">{formatPrice(spent)}</p>
+            <p className="treat-spent">
+              {formatPrice(spent)}{" "}
+              <small className="muted spent-label">en tratamientos completados</small>
+            </p>
             {p.no_show_count > 0 && (
               <p className="error">No asistió {p.no_show_count} vez/veces</p>
             )}

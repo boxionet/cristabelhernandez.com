@@ -21,10 +21,10 @@ values
   ('rejuvenecimiento-cuello', 'Rejuvenecimiento de Cuello', 'facial',    9000, true,  null,         60, 7),
   ('rejuvenecimiento-escote', 'Rejuvenecimiento de Escote', 'facial',    9000, true,  null,         60, 8),
   ('rejuvenecimiento-manos',  'Rejuvenecimiento de Manos',  'facial',    9000, true,  null,         60, 9),
-  ('escleroterapia',        'Escleroterapia',               'corporal',  3500, true,  null,         40, 1),
-  ('lipolisis-menton',      'Lipólisis de Mentón',          'corporal', 28000, false, '3 sesiones', 45, 2),
-  ('lipolisis-localizada',  'Lipólisis Localizada (Aqualyx)', 'corporal', 7000, false, 'c/ampolla', 45, 3),
-  ('anticelulitico-alidya', 'Anticelulítico (Alidya)',      'corporal',  4500, false, 'c/ampolla', 45, 4)
+  ('escleroterapia',        'Escleroterapia',               'corporal',  3500, true,  null,         40, 10),
+  ('lipolisis-menton',      'Lipólisis de Mentón',          'corporal', 28000, false, '3 sesiones', 45, 11),
+  ('lipolisis-localizada',  'Lipólisis Localizada (Aqualyx)', 'corporal', 7000, false, 'c/ampolla', 45, 12),
+  ('anticelulitico-alidya', 'Anticelulítico (Alidya)',      'corporal',  4500, false, 'c/ampolla', 45, 13)
 on conflict (slug) do nothing;
 
 -- Weekly schedule: Mon–Fri open 9:00–18:00; Sat/Sun closed

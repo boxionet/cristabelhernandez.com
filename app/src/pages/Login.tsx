@@ -1,17 +1,21 @@
 import { useState, type FormEvent } from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../auth";
+import { isAdmin, useAuth } from "../auth";
 import { supabase } from "../lib/supabase";
 
 export default function Login() {
-  const { session, loading } = useAuth();
+  const { session, user, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"email" | "code">("email");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!loading && session) return <Navigate to="/mi-cuenta/" replace />;
+  // Admins land in the Panel, not Mi Cuenta — otherwise the patient
+  // gate would create a client record for the staff account itself.
+  if (!loading && session) {
+    return <Navigate to={isAdmin(user) ? "/panel/" : "/mi-cuenta/"} replace />;
+  }
 
   async function sendCode(e: FormEvent) {
     e.preventDefault();
