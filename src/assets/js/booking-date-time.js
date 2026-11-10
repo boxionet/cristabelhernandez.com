@@ -1414,9 +1414,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (continueBtnMobile) continueBtnMobile.disabled = false;
   }
 
-  // Continue button
-  if (continueBtn) {
-    continueBtn.addEventListener("click", function () {
+  // Continue buttons (desktop + mobile bar): BOTH must write the
+  // sessionStorage values the datos step reads — previously only one
+  // button carried this handler, so the other path reached datos
+  // without them.
+  [continueBtnDesktop, continueBtnMobile].forEach((btn) => {
+    if (!btn) return;
+    btn.addEventListener("click", function () {
       if (!this.disabled) {
         // Store selected date and time in sessionStorage for next step
         sessionStorage.setItem("bookingDate", selectedDate);
@@ -1426,7 +1430,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "/reservar/datos/";
       }
     });
-  }
+  });
 
   // Close calendar modal on scroll
   document.addEventListener(

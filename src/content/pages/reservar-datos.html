@@ -438,6 +438,26 @@ permalink: "/reservar/datos/"
             }
         }
 
+        // "Lunes, Noviembre 16" -> "2026-11-16" (nearest upcoming year).
+        // The fecha-hora step stores the date as a formatted string in
+        // the localStorage booking record; the engine needs ISO format.
+        function parseStorageDate(text) {
+            const months = { Enero: 1, Febrero: 2, Marzo: 3, Abril: 4, Mayo: 5, Junio: 6, Julio: 7, Agosto: 8, Septiembre: 9, Octubre: 10, Noviembre: 11, Diciembre: 12 };
+            const m = String(text || '').match(/,\s*(\w+)\s+(\d{1,2})/);
+            if (!m || !months[m[1]]) return null;
+            const month = months[m[1]];
+            const day = parseInt(m[2], 10);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            for (const year of [now.getFullYear(), now.getFullYear() + 1]) {
+                const cand = new Date(year, month - 1, day);
+                if (cand >= today) {
+                    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                }
+            }
+            return null;
+        }
+
         // Handle form submission
         async function handleFormSubmit(e) {
             e.preventDefault();
@@ -486,9 +506,21 @@ permalink: "/reservar/datos/"
                         slug,
                         quantity: servicesMap[slug].quantity || 1,
                     }));
+                    // Date/time normally arrive via sessionStorage (the
+                    // fecha-hora continue handler). If that path was not
+                    // used, derive them from the localStorage booking
+                    // record instead of skipping the engine silently.
+                    let dateISO = null;
+                    let rawTime = sessionStorage.getItem('bookingTime');
                     const rawDate = sessionStorage.getItem('bookingDate');
-                    const rawTime = sessionStorage.getItem('bookingTime');
-                    const dateISO = rawDate ? rawDate.split('T')[0] : null;
+                    if (rawDate) dateISO = rawDate.split('T')[0];
+                    if (!dateISO || !rawTime) {
+                        const dt = BookingStorage.getDateTime();
+                        if (dt && typeof dt === 'object') {
+                            if (!rawTime && dt.time) rawTime = dt.time;
+                            if (!dateISO && dt.date) dateISO = parseStorageDate(dt.date);
+                        }
+                    }
                     const startTime = window.BookingAPI.to24h(rawTime);
                     if (items.length && dateISO && startTime) {
                         let idemKey = sessionStorage.getItem('cristabel_idem');
@@ -527,6 +559,8 @@ permalink: "/reservar/datos/"
                         } catch (engineError) {
                             console.warn('Booking engine unreachable; falling back to the email flow:', engineError);
                         }
+                    } else {
+                        console.warn('Booking engine skipped (missing items, date or time); falling back to the email flow:', { items: items.length, dateISO, startTime });
                     }
                 }
 
