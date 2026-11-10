@@ -91,12 +91,12 @@ export default function Login() {
               de spam.
             </p>
             <label>
-              Código de 6 dígitos
+              Código de acceso
               <input
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 required
-                maxLength={6}
+                maxLength={10}
                 placeholder="123456"
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
@@ -106,7 +106,7 @@ export default function Login() {
             <button
               type="submit"
               className="btn primary block"
-              disabled={busy || code.length !== 6}
+              disabled={busy || code.length < 6}
             >
               {busy ? "Verificando…" : "Entrar"}
             </button>
