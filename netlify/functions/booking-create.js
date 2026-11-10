@@ -75,6 +75,23 @@ exports.handler = async (event) => {
       return json(500, { error: "create_failed" });
     }
 
+    // Idempotent replay (same key submitted again): the RPC returns the
+    // original row. Answer with it, but never re-send the emails.
+    const isReplay =
+      Date.now() - new Date(appointment.created_at).getTime() > 10000;
+    if (isReplay) {
+      return json(200, {
+        referenceCode: appointment.reference_code,
+        status: appointment.status,
+        date: appointment.date,
+        startTime: String(appointment.start_time).slice(0, 5),
+        totalPrice: appointment.total_price,
+        totalIsEstimate: appointment.total_is_estimate,
+        confirmationExpiresAt: appointment.confirmation_expires_at,
+        replay: true,
+      });
+    }
+
     // Line items for the emails (price snapshot taken at booking).
     const { data: items } = await supabase
       .from("appointment_services")
