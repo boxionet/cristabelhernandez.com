@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, isAdmin, useAuth } from "./auth";
 import Layout from "./components/Layout";
@@ -7,6 +7,16 @@ import Login from "./pages/Login";
 import MisCitas from "./pages/MisCitas";
 import Perfil from "./pages/Perfil";
 import Tratamientos from "./pages/Tratamientos";
+import Agenda from "./panel/Agenda";
+import Citas from "./panel/Citas";
+import ClienteDetalle from "./panel/ClienteDetalle";
+import Clientes from "./panel/Clientes";
+import Dashboard from "./panel/Dashboard";
+import Horario from "./panel/Horario";
+import NuevaCita from "./panel/NuevaCita";
+import PanelLayout from "./panel/PanelLayout";
+import Reportes from "./panel/Reportes";
+import ServiciosPanel from "./panel/Servicios";
 
 function CenteredCard({ children }: { children: ReactNode }) {
   return (
@@ -17,9 +27,16 @@ function CenteredCard({ children }: { children: ReactNode }) {
 }
 
 // Gate for the patient area: session required, and the patient record
-// must be linked (portal-link) before any screen renders.
+// must be linked (portal-link) before any screen renders. Linking is
+// triggered here (not on any session) so Panel-only admin sessions
+// never create a patient row for the staff account.
 function RequirePatient({ children }: { children: ReactNode }) {
-  const { loading, session, patient, linkError, retryLink } = useAuth();
+  const { loading, session, patient, linkError, retryLink, ensureLinked } =
+    useAuth();
+
+  useEffect(() => {
+    if (session && !patient) ensureLinked();
+  }, [session, patient, ensureLinked]);
 
   if (loading) {
     return (
@@ -53,9 +70,10 @@ function RequirePatient({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-// Panel placeholder — the real dashboard is Phase 5. The admin role
-// gate (app_metadata.role) is already enforced here.
-function PanelGate() {
+// Panel gate (Phase 5): session + admin role in app_metadata. Data
+// access behind it is RLS (admin policies), so the gate is UX, not the
+// security boundary.
+function RequireAdmin({ children }: { children: ReactNode }) {
   const { loading, session, user } = useAuth();
   if (loading) {
     return (
@@ -73,12 +91,7 @@ function PanelGate() {
       </CenteredCard>
     );
   }
-  return (
-    <CenteredCard>
-      <h1>Panel</h1>
-      <p className="muted">El panel de administración llega en la siguiente fase.</p>
-    </CenteredCard>
-  );
+  return <>{children}</>;
 }
 
 export default function App() {
@@ -99,7 +112,24 @@ export default function App() {
           <Route path="tratamientos" element={<Tratamientos />} />
           <Route path="perfil" element={<Perfil />} />
         </Route>
-        <Route path="/panel/*" element={<PanelGate />} />
+        <Route
+          path="/panel"
+          element={
+            <RequireAdmin>
+              <PanelLayout />
+            </RequireAdmin>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="agenda" element={<Agenda />} />
+          <Route path="citas" element={<Citas />} />
+          <Route path="clientes" element={<Clientes />} />
+          <Route path="clientes/:id" element={<ClienteDetalle />} />
+          <Route path="nueva-cita" element={<NuevaCita />} />
+          <Route path="servicios" element={<ServiciosPanel />} />
+          <Route path="horario" element={<Horario />} />
+          <Route path="reportes" element={<Reportes />} />
+        </Route>
         <Route path="*" element={<Navigate to="/mi-cuenta" replace />} />
       </Routes>
     </AuthProvider>

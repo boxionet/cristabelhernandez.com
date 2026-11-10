@@ -1,0 +1,231 @@
+import { useState } from "react";
+import { formatPrice } from "../lib/format";
+import { supabase } from "../lib/supabase";
+import { usePanelData, type ServiceRow } from "../lib/panel";
+
+function ServiceEditor({
+  service,
+  onSaved,
+}: {
+  service: ServiceRow;
+  onSaved: () => void;
+}) {
+  const [price, setPrice] = useState(service.price);
+  const [duration, setDuration] = useState(service.duration_minutes);
+  const [priceFrom, setPriceFrom] = useState(service.price_from);
+  const [priceNote, setPriceNote] = useState(service.price_note ?? "");
+  const [active, setActive] = useState(service.active);
+  const [saved, setSaved] = useState(false);
+
+  async function save() {
+    await supabase
+      .from("services")
+      .update({
+        price,
+        duration_minutes: duration,
+        price_from: priceFrom,
+        price_note: priceNote.trim() || null,
+        active,
+      })
+      .eq("id", service.id);
+    setSaved(true);
+    onSaved();
+  }
+
+  return (
+    <tr className={active ? "" : "row-inactive"}>
+      <td>
+        <strong>{service.name}</strong>
+        <br />
+        <small className="muted">{service.category}</small>
+      </td>
+      <td>
+        <input
+          type="number"
+          min={0}
+          step={100}
+          value={price}
+          onChange={(e) => {
+            setPrice(Number(e.target.value) || 0);
+            setSaved(false);
+          }}
+          className="num-input"
+        />
+      </td>
+      <td>
+        <label className="check-label">
+          <input
+            type="checkbox"
+            checked={priceFrom}
+            onChange={(e) => {
+              setPriceFrom(e.target.checked);
+              setSaved(false);
+            }}
+          />
+          Desde
+        </label>
+        <input
+          value={priceNote}
+          onChange={(e) => {
+            setPriceNote(e.target.value);
+            setSaved(false);
+          }}
+          placeholder="c/ampolla, 3 sesiones…"
+          className="note-input"
+        />
+      </td>
+      <td>
+        <input
+          type="number"
+          min={5}
+          step={5}
+          value={duration}
+          onChange={(e) => {
+            setDuration(Number(e.target.value) || 0);
+            setSaved(false);
+          }}
+          className="num-input"
+        />
+      </td>
+      <td>
+        <label className="check-label">
+          <input
+            type="checkbox"
+            checked={active}
+            onChange={(e) => {
+              setActive(e.target.checked);
+              setSaved(false);
+            }}
+          />
+          Activo
+        </label>
+      </td>
+      <td>
+        <button type="button" className="btn primary small" onClick={() => void save()}>
+          Guardar
+        </button>
+        {saved && <span className="success"> ✓</span>}
+      </td>
+    </tr>
+  );
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export default function Servicios() {
+  const { services, error, reload } = usePanelData();
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("Facial");
+  const [price, setPrice] = useState(0);
+  const [duration, setDuration] = useState(45);
+  const [addError, setAddError] = useState<string | null>(null);
+
+  if (error) return <p className="error">{error}</p>;
+  if (!services) return <p className="muted">Cargando tratamientos…</p>;
+
+  async function addService() {
+    setAddError(null);
+    if (name.trim().length < 3 || price <= 0) {
+      setAddError("Escribe el nombre y un precio válido.");
+      return;
+    }
+    const maxOrder = (services ?? []).reduce(
+      (m, s) => Math.max(m, s.sort_order),
+      0,
+    );
+    const { error } = await supabase.from("services").insert({
+      slug: slugify(name),
+      name: name.trim(),
+      category,
+      price,
+      duration_minutes: duration,
+      sort_order: maxOrder + 1,
+    });
+    if (error) {
+      setAddError("No se pudo agregar (¿nombre repetido?).");
+      return;
+    }
+    setName("");
+    setPrice(0);
+    void reload();
+  }
+
+  return (
+    <>
+      <h2 className="section-title">Tratamientos (catálogo)</h2>
+      <section className="card">
+        <table className="table services-table">
+          <thead>
+            <tr>
+              <th>Tratamiento</th>
+              <th>Precio (RD$)</th>
+              <th>Etiqueta</th>
+              <th>Min</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {services.map((s) => (
+              <ServiceEditor key={s.id} service={s} onSaved={() => void reload()} />
+            ))}
+          </tbody>
+        </table>
+        <p className="muted">
+          Los cambios se reflejan enseguida en la página de servicios y en el
+          portal. Desactivar un tratamiento lo oculta de la web sin borrar su
+          historial. Precios de referencia: la Toxina Frontal está en{" "}
+          {formatPrice(13000)}.
+        </p>
+      </section>
+
+      <h2 className="section-title">Agregar tratamiento</h2>
+      <section className="card form-card">
+        <div className="form-grid">
+          <label>
+            Nombre
+            <input value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+          <label>
+            Categoría
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option>Facial</option>
+              <option>Corporal</option>
+            </select>
+          </label>
+          <label>
+            Precio (RD$)
+            <input
+              type="number"
+              min={0}
+              step={100}
+              value={price}
+              onChange={(e) => setPrice(Number(e.target.value) || 0)}
+            />
+          </label>
+          <label>
+            Duración (min)
+            <input
+              type="number"
+              min={5}
+              step={5}
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value) || 0)}
+            />
+          </label>
+        </div>
+        {addError && <p className="error">{addError}</p>}
+        <button type="button" className="btn primary" onClick={() => void addService()}>
+          Agregar
+        </button>
+      </section>
+    </>
+  );
+}

@@ -1,0 +1,132 @@
+import { useState } from "react";
+import {
+  confirmHold,
+  markNoShow,
+  releaseHold,
+  updateAppointment,
+  type PanelAppointment,
+} from "../lib/panel";
+
+// Staff actions on one appointment. All direct RLS writes — the plan's
+// staff override: no 24h window, holds can be confirmed or released.
+export default function AppointmentActions({
+  appt,
+  onChanged,
+}: {
+  appt: PanelAppointment;
+  onChanged: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [confirming, setConfirming] = useState<"cancel" | "release" | null>(null);
+  const [rescheduling, setRescheduling] = useState(false);
+  const [newDate, setNewDate] = useState(appt.date);
+  const [newTime, setNewTime] = useState(appt.start_time.slice(0, 5));
+  const [error, setError] = useState<string | null>(null);
+
+  async function run(fn: () => Promise<void>) {
+    setBusy(true);
+    setError(null);
+    try {
+      await fn();
+      onChanged();
+    } catch {
+      setError("No se pudo guardar el cambio.");
+      setBusy(false);
+    }
+  }
+
+  async function saveReschedule() {
+    setBusy(true);
+    setError(null);
+    try {
+      await updateAppointment(appt.id, { date: newDate, start_time: newTime });
+      setRescheduling(false);
+      onChanged();
+    } catch (e) {
+      const code = (e as { code?: string })?.code;
+      void code;
+      setError("No se pudo mover la cita (puede chocar con otra). Revisa el horario.");
+      setBusy(false);
+    }
+  }
+
+  const active = appt.status === "pendiente" || appt.status === "confirmada";
+
+  return (
+    <div className="appt-actions staff">
+      {appt.status === "por_confirmar" && confirming !== "release" && (
+        <>
+          <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => confirmHold(appt))}>
+            Confirmar
+          </button>
+          <button type="button" className="btn danger-ghost small" disabled={busy} onClick={() => setConfirming("release")}>
+            Liberar
+          </button>
+        </>
+      )}
+      {appt.status === "por_confirmar" && confirming === "release" && (
+        <>
+          <span>¿Liberar este apartado?</span>
+          <button type="button" className="btn ghost small" onClick={() => setConfirming(null)} disabled={busy}>
+            Volver
+          </button>
+          <button type="button" className="btn danger small" disabled={busy} onClick={() => void run(() => releaseHold(appt.id))}>
+            Sí, liberar
+          </button>
+        </>
+      )}
+
+      {active && !rescheduling && confirming !== "cancel" && (
+        <>
+          <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "completada" }))}>
+            Completar
+          </button>
+          {appt.payment_status === "pendiente" && (
+            <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }))}>
+              Marcar pagado
+            </button>
+          )}
+          <button type="button" className="btn ghost small" disabled={busy} onClick={() => setRescheduling(true)}>
+            Mover
+          </button>
+          <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => markNoShow(appt))}>
+            No asistió
+          </button>
+          <button type="button" className="btn danger-ghost small" disabled={busy} onClick={() => setConfirming("cancel")}>
+            Cancelar
+          </button>
+        </>
+      )}
+      {active && confirming === "cancel" && (
+        <>
+          <span>¿Cancelar esta cita?</span>
+          <button type="button" className="btn ghost small" onClick={() => setConfirming(null)} disabled={busy}>
+            Volver
+          </button>
+          <button type="button" className="btn danger small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "cancelada" }))}>
+            Sí, cancelar
+          </button>
+        </>
+      )}
+      {appt.status === "completada" && appt.payment_status === "pendiente" && (
+        <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }))}>
+          Marcar pagado
+        </button>
+      )}
+
+      {rescheduling && (
+        <span className="inline-reschedule">
+          <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+          <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+          <button type="button" className="btn primary small" disabled={busy} onClick={() => void saveReschedule()}>
+            Guardar
+          </button>
+          <button type="button" className="btn ghost small" onClick={() => setRescheduling(false)} disabled={busy}>
+            Volver
+          </button>
+        </span>
+      )}
+      {error && <span className="error">{error}</span>}
+    </div>
+  );
+}

@@ -18,6 +18,7 @@ interface AuthContextValue {
   patient: Patient | null;
   linkError: string | null;
   retryLink: () => void;
+  ensureLinked: () => void;
   signOut: () => Promise<void>;
 }
 
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextValue>({
   patient: null,
   linkError: null,
   retryLink: () => {},
+  ensureLinked: () => {},
   signOut: async () => {},
 });
 
@@ -57,14 +59,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
       setSession(data.session);
       setLoading(false);
-      if (data.session) void doLink(data.session);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
       setSession(sess);
       setLoading(false);
-      if (sess) {
-        void doLink(sess);
-      } else {
+      if (!sess) {
         linkedFor.current = null;
         setPatient(null);
       }
@@ -87,6 +86,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         linkedFor.current = null;
         void doLink(session);
       }
+    },
+    ensureLinked: () => {
+      if (session) void doLink(session);
     },
     signOut: async () => {
       await supabase.auth.signOut();
