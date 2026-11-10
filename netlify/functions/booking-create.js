@@ -92,6 +92,14 @@ exports.handler = async (event) => {
       });
     }
 
+    // A patient note from the form becomes an internal note for the Dra.
+    if (body.note && String(body.note).trim()) {
+      await supabase
+        .from("appointments")
+        .update({ internal_notes: String(body.note).trim().slice(0, 1000) })
+        .eq("id", appointment.id);
+    }
+
     // Line items for the emails (price snapshot taken at booking).
     const { data: items } = await supabase
       .from("appointment_services")

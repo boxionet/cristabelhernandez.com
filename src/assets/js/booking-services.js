@@ -439,3 +439,51 @@ continueBtnMobile.addEventListener("click", function () {
 // Load cart from storage on page load
 loadCartFromStorage();
 updateCart();
+
+// --- Live catalog overlay (Phase 3) ---
+// When the API answers, the database catalog wins: prices, durations
+// and names update in place, deactivated services are hidden, and the
+// cart is re-saved with the live values. Any failure leaves the
+// bundled catalog exactly as-is.
+if (window.BookingAPI) {
+  window.BookingAPI.fetchServices().then(function (liveServices) {
+    if (!liveServices || !liveServices.length) return;
+    const liveBySlug = {};
+    liveServices.forEach((s) => {
+      liveBySlug[s.slug] = s;
+    });
+
+    Object.keys(services).forEach((slug) => {
+      const live = liveBySlug[slug];
+      if (live) {
+        services[slug] = {
+          name: live.name,
+          price: live.price,
+          priceFrom: Boolean(live.priceFrom),
+          duration: live.duration,
+        };
+        if (live.priceNote) services[slug].priceNote = live.priceNote;
+      }
+    });
+
+    document.querySelectorAll(".booking-service-card").forEach((card) => {
+      const slug = card.dataset.serviceId;
+      const live = liveBySlug[slug];
+      if (!live) {
+        card.style.display = "none";
+        if (cart[slug]) delete cart[slug];
+        return;
+      }
+      const nameEl = card.querySelector(".booking-service-name");
+      if (nameEl) nameEl.textContent = live.name;
+      const durationEl = card.querySelector(".booking-service-duration");
+      if (durationEl) durationEl.textContent = `${live.duration} min`;
+      const priceEl = card.querySelector(".booking-service-price");
+      if (priceEl) priceEl.textContent = formatServicePrice(services[slug]);
+    });
+
+    saveCartToStorage();
+    updateCart();
+    updateCardStates();
+  });
+}

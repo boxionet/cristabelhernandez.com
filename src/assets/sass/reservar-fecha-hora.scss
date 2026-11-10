@@ -1051,3 +1051,11 @@
         display: none;
     }
 }
+
+/* Phase 3: starts the live availability API does not offer (booked,
+   or the cart would run past closing) are disabled in place. */
+.booking-time-slot--disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}

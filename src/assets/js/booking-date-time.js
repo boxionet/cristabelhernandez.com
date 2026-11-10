@@ -70,6 +70,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let selectedDate = null;
   let selectedTime = null;
+
+  // --- Live availability (Phase 3) ---
+  // The static slot grid stays as the fallback. When the booking API
+  // answers, starts the API does not offer for the cart's total
+  // duration are disabled, and a closed or fully-booked day falls
+  // back to the same "unavailable" message used for weekends.
+  function cartTotalDuration() {
+    try {
+      const stored = BookingStorage.getServices();
+      let total = 0;
+      Object.keys(stored).forEach((slug) => {
+        const item = stored[slug];
+        total += (item.duration || 0) * (item.quantity || 1);
+      });
+      return total > 0 ? total : 30;
+    } catch (e) {
+      return 30;
+    }
+  }
+
+  function slotDisplayTo24h(display) {
+    const m = String(display || "")
+      .trim()
+      .match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!m) return null;
+    let h = parseInt(m[1], 10) % 12;
+    if (/PM/i.test(m[3])) h += 12;
+    return `${String(h).padStart(2, "0")}:${m[2]}`;
+  }
+
+  function refreshLiveSlots() {
+    if (!window.BookingAPI || !selectedDate) return;
+    const dateISO = selectedDate.split("T")[0];
+    window.BookingAPI.fetchSlots(dateISO, cartTotalDuration()).then((res) => {
+      if (!res) return; // API unreachable: static grid stays as-is
+      if (!selectedDate || selectedDate.split("T")[0] !== dateISO) return;
+      if (!res.open || !res.slots || res.slots.length === 0) {
+        showUnavailableMessage(selectedDate);
+        selectedTime = null;
+        checkFormCompletion();
+        return;
+      }
+      hideUnavailableMessage();
+      const offered = new Set(res.slots);
+      document.querySelectorAll(".booking-time-slot").forEach((slot) => {
+        const textEl = slot.querySelector(".booking-time-slot-text");
+        const t24 = slotDisplayTo24h(
+          textEl ? textEl.textContent : slot.textContent,
+        );
+        const ok = Boolean(t24 && offered.has(t24));
+        slot.disabled = !ok;
+        slot.classList.toggle("booking-time-slot--disabled", !ok);
+        if (!ok && slot.getAttribute("aria-pressed") === "true") {
+          slot.setAttribute("aria-pressed", "false");
+          const wrap = slot.closest(".booking-time-slot-wrapper");
+          const input = wrap
+            ? wrap.querySelector(".booking-time-input")
+            : null;
+          if (input) {
+            input.checked = false;
+            input.setAttribute("aria-checked", "false");
+          }
+          selectedTime = null;
+        }
+      });
+      checkFormCompletion();
+    });
+  }
+
   let carouselStartDate = new Date(astToday);
   carouselStartDate.setDate(carouselStartDate.getDate() - 7);
   let carouselEndDate = new Date(astToday);
@@ -113,6 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle available date selection
     selectedDate = isoDate;
     updateDateSelection();
+    refreshLiveSlots();
   }
 
   function showUnavailableMessage(isoDate) {
@@ -911,6 +981,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Check form completion to update button state
             checkFormCompletion();
+
+            // Replace the static grid state with live availability
+            refreshLiveSlots();
           }
         });
       });

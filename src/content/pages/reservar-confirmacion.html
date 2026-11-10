@@ -30,13 +30,13 @@ permalink: "/reservar/confirmacion/"
 
                 <!-- Heading -->
                 <div class="confirmacion-heading">
-                    <span class="confirmacion-status-badge">
+                    <span class="confirmacion-status-badge" id="confirmacion-status-badge">
                         <span class="confirmacion-status-dot"></span>
                         Pendiente de confirmación
                     </span>
-                    <h1 class="confirmacion-title">¡Tu cita fue recibida!</h1>
-                    <p class="confirmacion-subtitle">Hemos recibido tu solicitud de cita. En breve nos pondremos en contacto contigo para confirmar la fecha y hora seleccionadas.</p>
-                    <p class="confirmacion-subtitle">Hemos enviado un resumen de tu cita a <strong>tu correo electrónico</strong>.</p>
+                    <h1 class="confirmacion-title" id="confirmacion-title">¡Tu cita fue recibida!</h1>
+                    <p class="confirmacion-subtitle" id="confirmacion-subtitle-1">Hemos recibido tu solicitud de cita. En breve nos pondremos en contacto contigo para confirmar la fecha y hora seleccionadas.</p>
+                    <p class="confirmacion-subtitle" id="confirmacion-subtitle-2">Hemos enviado un resumen de tu cita a <strong>tu correo electrónico</strong>.</p>
                 </div>
 
                 <!-- Booking Summary Card -->
@@ -285,7 +285,69 @@ permalink: "/reservar/confirmacion/"
             }
         }
 
+        // --- New-engine states (Phase 3) ---
+        // Arriving from the "Confirmar mi cita" email link (?estado=...)
+        // or right after a new-engine submit (sessionStorage result).
+        function applyBookingState() {
+            const params = new URLSearchParams(window.location.search);
+            const estado = params.get('estado');
+            const ref = params.get('ref');
+            const badge = document.getElementById('confirmacion-status-badge');
+            const title = document.getElementById('confirmacion-title');
+            const sub1 = document.getElementById('confirmacion-subtitle-1');
+            const sub2 = document.getElementById('confirmacion-subtitle-2');
+            function setBadge(text) {
+                if (badge) badge.innerHTML = '<span class="confirmacion-status-dot"></span> ' + text;
+            }
+
+            if (estado) {
+                // Email-link landing: without local booking data the
+                // summary card would show empty placeholders — hide it.
+                if (!BookingStorage.get()) {
+                    const card = document.getElementById('confirmacion-summary-card');
+                    if (card) card.style.display = 'none';
+                }
+                if (estado === 'confirmada') {
+                    setBadge('Cita confirmada');
+                    if (title) title.textContent = '¡Tu cita está confirmada!';
+                    if (sub1) sub1.textContent = 'Tu cita quedó confirmada' + (ref ? ` (referencia ${ref})` : '') + '. Te esperamos en el centro.';
+                    if (sub2) sub2.textContent = 'Si necesitas cambiar o cancelar, entra a Mi Cuenta o responde al correo de tu cita.';
+                    return;
+                }
+                if (estado === 'expirada') {
+                    setBadge('Enlace vencido');
+                    if (title) title.textContent = 'El enlace de confirmación venció';
+                    if (sub1) sub1.textContent = 'El espacio que apartaste se liberó porque la cita no se confirmó a tiempo.';
+                    if (sub2) sub2.textContent = 'Puedes reservar de nuevo desde Reservar, o llamarnos y con gusto te ayudamos.';
+                    return;
+                }
+                setBadge('Enlace no válido');
+                if (title) title.textContent = 'Este enlace no es válido';
+                if (sub1) sub1.textContent = 'El enlace de confirmación no se reconoce. Si tu cita ya fue confirmada, no necesitas hacer nada más.';
+                if (sub2) sub2.textContent = 'Ante cualquier duda, contáctanos y con gusto te ayudamos.';
+                return;
+            }
+
+            // Landing right after submitting through the new engine
+            let result = null;
+            try { result = JSON.parse(sessionStorage.getItem('cristabel_result') || 'null'); } catch (e) {}
+            if (result && result.status === 'por_confirmar') {
+                setBadge('Falta confirmar tu cita');
+                if (title) title.textContent = '¡Tu cita está apartada!';
+                let expiryText = '';
+                if (result.confirmationExpiresAt) {
+                    const exp = new Date(result.confirmationExpiresAt);
+                    expiryText = ' Tienes hasta el ' + exp.toLocaleString('es-DO', { timeZone: 'America/Santo_Domingo', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }) + ' para confirmarla.';
+                }
+                if (sub1) sub1.textContent = 'Te enviamos un correo con el botón «Confirmar mi cita». Tu espacio queda apartado solo hasta que confirmes.' + expiryText;
+                if (sub2) sub2.textContent = 'Referencia de tu cita: ' + (result.referenceCode || '') + '. Si no confirmas a tiempo, el espacio se libera automáticamente.';
+            }
+            sessionStorage.removeItem('cristabel_result');
+            sessionStorage.removeItem('cristabel_idem');
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            applyBookingState();
             populateSummary();
             // Clear booking data after reading it for the summary
             // Small delay so data is read first

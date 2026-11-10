@@ -176,6 +176,7 @@ permalink: "/reservar/datos/"
         </div>
     </section>
 
+    <script src="/assets/js/booking-api.js"></script>
     <script>
         // BookingStorage object for managing booking data
         const BookingStorage = {
@@ -474,6 +475,62 @@ permalink: "/reservar/datos/"
             if (continueBtnMobile) continueBtnMobile.disabled = true;
 
             try {
+                // --- New booking engine first (Phase 3) ---
+                // The booking is created in the database (with conflict
+                // checking) and the engine sends the emails. The legacy
+                // email-only flow below remains as the fallback until
+                // the Phase 7 cutover.
+                if (window.BookingAPI) {
+                    const servicesMap = BookingStorage.getServices();
+                    const items = Object.keys(servicesMap).map((slug) => ({
+                        slug,
+                        quantity: servicesMap[slug].quantity || 1,
+                    }));
+                    const rawDate = sessionStorage.getItem('bookingDate');
+                    const rawTime = sessionStorage.getItem('bookingTime');
+                    const dateISO = rawDate ? rawDate.split('T')[0] : null;
+                    const startTime = window.BookingAPI.to24h(rawTime);
+                    if (items.length && dateISO && startTime) {
+                        let idemKey = sessionStorage.getItem('cristabel_idem');
+                        if (!idemKey) {
+                            idemKey = (window.crypto && crypto.randomUUID)
+                                ? crypto.randomUUID()
+                                : 'idem-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+                            sessionStorage.setItem('cristabel_idem', idemKey);
+                        }
+                        try {
+                            const created = await window.BookingAPI.createBooking({
+                                name: `${firstName} ${lastName}`,
+                                email,
+                                phone,
+                                note,
+                                items,
+                                date: dateISO,
+                                startTime,
+                                idempotencyKey: idemKey,
+                            });
+                            if (created.ok) {
+                                sessionStorage.setItem('cristabel_result', JSON.stringify(created.data));
+                                sessionStorage.removeItem('cristabel_idem');
+                                window.location.href = '/reservar/confirmacion/';
+                                return;
+                            }
+                            if (created.status === 409) {
+                                sessionStorage.removeItem('cristabel_idem');
+                                alert('Ese horario acaba de ocuparse. Por favor elige otra hora.');
+                                if (confirmBtn) confirmBtn.disabled = false;
+                                if (continueBtnMobile) continueBtnMobile.disabled = false;
+                                window.location.href = '/reservar/fecha-hora/';
+                                return;
+                            }
+                            console.warn('Booking engine rejected the request; falling back to the email flow:', created);
+                        } catch (engineError) {
+                            console.warn('Booking engine unreachable; falling back to the email flow:', engineError);
+                        }
+                    }
+                }
+
+                // --- Legacy fallback: email-only flow ---
                 const response = await fetch('/.netlify/functions/send-booking-email', {
                     method: 'POST',
                     headers: {
