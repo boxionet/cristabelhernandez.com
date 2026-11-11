@@ -34,7 +34,7 @@ export default function ClienteDetalle() {
   if (!patient) {
     return (
       <section className="card empty">
-        <p>No encontramos este cliente.</p>
+        <p>No encontramos este paciente.</p>
         <Link className="btn ghost" to="/panel/pacientes">
           Volver a pacientes
         </Link>
@@ -106,7 +106,7 @@ export default function ClienteDetalle() {
           </AsyncButton>
           {saved && <span className="success">Guardado.</span>}
           <Link className="btn ghost small" to={`/panel/nueva-cita?paciente=${patient.id}`}>
-            Nueva cita para este cliente
+            Nueva cita para este paciente
           </Link>
         </div>
       </section>
@@ -114,7 +114,7 @@ export default function ClienteDetalle() {
       <h2 className="section-title">Historial de citas</h2>
       {own.length === 0 && (
         <section className="card empty">
-          <p>Este cliente aún no tiene citas.</p>
+          <p>Este paciente aún no tiene citas.</p>
         </section>
       )}
       {own
