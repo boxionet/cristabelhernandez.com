@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import type { IconType } from "react-icons";
 import { FiCalendar, FiClock, FiLogOut, FiTag, FiUser } from "react-icons/fi";
 import { useAuth } from "../auth";
+import UserMenu from "./UserMenu";
 
 const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
   { to: "/mi-cuenta/", label: "Mis Citas", icon: FiCalendar, end: true },
@@ -14,7 +15,6 @@ const LOGO_URL = "/assets/svgs/cristabel_logo_horizontal.svg";
 
 export default function Layout() {
   const { patient, signOut } = useAuth();
-  const firstName = (patient?.fullName || "").split(" ")[0] || "";
 
   return (
     <div className="shell">
@@ -45,17 +45,11 @@ export default function Layout() {
       <div className="main">
         <header className="topbar">
           <span className="topbar-title">Mi Cuenta</span>
-          {firstName && (
-            <span className="user-identity">
-              <span className="avatar" aria-hidden>
-                {firstName.charAt(0).toUpperCase()}
-              </span>
-              <span className="user-meta">
-                <span className="user-name">{firstName}</span>
-                <small className="user-role-text">Paciente</small>
-              </span>
-            </span>
-          )}
+          <UserMenu
+            mode="patient"
+            fullName={patient?.fullName ?? ""}
+            email={patient?.email ?? ""}
+          />
         </header>
         <main className="content">
           <Outlet />

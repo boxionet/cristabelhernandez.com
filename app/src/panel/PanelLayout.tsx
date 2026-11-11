@@ -11,6 +11,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { useAuth } from "../auth";
+import UserMenu from "../components/UserMenu";
 import { clinicToday } from "../lib/panel";
 import {
   usePanelAppointments,
@@ -49,8 +50,6 @@ export default function PanelLayout() {
     (profile.isLoading
       ? ""
       : profile.data || (user?.email ? user.email.split("@")[0] : ""));
-  const firstName = fullName.trim().split(/\s+/)[0] || "";
-  const initial = (firstName.charAt(0) || "?").toUpperCase();
 
   const today = clinicToday();
   const todayCount = (appointments ?? []).filter(
@@ -96,17 +95,7 @@ export default function PanelLayout() {
       <div className="main">
         <header className="topbar">
           <span className="topbar-spacer" />
-          {firstName && (
-            <span className="user-identity">
-              <span className="avatar" aria-hidden>
-                {initial}
-              </span>
-              <span className="user-meta">
-                <span className="user-name">{firstName}</span>
-                <small className="user-role-text">Admin</small>
-              </span>
-            </span>
-          )}
+          <UserMenu mode="panel" fullName={fullName} email={user?.email ?? ""} />
           <button
             type="button"
             className="topbar-signout"
