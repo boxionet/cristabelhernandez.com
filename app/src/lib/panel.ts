@@ -114,7 +114,7 @@ export async function markNoShow(appt: PanelAppointment): Promise<void> {
 
 // Staff confirms a hold (e.g. the patient confirmed by phone):
 // patient find-or-create by email, and the cita lands in 'confirmada'
-// — a staff decision IS the approval, so no second Aprobar step.
+// — a staff decision IS the confirmation, so no second Confirmar step.
 export async function confirmHold(appt: PanelAppointment): Promise<void> {
   let patientId = appt.patient_id;
   if (!patientId && appt.guest_email) {

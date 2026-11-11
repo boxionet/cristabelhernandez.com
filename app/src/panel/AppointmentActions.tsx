@@ -22,7 +22,7 @@ import { useToast } from "../components/Toast";
 // approval model): the everyday actions sit in the row; the
 // rare/destructive ones live in the "···" overflow menu.
 //   por_confirmar: Confirmar (+ Liberar in the menu)
-//   pendiente:     Aprobar (+ Mover, Tratamientos; No aprobar in the menu)
+//   pendiente:     Confirmar (+ Mover, Tratamientos; No confirmar in the menu)
 //   confirmada:    Completar, Marcar pagado, Mover, Tratamientos
 //                  (+ No asistió, Cancelar in the menu)
 export default function AppointmentActions({
@@ -112,11 +112,11 @@ export default function AppointmentActions({
             const r = await decideAppointment(appt.id, "approve");
             toast.success(
               r.emailSent
-                ? "Cita aprobada — la paciente recibió la confirmación"
-                : "Cita aprobada, pero no se pudo enviar el correo de confirmación.",
+                ? "Cita confirmada — la paciente recibió la confirmación"
+                : "Cita confirmada, pero no se pudo enviar el correo de confirmación.",
             );
           })}>
-            Aprobar
+            Confirmar
           </button>
           <button type="button" className="btn ghost small" disabled={busy} onClick={() => setRescheduling(true)}>
             Mover
@@ -191,7 +191,7 @@ export default function AppointmentActions({
                       setConfirmModal("reject");
                     }}
                   >
-                    <FiXCircle aria-hidden /> No aprobar
+                    <FiXCircle aria-hidden /> No confirmar
                   </button>
                 )}
                 {isConfirmed && (
@@ -255,10 +255,10 @@ export default function AppointmentActions({
           className="modal-card"
           role="dialog"
           aria-modal="true"
-          aria-label={confirmModal === "reject" ? "No aprobar cita" : "Cancelar cita"}
+          aria-label={confirmModal === "reject" ? "No confirmar cita" : "Cancelar cita"}
           onClick={(e) => e.stopPropagation()}
         >
-          <h3>{confirmModal === "reject" ? "¿No aprobar esta cita?" : "¿Cancelar esta cita?"}</h3>
+          <h3>{confirmModal === "reject" ? "¿No confirmar esta cita?" : "¿Cancelar esta cita?"}</h3>
           <p className="modal-appt">
             <strong>{displayName(appt)}</strong> · {formatDateEs(appt.date)} ·{" "}
             {formatTime12h(appt.start_time)}
@@ -268,7 +268,7 @@ export default function AppointmentActions({
           </p>
           <p className="muted">
             {confirmModal === "reject"
-              ? "La cita se marcará como cancelada, el horario quedará libre y la paciente recibirá un correo avisándole que su solicitud no fue aprobada."
+              ? "La cita se marcará como cancelada, el horario quedará libre y la paciente recibirá un correo avisándole que su solicitud no fue confirmada."
               : "La cita se marcará como cancelada y el horario quedará libre."}
           </p>
           <div className="modal-actions">
@@ -291,8 +291,8 @@ export default function AppointmentActions({
                     setConfirmModal(null);
                     toast.success(
                       r.emailSent
-                        ? "Cita no aprobada — la paciente recibió el aviso"
-                        : "Cita no aprobada, pero no se pudo enviar el correo de aviso.",
+                        ? "Cita no confirmada — la paciente recibió el aviso"
+                        : "Cita no confirmada, pero no se pudo enviar el correo de aviso.",
                     );
                   } else {
                     await updateAppointment(appt.id, { status: "cancelada" });
@@ -301,7 +301,7 @@ export default function AppointmentActions({
                 }, confirmModal === "reject" ? undefined : "Cita cancelada")
               }
             >
-              {confirmModal === "reject" ? "Sí, no aprobar" : "Sí, cancelar"}
+              {confirmModal === "reject" ? "Sí, no confirmar" : "Sí, cancelar"}
             </button>
           </div>
         </div>

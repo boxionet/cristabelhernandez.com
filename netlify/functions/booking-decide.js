@@ -45,8 +45,8 @@ exports.handler = async (event) => {
     if (body.action === "reject") {
       const prev = (appointment.internal_notes || "").trim();
       patch.internal_notes = prev
-        ? `${prev}\nNo aprobada por el centro.`
-        : "No aprobada por el centro.";
+        ? `${prev}\nNo confirmada por el centro.`
+        : "No confirmada por el centro.";
     }
     const { error: updateError } = await supabase
       .from("appointments")

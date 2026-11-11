@@ -12,7 +12,7 @@ import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonForm } from "../components/Skeleton";
 
 export default function NuevaCita() {
-  const { patients, services, error } = usePanelData();
+  const { patients, services, error, reload } = usePanelData();
   const [params] = useSearchParams();
   const [patientId, setPatientId] = useState<string>(params.get("paciente") ?? "nuevo");
   const [fullName, setFullName] = useState("");
@@ -87,6 +87,9 @@ export default function NuevaCita() {
           source,
           note,
         });
+      // Refresh the Panel cache now, so Citas/Agenda show the new
+      // cita immediately instead of serving the 30s-stale list.
+      reload();
       // With an email the booking is a hold until the patient clicks
       // the confirmation link; without one it is already confirmed.
       // A failed email send must not fail the booking — the Dra can

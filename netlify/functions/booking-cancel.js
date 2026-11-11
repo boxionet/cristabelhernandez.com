@@ -1,9 +1,9 @@
 // Patient-initiated cancellation (manage token or owning session).
 // Enforces the settled 24-hour window; staff override lives in the
 // Panel. POST JSON: { manageToken } or { appointmentId } + session.
-const { serviceClient, json } = require("./_booking/supabase");
+const { serviceClient, json, siteOrigin } = require("./_booking/supabase");
 const { resolveAppointment, outsideWindow, FINAL_STATUSES } = require("./_booking/manage");
-const { sendSimpleEmail, OWNER_EMAIL } = require("./_booking/email");
+const { sendCancellationNotice } = require("./_booking/email");
 const { formatDateEs, formatTime12h } = require("./_booking/time");
 
 exports.handler = async (event) => {
@@ -32,10 +32,10 @@ exports.handler = async (event) => {
     if (error) throw error;
 
     const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(String(appointment.start_time).slice(0, 5))}`;
-    await sendSimpleEmail({
-      to: OWNER_EMAIL,
-      subject: `Cita cancelada — ${appointment.reference_code}`,
-      text: `La paciente canceló su cita ${appointment.reference_code} (${when}) desde el enlace de su correo o su cuenta. El espacio quedó libre.`,
+    await sendCancellationNotice({
+      appointment,
+      when,
+      panelUrl: `${siteOrigin(event)}/panel/`,
     });
 
     return json(200, { referenceCode: appointment.reference_code, status: "cancelada" });
