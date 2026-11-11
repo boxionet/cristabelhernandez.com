@@ -63,7 +63,13 @@ export default function ReschedulePanel({
     setError(null);
     try {
       await rescheduleAppointment(session.access_token, appointment.id, date, picked);
-      toast.success("Cita reprogramada");
+      // Approval model: moving an approved cita voids the approval, so
+      // the patient must hear that it now waits for the Dra again.
+      toast.success(
+        appointment.status === "confirmada"
+          ? "Cita reprogramada — queda pendiente de aprobación por el centro"
+          : "Cita reprogramada",
+      );
       onDone();
     } catch (e) {
       setError(errorText(e));

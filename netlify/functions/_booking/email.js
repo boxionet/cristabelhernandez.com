@@ -85,7 +85,15 @@ function resendClient() {
 
 // Sends the pair of emails for a new booking. Never throws: a failed
 // email must not fail a booking that already exists in the database.
-async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl }) {
+//
+// Approval model: nothing sent before approval carries a calendar
+// invite — the patient must not treat a pending request as booked.
+// The approval email (sendApprovalEmail) is the one with the .ics and
+// the Google Calendar link. Verified bookings have no guest_email, so
+// today the patient email below only fires for guest holds; verified
+// patients learn their request is pending from the confirmation page
+// and from the approval email.
+async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl, verifiedName, verifiedEmail }) {
   const resend = resendClient();
   const isGuest = appointment.status === "por_confirmar";
   const patientEmail = appointment.guest_email || null;
@@ -95,13 +103,16 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl 
 
   // --- Clinic notification ---
   try {
+    const ownerEmail = patientEmail || verifiedEmail || OWNER_EMAIL;
     await resend.emails.send({
       from: FROM_EMAIL,
       to: OWNER_EMAIL,
-      reply_to: patientEmail || OWNER_EMAIL,
-      subject: `${isGuest ? "Nueva cita POR CONFIRMAR" : "Nueva cita"} — ${appointment.reference_code}`,
+      reply_to: ownerEmail,
+      subject: `${isGuest ? "Nueva cita POR CONFIRMAR" : "Nueva cita por aprobar"} — ${appointment.reference_code}`,
       text: [
-        `Nueva cita desde la web (${isGuest ? "por confirmar — la paciente aún no confirma su correo" : "paciente verificada"}).`,
+        isGuest
+          ? "Nueva cita desde la web (por confirmar — la paciente aún no confirma su correo)."
+          : "Nueva cita desde la web (paciente verificada — pendiente de aprobación en el Panel).",
         ``,
         `Referencia: ${appointment.reference_code}`,
         `Fecha: ${when}`,
@@ -109,8 +120,8 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl 
         itemsListText(items),
         `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
         ``,
-        `Paciente: ${appointment.guest_name || "(ver en el Panel)"}`,
-        patientEmail ? `Correo: ${patientEmail}` : "",
+        `Paciente: ${appointment.guest_name || verifiedName || "(ver en el Panel)"}`,
+        ownerEmail !== OWNER_EMAIL ? `Correo: ${ownerEmail}` : "",
         appointment.guest_phone ? `Teléfono: ${appointment.guest_phone}` : "",
       ]
         .filter(Boolean)
@@ -121,28 +132,19 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl 
     console.error("owner email failed", e);
   }
 
-  // --- Patient email ---
+  // --- Patient email (guest holds only: verified bookings carry no guest_email) ---
   if (patientEmail) {
     try {
-      const summary = `Cita — ${CLINIC_NAME}`;
-      const ics = buildIcs({ appointment, summary });
-      const gcal = googleCalendarUrl({ appointment, summary });
-      const confirmBlock = isGuest
-        ? `\nIMPORTANTE: tu cita está apartada pero aún NO está confirmada.\nConfírmala aquí antes de que expire el plazo: ${confirmUrl}\nSi no la confirmas, el espacio se libera automáticamente.\n`
-        : "";
+      const confirmBlock = `\nIMPORTANTE: tu cita está apartada pero aún NO está confirmada.\nConfírmala aquí antes de que expire el plazo: ${confirmUrl}\nSi no la confirmas, el espacio se libera automáticamente.\n`;
       const { data } = await resend.emails.send({
         from: FROM_EMAIL,
         to: patientEmail,
         reply_to: OWNER_EMAIL,
-        subject: isGuest
-          ? `Confirma tu cita — ${appointment.reference_code}`
-          : `Tu cita está registrada — ${appointment.reference_code}`,
+        subject: `Confirma tu cita — ${appointment.reference_code}`,
         text: [
           `Hola,`,
           ``,
-          isGuest
-            ? `Recibimos tu solicitud de cita en ${CLINIC_NAME}.`
-            : `Tu cita en ${CLINIC_NAME} está registrada.`,
+          `Recibimos tu solicitud de cita en ${CLINIC_NAME}.`,
           ``,
           `Referencia: ${appointment.reference_code}`,
           `Fecha: ${when}`,
@@ -151,18 +153,9 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl 
           `${totalLabel}: ${formatPrice(appointment.total_price)}`,
           `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
           confirmBlock,
-          `Agregar a tu calendario: ${gcal}`,
-          `También adjuntamos un archivo .ics para Apple Calendario, Outlook, etc.`,
-          ``,
           `Puedes ver y administrar tus citas en: ${portalUrl}`,
           `Si necesitas cambiar o cancelar, hazlo desde tu cuenta o responde a este correo.`,
         ].join("\n"),
-        attachments: [
-          {
-            filename: `cita-${appointment.reference_code}.ics`,
-            content: Buffer.from(ics).toString("base64"),
-          },
-        ],
       });
       results.patient = Boolean(data);
     } catch (e) {
@@ -170,6 +163,121 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl 
     }
   }
   return results;
+}
+
+// The Dra approved a pending request: THIS is the confirmation the
+// patient receives, with the calendar invite attached.
+async function sendApprovalEmail({ appointment, items, portalUrl, to }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const summary = `Cita — ${CLINIC_NAME}`;
+    const ics = buildIcs({ appointment, summary });
+    const gcal = googleCalendarUrl({ appointment, summary });
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      reply_to: OWNER_EMAIL,
+      subject: `Tu cita está confirmada — ${appointment.reference_code}`,
+      text: [
+        `Hola,`,
+        ``,
+        `¡Tu cita en ${CLINIC_NAME} está confirmada! Te esperamos.`,
+        ``,
+        `Referencia: ${appointment.reference_code}`,
+        `Fecha: ${when}`,
+        `Servicios:`,
+        itemsListText(items),
+        `${totalLabel}: ${formatPrice(appointment.total_price)}`,
+        `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
+        ``,
+        `Agregar a tu calendario: ${gcal}`,
+        `También adjuntamos un archivo .ics para Apple Calendario, Outlook, etc.`,
+        ``,
+        `Puedes ver y administrar tus citas en: ${portalUrl}`,
+        `Si necesitas cambiar o cancelar, hazlo desde tu cuenta hasta 24 horas antes, o responde a este correo.`,
+      ].join("\n"),
+      attachments: [
+        {
+          filename: `cita-${appointment.reference_code}.ics`,
+          content: Buffer.from(ics).toString("base64"),
+        },
+      ],
+    });
+    return true;
+  } catch (e) {
+    console.error("approval email failed", e);
+    return false;
+  }
+}
+
+// The Dra did not approve a pending request: the patient hears it from
+// the clinic, with a way to find another date.
+async function sendRejectionEmail({ appointment, items, portalUrl, to }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      reply_to: OWNER_EMAIL,
+      subject: `Tu solicitud de cita no fue aprobada — ${appointment.reference_code}`,
+      text: [
+        `Hola,`,
+        ``,
+        `Lamentamos informarte que tu solicitud de cita en ${CLINIC_NAME} no pudo ser aprobada para la fecha solicitada:`,
+        ``,
+        `Referencia: ${appointment.reference_code}`,
+        `Fecha solicitada: ${when}`,
+        `Servicios:`,
+        itemsListText(items),
+        ``,
+        `Puedes reservar otra fecha desde ${portalUrl} o llamarnos al (829) 316-3313 y con gusto buscamos otro horario para ti.`,
+      ].join("\n"),
+    });
+    return true;
+  } catch (e) {
+    console.error("rejection email failed", e);
+    return false;
+  }
+}
+
+// A staff-created booking with an email: the patient confirms through
+// the same tokenized link as a guest hold. No calendar invite — the
+// booking is not confirmed until she clicks.
+async function sendConfirmationRequestEmail({ appointment, items, confirmUrl, portalUrl, to }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      reply_to: OWNER_EMAIL,
+      subject: `Confirma tu cita — ${appointment.reference_code}`,
+      text: [
+        `Hola,`,
+        ``,
+        `${CLINIC_NAME} registró una cita para ti. Por favor confírmala en este enlace antes de que expire el plazo:`,
+        `${confirmUrl}`,
+        `Si no la confirmas, el espacio se libera automáticamente.`,
+        ``,
+        `Referencia: ${appointment.reference_code}`,
+        `Fecha: ${when}`,
+        `Servicios:`,
+        itemsListText(items),
+        `${totalLabel}: ${formatPrice(appointment.total_price)}`,
+        `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
+        ``,
+        `Puedes ver y administrar tus citas en: ${portalUrl}`,
+      ].join("\n"),
+    });
+    return true;
+  } catch (e) {
+    console.error("confirmation-request email failed", e);
+    return false;
+  }
 }
 
 // 24-hour reminder (plan §5): date/time, the cash total due at the
@@ -223,6 +331,9 @@ module.exports = {
   FROM_EMAIL,
   formatPrice,
   sendNewBookingEmails,
+  sendApprovalEmail,
+  sendRejectionEmail,
+  sendConfirmationRequestEmail,
   sendReminderEmail,
   sendSimpleEmail,
 };

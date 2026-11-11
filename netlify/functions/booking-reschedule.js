@@ -32,9 +32,16 @@ exports.handler = async (event) => {
     if (outsideWindow(appointment))
       return json(403, { error: "outside_window" });
 
+    // Approval model: moving a Dra-approved cita to a new slot voids
+    // the approval — the new slot goes back to 'pendiente' for the Dra
+    // to approve again. Holds and pending requests keep their status.
+    const patch = { date: body.newDate, start_time: body.newStartTime };
+    const wasApproved = appointment.status === "confirmada";
+    if (wasApproved) patch.status = "pendiente";
+
     const { data: updated, error } = await supabase
       .from("appointments")
-      .update({ date: body.newDate, start_time: body.newStartTime })
+      .update(patch)
       .eq("id", appointment.id)
       .select()
       .single();
@@ -48,7 +55,9 @@ exports.handler = async (event) => {
     await sendSimpleEmail({
       to: OWNER_EMAIL,
       subject: `Cita reprogramada — ${updated.reference_code}`,
-      text: `La cita ${updated.reference_code} se reprogramó para el ${when}.`,
+      text: wasApproved
+        ? `La cita ${updated.reference_code} se reprogramó para el ${when}. Como estaba confirmada, vuelve a pendiente y requiere aprobación en el Panel.`
+        : `La cita ${updated.reference_code} se reprogramó para el ${when}.`,
     });
 
     return json(200, {

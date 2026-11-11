@@ -30,7 +30,8 @@ root `package.json`, after the Eleventy build). Vite outputs to
 Migrations live in `supabase/migrations/` and are applied manually in
 the Supabase SQL Editor (project `bgahgawcjokcrpzkexvx`, us-east-1).
 001 schema + RLS · 002 seed (13 services, Mon–Fri 09:00–18:00) ·
-003 booking RPCs · 004 service sort_order fix · 005 reminder_sent_at.
+003 booking RPCs · 004 service sort_order fix · 005 reminder_sent_at ·
+006 approval model (confirm_booking: web -> pendiente, staff-created -> confirmada).
 
 ## Runbook
 
@@ -46,10 +47,28 @@ the Supabase SQL Editor (project `bgahgawcjokcrpzkexvx`, us-east-1).
   confirmation link; redirect allowlist = production
   `https://cristabelhernandez.com/**` (plus the Deploy Preview URL
   while testing — remove it at go-live).
+- **Approval model (2026-11-11)**: every online booking lands in
+  `pendiente` and waits for the Dra in Citas (Aprobar / No aprobar);
+  approval sends the patient the confirmation email with the calendar
+  invite, rejection cancels + emails the patient. The decision runs
+  through `booking-decide` (admin session required) so the status
+  change and the email happen together. Guest holds confirmed via
+  the email link become `pendiente`; staff-created holds (manual
+  booking with an email, via `booking-request-confirmation`) resolve
+  straight to `confirmada` — the Dra already decided by creating
+  them; manual bookings without an email are `confirmada` at once.
+  Panel Confirmar on a hold is the approval itself (`confirmada`).
+  A patient rescheduling a `confirmada` cita drops it back to
+  `pendiente` (staff moves keep the status). Nothing sent before
+  approval carries a calendar invite. `booking-confirm` maps the RPC
+  outcome to the confirmation page's `estado` values (`confirmada` /
+  `pendiente` / `expirada` / invalid) — the raw RPC values never
+  matched the page, a latent Phase 3 bug fixed with this model.
 - **Scheduled functions**: `booking-sweep` every 15 min purges
   expired unconfirmed holds; `booking-reminders` hourly emails the
-  24 h reminder (citas starting in 23–25 h, once each, tracked by
-  `appointments.reminder_sent_at`). Scheduled functions only run on
+  24 h reminder for `confirmada` citas only (starting in 23–25 h,
+  once each, tracked by `appointments.reminder_sent_at` — pending
+  requests are never reminded). Scheduled functions only run on
   the production deploy; a manual POST runs the same handler (used
   for tests on previews).
 - **Bot protection**: guest `booking-create` calls must carry an

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAvailability } from "../lib/queries/availability";
+import { requestConfirmation } from "../lib/api";
 import { formatPrice, formatTime12h } from "../lib/format";
 import {
   clinicToday,
@@ -24,7 +25,11 @@ export default function NuevaCita() {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [done, setDone] = useState<string | null>(null);
+  const [done, setDone] = useState<{
+    referenceCode: string;
+    emailState: "sent" | "failed" | "none";
+    email: string;
+  } | null>(null);
 
   const activeServices = (services ?? []).filter((s) => s.active);
   const items = useMemo(
@@ -69,18 +74,33 @@ export default function NuevaCita() {
     }
     setBusy(true);
     try {
-      const { referenceCode } = await createManualBooking({
-        patientId: existing ? existing.id : null,
-        fullName: existing ? existing.full_name : fullName,
-        email: existing ? existing.email : email,
-        phone: existing ? (existing.phone ?? "") : phone,
-        items,
-        date,
-        startTime,
-        source,
-        note,
-      });
-      setDone(referenceCode);
+      const effectiveEmail = existing ? existing.email : email.trim();
+      const { referenceCode, appointmentId, needsConfirmation } =
+        await createManualBooking({
+          patientId: existing ? existing.id : null,
+          fullName: existing ? existing.full_name : fullName,
+          email: existing ? existing.email : email,
+          phone: existing ? (existing.phone ?? "") : phone,
+          items,
+          date,
+          startTime,
+          source,
+          note,
+        });
+      // With an email the booking is a hold until the patient clicks
+      // the confirmation link; without one it is already confirmed.
+      // A failed email send must not fail the booking — the Dra can
+      // still confirm it from Citas, and the success screen says so.
+      let emailState: "sent" | "failed" | "none" = "none";
+      if (needsConfirmation) {
+        try {
+          const r = await requestConfirmation(appointmentId);
+          emailState = r.sent ? "sent" : "failed";
+        } catch {
+          emailState = "failed";
+        }
+      }
+      setDone({ referenceCode, emailState, email: effectiveEmail });
     } catch (e) {
       const key = e instanceof Error ? e.message : "";
       setFormError(
@@ -100,8 +120,13 @@ export default function NuevaCita() {
       <section className="card empty">
         <h2 className="section-title">Cita creada</h2>
         <p>
-          Referencia <strong>{done}</strong> · {formatPrice(total)} · queda
-          confirmada de inmediato (sin paso de confirmación por correo).
+          Referencia <strong>{done.referenceCode}</strong> · {formatPrice(total)}
+          {done.emailState === "sent" &&
+            ` · enviamos un correo a ${done.email} para que la paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
+          {done.emailState === "failed" &&
+            " · no pudimos enviar el correo de confirmación. Puedes confirmar la cita desde Citas."}
+          {done.emailState === "none" &&
+            " · queda confirmada de inmediato (sin correo para confirmar)."}
         </p>
         <Link className="btn primary" to="/panel/agenda">
           Ver la agenda
@@ -109,6 +134,11 @@ export default function NuevaCita() {
       </section>
     );
   }
+
+  const selectedExisting = patients?.find((p) => p.id === patientId);
+  const willRequestConfirmation = selectedExisting
+    ? true
+    : email.trim() !== "";
 
   return (
     <>
@@ -142,7 +172,7 @@ export default function NuevaCita() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Si lo da, su cuenta queda enlazada"
+                placeholder="Si lo da, la paciente recibe un correo para confirmar su cita"
               />
             </label>
           </div>
@@ -253,6 +283,8 @@ export default function NuevaCita() {
             <>
               <span className="spinner" aria-hidden /> Creando…
             </>
+          ) : willRequestConfirmation ? (
+            "Crear cita y enviar confirmación"
           ) : (
             "Crear cita confirmada"
           )}

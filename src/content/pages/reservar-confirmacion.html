@@ -314,6 +314,16 @@ permalink: "/reservar/confirmacion/"
                     if (sub2) sub2.textContent = 'Si necesitas cambiar o cancelar, entra a Mi Cuenta o responde al correo de tu cita.';
                     return;
                 }
+                // Approval model: a web booking confirmed through the
+                // email link lands in 'pendiente' — the Dra still has
+                // to approve it before it is a booking.
+                if (estado === 'pendiente') {
+                    setBadge('Pendiente de aprobación');
+                    if (title) title.textContent = '¡Gracias por confirmar tu correo!';
+                    if (sub1) sub1.textContent = 'Tu cita' + (ref ? ` (referencia ${ref})` : '') + ' quedó registrada y pendiente de aprobación por el centro. Te enviaremos un correo cuando la doctora la apruebe.';
+                    if (sub2) sub2.textContent = 'Si necesitas cambiar o cancelar, entra a Mi Cuenta o contáctanos.';
+                    return;
+                }
                 if (estado === 'expirada') {
                     setBadge('Enlace vencido');
                     if (title) title.textContent = 'El enlace de confirmación venció';
