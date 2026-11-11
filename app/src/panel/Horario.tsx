@@ -125,38 +125,6 @@ export default function Horario() {
 
   return (
     <>
-      <h2 className="section-title">Horario semanal</h2>
-      <section className="card">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Día</th>
-              <th>Estado</th>
-              <th>Apertura</th>
-              <th>Cierre</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {ORDER.map((weekday) => {
-              const row = schedule.find((s) => s.weekday === weekday);
-              return row ? (
-                <ScheduleEditor
-                  key={weekday}
-                  row={row}
-                  onSaved={() => void reload()}
-                />
-              ) : null;
-            })}
-          </tbody>
-        </table>
-        <p className="muted">
-          La disponibilidad de la web se calcula con este horario: la última
-          cita puede empezar hasta que quepa su duración completa antes del
-          cierre.
-        </p>
-      </section>
-
       <h2 className="section-title">Días especiales (feriados, cierres, horarios cortos)</h2>
       <section className="card">
         {exceptions.length === 0 && (
@@ -223,6 +191,38 @@ export default function Horario() {
         <button type="button" className="btn primary" onClick={() => void addException()}>
           Agregar día especial
         </button>
+      </section>
+
+      <h2 className="section-title">Horario semanal</h2>
+      <section className="card">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Estado</th>
+              <th>Apertura</th>
+              <th>Cierre</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {ORDER.map((weekday) => {
+              const row = schedule.find((s) => s.weekday === weekday);
+              return row ? (
+                <ScheduleEditor
+                  key={weekday}
+                  row={row}
+                  onSaved={() => void reload()}
+                />
+              ) : null;
+            })}
+          </tbody>
+        </table>
+        <p className="muted">
+          La disponibilidad de la web se calcula con este horario: la última
+          cita puede empezar hasta que quepa su duración completa antes del
+          cierre.
+        </p>
       </section>
     </>
   );
