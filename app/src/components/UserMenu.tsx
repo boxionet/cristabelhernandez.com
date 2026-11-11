@@ -79,10 +79,12 @@ export default function UserMenu({
                 {initial}
               </span>
               <span className="um-head-text">
-                <span className="um-head-name">{fullName}</span>
+                <span className="um-head-row">
+                  <span className="um-head-name">{fullName}</span>
+                  <span className="um-tag">Admin</span>
+                </span>
                 <span className="um-head-email">{email}</span>
               </span>
-              <span className="um-tag">Admin</span>
             </div>
             <span className="um-sep" />
             <span className="um-label">Ver como</span>

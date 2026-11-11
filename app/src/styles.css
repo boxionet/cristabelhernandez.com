@@ -424,6 +424,14 @@ input:disabled {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.um-head-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.um-head-text {
+  flex: 1;
+}
 .um-tag {
   margin-left: auto;
   flex: none;
