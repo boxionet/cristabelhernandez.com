@@ -2112,23 +2112,32 @@ body #banner-712 {
         justify-content: center;
         /* prevent flexbox from squishing it */
         flex: none;
-        transition: background-color 0.2s;
+        transition:
+            background-color 0.3s,
+            border-color 0.3s,
+            color 0.3s;
 
         svg {
             width: calc(21 / 16 * 1rem);
             height: calc(21 / 16 * 1rem);
         }
 
+        /* Same hover as the Reservar Cita button: fills with the
+           brown #705d3f and the icon turns white. */
         &:hover {
-            background-color: rgba(132, 149, 115, 0.14);
+            background-color: #705d3f;
+            border-color: #705d3f;
+            color: #fff;
         }
     }
 }
 
+/* The account icon is desktop-only; on mobile and tablet the
+   Mi Cuenta text item lives in the hamburger menu instead. */
 @media only screen and (max-width: 1023.5px) {
     #cs-navigation {
         .cs-account-btn {
-            margin-left: calc(12 / 16 * 1rem);
+            display: none;
         }
     }
 }
