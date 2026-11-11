@@ -1255,12 +1255,13 @@
   display: flex;
   gap: 0.9rem;
   align-items: flex-end;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 .add-field {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  min-width: 0;
 }
 .add-field.grow {
   flex: 1 1 220px;
@@ -1275,6 +1276,14 @@
   flex-shrink: 0;
 }
 @media (max-width: 640px) {
+  .add-row {
+    flex-wrap: wrap;
+  }
+  .add-field.grow,
+  .add-field.mid,
+  .add-field.num {
+    flex: 1 1 140px;
+  }
   .next-row {
     flex-wrap: wrap;
   }
