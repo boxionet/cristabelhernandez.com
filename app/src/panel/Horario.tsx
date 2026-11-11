@@ -182,14 +182,14 @@ export default function Horario() {
           ))}
         </ul>
         <div className="form-grid">
-          <label>
+          <div className="field-like">
             Fecha
             <DatePicker
               value={date}
               onChange={setDate}
               placeholder="Elige la fecha"
             />
-          </label>
+          </div>
           <label>
             Motivo
             <input

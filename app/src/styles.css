@@ -146,6 +146,16 @@ label {
   font-weight: 600;
   color: var(--heading);
 }
+/* Same look as a label, for composite fields (e.g. the date picker)
+   whose control must not sit inside a real <label>. */
+.field-like {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--heading);
+}
 input,
 select {
   border: 1px solid #d7dccd;

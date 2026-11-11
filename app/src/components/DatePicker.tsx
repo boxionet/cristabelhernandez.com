@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 import MonthCalendar, { monthTitleOf } from "./MonthCalendar";
 import { formatDateEs } from "../lib/format";
@@ -20,6 +20,15 @@ export default function DatePicker({
   displayFormat?: (iso: string) => string;
 }) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open ]);
 
   const label = value
     ? (displayFormat?.(value) ??
