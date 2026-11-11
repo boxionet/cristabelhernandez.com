@@ -708,12 +708,29 @@ input:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.9rem;
 }
 .monthgrid .mg-head h3 {
   color: var(--heading);
-  font-size: 1.05rem;
-  text-transform: capitalize;
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.mg-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  cursor: pointer;
+  font: inherit;
+}
+.mg-arrow:hover {
+  background: #f3f4f6;
 }
 .mg-grid {
   display: grid;
@@ -723,10 +740,11 @@ input:disabled {
 .mg-tile {
   border: none;
   background: none;
-  border-radius: 10px;
-  padding: 0.6rem 0;
+  border-radius: 12px;
+  padding: 0.68rem 0;
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
+  font-weight: 500;
   color: var(--ink);
   text-align: center;
   cursor: pointer;
@@ -738,6 +756,28 @@ input:disabled {
   background: var(--sage);
   color: #fff;
   font-weight: 700;
+  box-shadow: 0 6px 14px rgba(132, 149, 115, 0.35);
+}
+.mg-foot {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.95rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f0f1ec;
+}
+.mg-chip {
+  border: none;
+  background: #f1f4ec;
+  color: var(--sage-deep);
+  border-radius: 999px;
+  padding: 0.38rem 0.8rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mg-chip:hover {
+  background: #e6ebdd;
 }
 .cal-count {
   font-size: 0.62rem;
@@ -784,10 +824,15 @@ input:disabled {
   z-index: 60;
   width: min(330px, calc(100vw - 16px));
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 18px 44px rgba(31, 41, 55, 0.18);
-  border: 1px solid #e5e7eb;
-  padding: 1rem;
+  border-radius: 20px;
+  box-shadow:
+    0 24px 60px rgba(31, 41, 55, 0.16),
+    0 4px 16px rgba(31, 41, 55, 0.06);
+  border: 1px solid #e7eae4;
+  padding: 1.15rem 1.15rem 1rem;
+}
+.datepicker-btn .dp-chevron {
+  color: #9ca3af;
 }
 
 /* ---------- Responsive: small tablets & phones (shared + patient) ---------- */

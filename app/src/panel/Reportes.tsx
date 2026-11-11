@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { formatPrice, STATUS_LABELS } from "../lib/format";
 import { usePanelData } from "../lib/queries/panelQueries";
@@ -18,6 +18,8 @@ export default function Reportes() {
   const month = useAppSelector((s) => s.ui.reportMonth);
   const dispatch = useAppDispatch();
   const setMonth = (m: string) => dispatch(setReportMonth(m));
+  // The picker popover anchors to the whole segmented control.
+  const segRef = useRef<HTMLDivElement>(null);
 
   const data = useMemo(() => {
     if (!appointments) return null;
@@ -74,10 +76,10 @@ export default function Reportes() {
     <>
       <div className="reportes-head">
         <h2 className="section-title">Reportes</h2>
-        <div className="month-nav">
+        <div className="month-seg" ref={segRef}>
           <button
             type="button"
-            className="cal-arrow"
+            className="seg-step"
             aria-label="Mes anterior"
             onClick={() => setMonth(shiftMonthKey(month, -1))}
           >
@@ -85,13 +87,14 @@ export default function Reportes() {
           </button>
           <DatePicker
             mode="month"
+            anchorRef={segRef}
             value={`${month}-01`}
             onChange={(iso) => setMonth(iso.slice(0, 7))}
             displayFormat={formatMonthDisplay}
           />
           <button
             type="button"
-            className="cal-arrow"
+            className="seg-step"
             aria-label="Mes siguiente"
             onClick={() => setMonth(shiftMonthKey(month, 1))}
           >

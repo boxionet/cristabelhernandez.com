@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { clinicToday } from "../lib/panel";
 
 /** Spanish month abbreviations, first letter capitalized (owner's pick). */
 export const MONTHS_SHORT = [
@@ -38,6 +39,10 @@ export default function MonthGrid({
     : new Date().getFullYear();
   const [year, setYear] = useState(initialYear);
 
+  const thisYm = clinicToday().slice(0, 7);
+  const [ty, tm] = thisYm.split("-").map(Number);
+  const lastYm = new Date(Date.UTC(ty, tm - 2, 1)).toISOString().slice(0, 7);
+
   return (
     <div className="monthgrid">
       <div className="mg-head">
@@ -45,6 +50,7 @@ export default function MonthGrid({
         <div className="cal-nav">
           <button
             type="button"
+            className="mg-arrow"
             aria-label="Año anterior"
             onClick={() => setYear((y) => y - 1)}
           >
@@ -52,6 +58,7 @@ export default function MonthGrid({
           </button>
           <button
             type="button"
+            className="mg-arrow"
             aria-label="Año siguiente"
             onClick={() => setYear((y) => y + 1)}
           >
@@ -73,6 +80,22 @@ export default function MonthGrid({
             </button>
           );
         })}
+      </div>
+      <div className="mg-foot">
+        <button
+          type="button"
+          className="mg-chip"
+          onClick={() => onPick(`${thisYm}-01`)}
+        >
+          Este mes
+        </button>
+        <button
+          type="button"
+          className="mg-chip"
+          onClick={() => onPick(`${lastYm}-01`)}
+        >
+          Mes pasado
+        </button>
       </div>
     </div>
   );

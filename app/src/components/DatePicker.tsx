@@ -4,8 +4,9 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type RefObject,
 } from "react";
-import { FiCalendar } from "react-icons/fi";
+import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import MonthCalendar, { monthTitleOf } from "./MonthCalendar";
 import MonthGrid from "./MonthGrid";
 import { formatDateEs } from "../lib/format";
@@ -25,6 +26,7 @@ export default function DatePicker({
   placeholder = "Elige una fecha",
   displayFormat,
   mode = "day",
+  anchorRef,
 }: {
   value: string;
   onChange: (iso: string) => void;
@@ -32,6 +34,8 @@ export default function DatePicker({
   displayFormat?: (iso: string) => string;
   /** "day" shows the month calendar; "month" shows the year + month-tile grid. */
   mode?: "day" | "month";
+  /** Optional wider element the popover anchors to (e.g. a segmented control). */
+  anchorRef?: RefObject<HTMLElement | null>;
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
@@ -44,7 +48,7 @@ export default function DatePicker({
     const btn = btnRef.current;
     const pop = popRef.current;
     if (!btn || !pop) return;
-    const r = btn.getBoundingClientRect();
+    const r = (anchorRef?.current ?? btn).getBoundingClientRect();
     const pw = pop.offsetWidth;
     const ph = pop.offsetHeight;
     const vw = window.innerWidth;
@@ -58,7 +62,7 @@ export default function DatePicker({
     if (left + pw > vw - 8) left = r.right - pw; // keep inside the right edge
     left = Math.min(Math.max(8, left), Math.max(8, vw - pw - 8));
     setCoords({ top, left });
-  }, []);
+  }, [anchorRef]);
 
   useLayoutEffect(() => {
     if (open) {
@@ -98,6 +102,9 @@ export default function DatePicker({
       >
         <FiCalendar aria-hidden />
         <span>{label}</span>
+        {mode === "month" && (
+          <FiChevronDown className="dp-chevron" aria-hidden />
+        )}
       </button>
       {open && (
         <>
@@ -136,6 +143,7 @@ export default function DatePicker({
 }
 
 export function formatMonthDisplay(iso: string): string {
-  const t = monthTitleOf(iso.slice(0, 7));
+  // "noviembre de 2026" → "Noviembre 2026" (compact label for the pill control)
+  const t = monthTitleOf(iso.slice(0, 7)).replace(" de ", " ");
   return t.replace(/^./, (c) => c.toUpperCase());
 }
