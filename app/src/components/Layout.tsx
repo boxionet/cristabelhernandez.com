@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import type { IconType } from "react-icons";
-import { FiCalendar, FiClock, FiLogOut, FiPlus, FiTag, FiUser } from "react-icons/fi";
+import { FiCalendar, FiClock, FiLogOut, FiTag, FiUser } from "react-icons/fi";
 import { useAuth } from "../auth";
 
 const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
@@ -37,9 +37,6 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
-        <a className="nav-book" href="/reservar/">
-          <FiPlus aria-hidden /> Reservar una cita
-        </a>
         <button className="nav-signout" onClick={() => void signOut()}>
           <FiLogOut aria-hidden /> Cerrar sesión
         </button>

@@ -69,6 +69,28 @@ export default function Tratamientos() {
           </a>
         </section>
       )}
+      {list.length > 0 && (
+        <section className="treat-summary">
+          <div className="card kpi kpi-flex">
+            <span className="kpi-ic">
+              <FiCreditCard aria-hidden />
+            </span>
+            <span>
+              <span className="kpi-value">{formatPrice(totalSpent)}</span>
+              <span className="kpi-label">Invertido en tus tratamientos</span>
+            </span>
+          </div>
+          <div className="card kpi kpi-flex">
+            <span className="kpi-ic">
+              <FiTag aria-hidden />
+            </span>
+            <span>
+              <span className="kpi-value">{list.length}</span>
+              <span className="kpi-label">Tratamientos diferentes</span>
+            </span>
+          </div>
+        </section>
+      )}
       <section className="treat-grid">
         {list.map((t) => (
           <article key={t.name} className="card treat2">
@@ -105,29 +127,6 @@ export default function Tratamientos() {
           </article>
         ))}
       </section>
-
-      {list.length > 0 && (
-        <section className="kpis treat-summary">
-          <div className="card kpi kpi-flex">
-            <span className="kpi-ic">
-              <FiCreditCard aria-hidden />
-            </span>
-            <span>
-              <span className="kpi-value">{formatPrice(totalSpent)}</span>
-              <span className="kpi-label">Invertido en tus tratamientos</span>
-            </span>
-          </div>
-          <div className="card kpi kpi-flex">
-            <span className="kpi-ic">
-              <FiTag aria-hidden />
-            </span>
-            <span>
-              <span className="kpi-value">{list.length}</span>
-              <span className="kpi-label">Tratamientos diferentes</span>
-            </span>
-          </div>
-        </section>
-      )}
     </>
   );
 }
