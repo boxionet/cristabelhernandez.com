@@ -56,8 +56,11 @@ the Supabase SQL Editor (project `bgahgawcjokcrpzkexvx`, us-east-1).
   invisible reCAPTCHA v2 token (`RECAPTCHA_SECRET_KEY` in Netlify
   env; same site key as the contact form). Verified sessions skip
   it. A failed check returns `captcha_failed` and the public flow
-  falls back to the legacy email booking for that submission —
-  that fallback is removed at the Phase 7 cutover.
+  (Before go-live the public flow fell back to a legacy email
+  booking for that submission; the fallback and the legacy
+  `send-booking-email` function were removed at the Phase 7
+  cutover, 2026-11-11 — the engine is now the only booking path
+  and failures surface an error to the patient.)
 - **Tests**: `supabase/tests/phase2_engine_tests.sql` (engine,
   run in the SQL Editor); anon-key requests to `patients` /
   `appointments` must return 401 (RLS + grants), the catalog

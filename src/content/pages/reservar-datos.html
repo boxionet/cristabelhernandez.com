@@ -182,8 +182,7 @@ permalink: "/reservar/datos/"
         // Invisible reCAPTCHA v2 for the booking engine (Phase 6) —
         // same site key as the contact form. getBookingCaptchaToken()
         // resolves the token, or null when the script is blocked or
-        // times out (the server then rejects and the legacy email
-        // flow takes over for that submission).
+        // times out (the server then rejects the submission).
         window.__bookingCaptchaWidget = null;
         window.__bookingCaptchaResolvers = [];
         function onBookingCaptchaLoad() {
@@ -534,11 +533,13 @@ permalink: "/reservar/datos/"
             if (continueBtnMobile) continueBtnMobile.disabled = true;
 
             try {
-                // --- New booking engine first (Phase 3) ---
+                // --- Booking engine (the only path since the
+                // Phase 7 go-live) ---
                 // The booking is created in the database (with conflict
-                // checking) and the engine sends the emails. The legacy
-                // email-only flow below remains as the fallback until
-                // the Phase 7 cutover.
+                // checking) and the engine sends the emails. Any failure
+                // surfaces an error below; the old email-only fallback
+                // was removed at the cutover so a booking can never
+                // exist only as an email again.
                 if (window.BookingAPI) {
                     const servicesMap = BookingStorage.getServices();
                     const items = Object.keys(servicesMap).map((slug) => ({
@@ -596,35 +597,21 @@ permalink: "/reservar/datos/"
                                 window.location.href = '/reservar/fecha-hora/';
                                 return;
                             }
-                            console.warn('Booking engine rejected the request; falling back to the email flow:', created);
+                            console.warn('Booking engine rejected the request:', created);
+                            throw new Error('No pudimos completar tu reserva. Por favor intenta de nuevo o llámanos al (829) 316-3313.');
                         } catch (engineError) {
-                            console.warn('Booking engine unreachable; falling back to the email flow:', engineError);
+                            if (engineError && engineError.message && engineError.message.indexOf('No pudimos') === 0) throw engineError;
+                            console.warn('Booking engine unreachable:', engineError);
+                            throw new Error('No pudimos completar tu reserva. Por favor intenta de nuevo o llámanos al (829) 316-3313.');
                         }
                     } else {
-                        console.warn('Booking engine skipped (missing items, date or time); falling back to the email flow:', { items: items.length, dateISO, startTime });
+                        console.warn('Booking engine skipped (missing items, date or time):', { items: items.length, dateISO, startTime });
+                        throw new Error('Falta información de tu reserva. Por favor vuelve al paso anterior y elige los tratamientos, la fecha y la hora.');
                     }
                 }
 
-                // --- Legacy fallback: email-only flow ---
-                const response = await fetch('/.netlify/functions/send-booking-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(bookingData),
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    console.error('Email sending failed:', result);
-                    throw new Error(result.error || 'Error al enviar la confirmación');
-                }
-
-                console.log('✓ Booking emails sent:', result);
-
-                // Redirect to thank-you page (storage is cleared there after reading)
-                window.location.href = '/reservar/confirmacion/';
+                // BookingAPI itself failed to load — never book by email.
+                throw new Error('No pudimos completar tu reserva. Por favor intenta de nuevo o llámanos al (829) 316-3313.');
             } catch (error) {
                 console.error('✗ Error submitting booking:', error);
                 alert('Hubo un problema al enviar tu reserva. Por favor intenta de nuevo.\n\nDetalles: ' + error.message);
