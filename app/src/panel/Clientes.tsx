@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { formatPrice } from "../lib/format";
-import { isNuevo } from "../lib/panel";
+import { FiCalendar, FiChevronRight, FiMail, FiPhone, FiSearch } from "react-icons/fi";
+import { formatDateLongEs, formatPrice } from "../lib/format";
+import { clinicToday, isNuevo } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonCards } from "../components/Skeleton";
 
@@ -12,6 +13,7 @@ export default function Clientes() {
   const rows = useMemo(() => {
     if (!patients || !appointments) return [];
     const q = query.trim().toLowerCase();
+    const today = clinicToday();
     return patients
       .filter(
         (p) =>
@@ -28,8 +30,14 @@ export default function Clientes() {
         const spent = own
           .filter((a) => a.status === "completada")
           .reduce((s, a) => s + a.total_price, 0);
+        const done = own.filter((a) => a.status === "completada").length;
         const last = own.length ? own[own.length - 1].date : null;
-        return { p, count: own.length, spent, last };
+        const upcoming = own
+          .filter((a) => a.date >= today && a.status !== "no_show")
+          .map((a) => a.date)
+          .sort();
+        const next = upcoming.length ? upcoming[0] : null;
+        return { p, count: own.length, spent, done, last, next };
       });
   }, [patients, appointments, query]);
 
@@ -39,13 +47,13 @@ export default function Clientes() {
   return (
     <>
       <h2 className="section-title">Clientes</h2>
-      <div className="filter-row">
+      <div className="search-bar">
+        <FiSearch aria-hidden />
         <input
           type="search"
           placeholder="Buscar por nombre, correo o teléfono…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="search-input"
         />
       </div>
       {rows.length === 0 && (
@@ -53,30 +61,75 @@ export default function Clientes() {
           <p>No hay clientes con esa búsqueda.</p>
         </section>
       )}
-      <section className="treat-grid">
-        {rows.map(({ p, count, spent, last }) => (
-          <Link key={p.id} to={`/panel/clientes/${p.id}`} className="card treat client-card">
-            <div className="client-card-head">
-              <h3>{p.full_name}</h3>
-              <span className={`chip${isNuevo(p.id, appointments) ? " nuevo" : ""}`}>
-                {isNuevo(p.id, appointments) ? "Nuevo" : "Recurrente"}
-              </span>
-            </div>
-            <p className="muted">{p.email}</p>
-            {p.phone && <p className="muted">{p.phone}</p>}
-            <p className="muted">
-              {count} {count === 1 ? "cita" : "citas"}
-              {last ? ` · Última: ${last}` : ""}
-            </p>
-            <p className="treat-spent">
-              {formatPrice(spent)}{" "}
-              <small className="muted spent-label">en tratamientos completados</small>
-            </p>
-            {p.no_show_count > 0 && (
-              <p className="error">No asistió {p.no_show_count} vez/veces</p>
-            )}
-          </Link>
-        ))}
+      <section className="clients-grid">
+        {rows.map(({ p, count, spent, done, last, next }) => {
+          const nuevo = isNuevo(p.id, appointments);
+          return (
+            <Link
+              key={p.id}
+              to={`/panel/clientes/${p.id}`}
+              className="card client2"
+            >
+              <div className="client2-head">
+                <span className="client2-avatar">
+                  {p.full_name.trim().charAt(0).toUpperCase()}
+                </span>
+                <div className="client2-id">
+                  <p className="client2-name">
+                    <strong>{p.full_name}</strong>
+                    <span className={`chip${nuevo ? " nuevo" : " recur"}`}>
+                      {nuevo ? "Nuevo" : "Recurrente"}
+                    </span>
+                  </p>
+                  <p className="client2-contact">
+                    <FiMail aria-hidden /> {p.email}
+                    {p.phone && (
+                      <>
+                        {" · "}
+                        <FiPhone aria-hidden /> {p.phone}
+                      </>
+                    )}
+                  </p>
+                </div>
+                <FiChevronRight className="client2-chev" aria-hidden />
+              </div>
+              <div className="client2-stats">
+                <span className="cstat">
+                  <span className="v">{count}</span>
+                  <span className="l">Citas</span>
+                </span>
+                <span className="cstat">
+                  <span className="v">{done}</span>
+                  <span className="l">Completadas</span>
+                </span>
+                <span className="cstat">
+                  <span className="v">{formatPrice(spent)}</span>
+                  <span className="l">En tratamientos</span>
+                </span>
+              </div>
+              {p.no_show_count > 0 && (
+                <p className="error client2-noshow">
+                  No asistió {p.no_show_count}{" "}
+                  {p.no_show_count === 1 ? "vez" : "veces"}
+                </p>
+              )}
+              <p className="client2-foot">
+                <FiCalendar aria-hidden />
+                {next ? (
+                  <>
+                    Próxima cita: <strong>{formatDateLongEs(next)}</strong>
+                  </>
+                ) : last ? (
+                  <>
+                    Última cita: <strong>{formatDateLongEs(last)}</strong>
+                  </>
+                ) : (
+                  "Sin citas todavía"
+                )}
+              </p>
+            </Link>
+          );
+        })}
       </section>
     </>
   );

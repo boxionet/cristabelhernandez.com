@@ -5,6 +5,7 @@ import { type ServiceRow } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonTable } from "../components/Skeleton";
 import AsyncButton from "../components/AsyncButton";
+import { FiPlus } from "react-icons/fi";
 import { useToast } from "../components/Toast";
 
 function ServiceEditor({
@@ -169,19 +170,19 @@ export default function Servicios() {
     <>
       <h2 className="section-title">Agregar tratamiento</h2>
       <section className="card form-card">
-        <div className="form-grid">
-          <label>
+        <div className="add-row">
+          <label className="add-field grow">
             Nombre
             <input value={name} onChange={(e) => setName(e.target.value)} />
           </label>
-          <label>
+          <label className="add-field mid">
             Categoría
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
               <option>Facial</option>
               <option>Corporal</option>
             </select>
           </label>
-          <label>
+          <label className="add-field num">
             Precio (RD$)
             <input
               type="number"
@@ -191,7 +192,7 @@ export default function Servicios() {
               onChange={(e) => setPrice(Number(e.target.value) || 0)}
             />
           </label>
-          <label>
+          <label className="add-field num">
             Duración (min)
             <input
               type="number"
@@ -201,15 +202,15 @@ export default function Servicios() {
               onChange={(e) => setDuration(Number(e.target.value) || 0)}
             />
           </label>
+          <AsyncButton
+            className="btn primary"
+            pendingText="Agregando…"
+            onClick={addService}
+          >
+            <FiPlus /> Agregar
+          </AsyncButton>
         </div>
         {addError && <p className="error">{addError}</p>}
-        <AsyncButton
-          className="btn primary"
-          pendingText="Agregando…"
-          onClick={addService}
-        >
-          Agregar
-        </AsyncButton>
       </section>
 
       <h2 className="section-title">Tratamientos (catálogo)</h2>

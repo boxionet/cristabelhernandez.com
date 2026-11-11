@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import { type ScheduleRow } from "../lib/panel";
+import { formatDateLongEs, formatTime12h } from "../lib/format";
 import { usePanelData } from "../lib/queries/panelQueries";
 import DatePicker from "../components/DatePicker";
 import AsyncButton from "../components/AsyncButton";
@@ -17,6 +18,21 @@ const DAY_NAMES = [
   "Sábado",
 ];
 const ORDER = [1, 2, 3, 4, 5, 6, 0];
+
+const CHIP_DOW = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
+const CHIP_MON = [
+  "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+  "JUL", "AGO", "SEP", "OCT", "NOV", "DIC",
+];
+
+function chipParts(iso: string) {
+  const d = new Date(`${iso}T12:00:00Z`);
+  return {
+    dow: CHIP_DOW[d.getUTCDay()],
+    day: d.getUTCDate(),
+    mon: CHIP_MON[d.getUTCMonth()],
+  };
+}
 
 function ScheduleEditor({
   row,
@@ -140,26 +156,50 @@ export default function Horario() {
         {exceptions.length === 0 && (
           <p className="muted">No hay días especiales registrados.</p>
         )}
-        <ul className="exception-list">
-          {exceptions.map((e) => (
-            <li key={e.id}>
-              <span>
-                <strong>{e.date}</strong> ·{" "}
-                {e.is_closed
-                  ? "Cerrado"
-                  : `Abierto ${e.open_time?.slice(0, 5)}–${e.close_time?.slice(0, 5)}`}
-                {e.label ? ` · ${e.label}` : ""}
-              </span>
-              <AsyncButton
-                className="btn danger-ghost small"
-                pendingText="Quitando…"
-                onClick={() => removeException(e.id)}
-              >
-                Quitar
-              </AsyncButton>
-            </li>
-          ))}
+        <ul className="spec-list">
+          {[...exceptions]
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .map((e) => {
+              const chip = chipParts(e.date);
+              return (
+                <li key={e.id} className="spec-row">
+                  <span className="datechip">
+                    <span className="dc-dow">{chip.dow}</span>
+                    <span className="dc-day">{chip.day}</span>
+                    <span className="dc-mon">{chip.mon}</span>
+                  </span>
+                  <span className="spec-main">
+                    <span className="spec-date">{formatDateLongEs(e.date)}</span>
+                    <span className="spec-sub">
+                      {e.is_closed ? (
+                        <>
+                          <span className="spec-tag closed">Cerrado</span>
+                          {e.label && <span>{e.label}</span>}
+                        </>
+                      ) : (
+                        <>
+                          <span className="spec-tag short">Horario corto</span>
+                          <span>
+                            {e.open_time ? formatTime12h(e.open_time.slice(0, 5)) : ""} –{" "}
+                            {e.close_time ? formatTime12h(e.close_time.slice(0, 5)) : ""}
+                          </span>
+                          {e.label && <span>· {e.label}</span>}
+                        </>
+                      )}
+                    </span>
+                  </span>
+                  <AsyncButton
+                    className="btn danger-ghost small"
+                    pendingText="Quitando…"
+                    onClick={() => removeException(e.id)}
+                  >
+                    Quitar
+                  </AsyncButton>
+                </li>
+              );
+            })}
         </ul>
+        <div className="spec-form">
         <div className="form-grid">
           <div className="field-like">
             Fecha
@@ -206,6 +246,7 @@ export default function Horario() {
         >
           Agregar día especial
         </AsyncButton>
+        </div>
       </section>
 
       <h2 className="section-title">Horario semanal</h2>
