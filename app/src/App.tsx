@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { AuthProvider, isAdmin, useAuth } from "./auth";
 import Layout from "./components/Layout";
+import CompletarPerfil from "./pages/CompletarPerfil";
 import Historial from "./pages/Historial";
 import Login from "./pages/Login";
 import MisCitas from "./pages/MisCitas";
@@ -18,6 +19,7 @@ import PanelLayout from "./panel/PanelLayout";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
 import { SkeletonShell } from "./components/Skeleton";
+import { profileComplete } from "./lib/profile";
 
 function CenteredCard({ children }: { children: ReactNode }) {
   return (
@@ -63,6 +65,18 @@ function RequirePatient({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+// Completeness gate: a linked patient whose record still has the
+// email-prefix placeholder name or no phone (a portal-first signup)
+// is sent to the one-time CompletarPerfil step before using the
+// portal. Booking-created patients are already complete.
+function RequireCompleteProfile({ children }: { children: ReactNode }) {
+  const { patient } = useAuth();
+  if (patient && !profileComplete(patient)) {
+    return <Navigate to="/mi-cuenta/completar-perfil" replace />;
+  }
+  return <>{children}</>;
+}
+
 // Panel gate (Phase 5): session + admin role in app_metadata. Data
 // access behind it is RLS (admin policies), so the gate is UX, not the
 // security boundary.
@@ -94,10 +108,20 @@ export default function App() {
       <Routes>
         <Route path="/mi-cuenta/login" element={<Login />} />
         <Route
+          path="/mi-cuenta/completar-perfil"
+          element={
+            <RequirePatient>
+              <CompletarPerfil />
+            </RequirePatient>
+          }
+        />
+        <Route
           path="/mi-cuenta"
           element={
             <RequirePatient>
-              <Layout />
+              <RequireCompleteProfile>
+                <Layout />
+              </RequireCompleteProfile>
             </RequirePatient>
           }
         >
