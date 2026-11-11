@@ -56,8 +56,8 @@ export default function Login() {
       <section className="card login-card">
         <div className="brand login-brand">
           <img
-            className="brand-logo"
-            src="/assets/svgs/cristabel_logo_horizontal.svg"
+            className="login-logo"
+            src="/assets/svgs/cristabel-hernandez-logo.svg"
             alt="Centro Estético Dra. Cristabel Hernández"
           />
         </div>
