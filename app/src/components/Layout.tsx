@@ -48,7 +48,14 @@ export default function Layout() {
       <div className="main">
         <header className="topbar">
           <span className="topbar-title">Mi Cuenta</span>
-          {firstName && <span className="topbar-user">Hola, {firstName}</span>}
+          {firstName && (
+            <span className="user-identity">
+              <span className="avatar" aria-hidden>
+                {firstName.charAt(0).toUpperCase()}
+              </span>
+              <span className="user-name">{firstName}</span>
+            </span>
+          )}
         </header>
         <main className="content">
           <Outlet />

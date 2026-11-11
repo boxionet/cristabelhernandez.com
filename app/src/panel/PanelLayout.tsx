@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import type { IconType } from "react-icons";
 import {
@@ -8,15 +8,15 @@ import {
   FiClock,
   FiGrid,
   FiLogOut,
-  FiPlus,
   FiTag,
   FiUsers,
 } from "react-icons/fi";
 import { useAuth } from "../auth";
+import { supabase } from "../lib/supabase";
 import { clinicToday, usePanelData } from "../lib/panel";
 
 const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
-  { to: "/panel/", label: "Dashboard", icon: FiGrid, end: true },
+  { to: "/panel/", label: "Panel", icon: FiGrid, end: true },
   { to: "/panel/agenda", label: "Agenda", icon: FiCalendar, end: false },
   { to: "/panel/citas", label: "Citas", icon: FiClipboard, end: false },
   { to: "/panel/clientes", label: "Clientes", icon: FiUsers, end: false },
@@ -31,6 +31,37 @@ export default function PanelLayout() {
   const { user, signOut } = useAuth();
   const { appointments, reload } = usePanelData();
   const location = useLocation();
+  const [profileName, setProfileName] = useState<string | null>(null);
+
+  // The identity shown top-right is the person's first name: the auth
+  // profile name when present, else their patient record's name, else
+  // the email prefix as a last resort.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    void supabase
+      .from("patients")
+      .select("full_name")
+      .eq("auth_user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.full_name) setProfileName(data.full_name);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const meta = user?.user_metadata as
+    | { full_name?: string; name?: string }
+    | undefined;
+  const fullName =
+    meta?.full_name ||
+    meta?.name ||
+    profileName ||
+    (user?.email ? user.email.split("@")[0] : "");
+  const firstName = fullName.trim().split(/\s+/)[0] || "";
+  const initial = (firstName.charAt(0) || "?").toUpperCase();
 
   // The layout keeps its own data copy for the sidebar badges; refresh
   // it on navigation so actions taken on a page don't leave stale counts.
@@ -73,12 +104,7 @@ export default function PanelLayout() {
             </NavLink>
           ))}
         </nav>
-        <NavLink className="nav-book deep" to="/panel/nueva-cita">
-          Citas por teléfono o WhatsApp
-          <small>Registrar una cita manual</small>
-        </NavLink>
         <div className="user-chip">
-          <span className="user-email">{user?.email}</span>
           <span className="user-role">Admin</span>
         </div>
         <button className="nav-signout" onClick={() => void signOut()}>
@@ -89,9 +115,14 @@ export default function PanelLayout() {
       <div className="main">
         <header className="topbar">
           <span className="topbar-spacer" />
-          <NavLink className="btn primary small" to="/panel/nueva-cita">
-            <FiPlus aria-hidden /> Nueva cita
-          </NavLink>
+          {firstName && (
+            <span className="user-identity">
+              <span className="avatar" aria-hidden>
+                {initial}
+              </span>
+              <span className="user-name">{firstName}</span>
+            </span>
+          )}
         </header>
         <nav className="mobile-nav">
           {NAV.map((item) => (

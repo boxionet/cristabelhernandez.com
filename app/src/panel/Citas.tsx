@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { FiPhone, FiPlus } from "react-icons/fi";
 import {
   formatDateEs,
   formatPrice,
@@ -48,7 +49,25 @@ export default function Citas() {
 
   return (
     <>
-      <h2 className="section-title">Citas</h2>
+      <div className="citas-head">
+        <h2 className="section-title">Citas</h2>
+        <Link className="btn primary" to="/panel/nueva-cita">
+          <FiPlus aria-hidden /> Nueva cita
+        </Link>
+      </div>
+
+      <section className="card manual-card">
+        <div className="manual-card-text">
+          <h3>
+            <FiPhone aria-hidden /> Citas por teléfono o WhatsApp
+          </h3>
+          <p>Registra aquí las citas que llegan por teléfono o WhatsApp.</p>
+        </div>
+        <Link className="btn manual-card-btn" to="/panel/nueva-cita">
+          Registrar cita
+        </Link>
+      </section>
+
       <div className="filter-row">
         <input
           type="search"
@@ -121,9 +140,11 @@ export default function Citas() {
               {a.total_is_estimate ? "Total estimado: " : "Total: "}
               <strong>{formatPrice(a.total_price)}</strong>
             </span>
-            <span className="muted">
-              {a.payment_status === "pagado" ? "Pagado" : "Pago pendiente"}
-            </span>
+            {a.payment_status === "pagado" ? (
+              <span className="muted">Pagado</span>
+            ) : (
+              <span className="pill pill-pay">Pago pendiente</span>
+            )}
           </div>
           {a.internal_notes && <p className="note">Nota interna: {a.internal_notes}</p>}
           <AppointmentActions appt={a} onChanged={() => void reload()} />

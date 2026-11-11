@@ -304,6 +304,28 @@ input:disabled {
   color: var(--muted);
   font-weight: 500;
 }
+.user-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--sage);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+}
+.user-name {
+  font-weight: 600;
+  color: var(--heading);
+}
 .content {
   padding: 1.2rem 1.8rem 2.5rem;
   display: flex;
@@ -367,9 +389,13 @@ input:disabled {
   background: var(--sage-tint);
   color: var(--heading);
 }
-.pill.status-por_confirmar {
-  background: #fdf3d7;
-  color: #7a5b00;
+/* Pending states use the standard dashboard warning amber, solid so
+   they are impossible to miss next to the neutral pills. */
+.pill.status-por_confirmar,
+.pill.status-pendiente,
+.pill.pill-pay {
+  background: #f59e0b;
+  color: #fff;
 }
 .pill.status-cancelada,
 .pill.status-no_show {
