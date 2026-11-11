@@ -9,7 +9,7 @@ import {
 import { supabase } from "../lib/supabase";
 import { isNuevo } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
-import AppointmentActions from "./AppointmentActions";
+import PanelAppointmentCard from "./PanelAppointmentCard";
 import { SkeletonCards } from "../components/Skeleton";
 
 export default function ClienteDetalle() {
@@ -107,42 +107,12 @@ export default function ClienteDetalle() {
         .slice()
         .reverse()
         .map((a) => (
-          <article key={a.id} className="card appt">
-            <div className="appt-head">
-              <div>
-                <h3 className="appt-date">
-                  {formatDateEs(a.date)} · {formatTime12h(a.start_time)}
-                </h3>
-                <p className="appt-ref">
-                  {a.reference_code} · {a.source}
-                </p>
-              </div>
-              <span className={`pill status-${a.status}`}>
-                {STATUS_LABELS[a.status]}
-              </span>
-            </div>
-            <ul className="appt-items">
-              {a.appointment_services.map((i) => (
-                <li key={i.id}>
-                  <span>
-                    {i.service_name}
-                    {i.quantity > 1 ? ` × ${i.quantity}` : ""}
-                  </span>
-                  <span>{formatPrice(i.unit_price * i.quantity)}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="appt-foot">
-              <span className="appt-total">
-                {a.total_is_estimate ? "Total estimado: " : "Total: "}
-                <strong>{formatPrice(a.total_price)}</strong>
-              </span>
-              <span className="muted">
-                {a.payment_status === "pagado" ? "Pagado" : "Pago pendiente"}
-              </span>
-            </div>
-            <AppointmentActions appt={a} onChanged={() => void reload()} />
-          </article>
+          <PanelAppointmentCard
+            key={a.id}
+            appt={a}
+            onChanged={() => void reload()}
+            showPatientName={false}
+          />
         ))}
     </>
   );

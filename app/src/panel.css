@@ -377,6 +377,189 @@
   padding: 0.4rem 0.5rem;
 }
 
+/* ---------- Panel appointment card (shared: Citas / Agenda / Historial) ---------- */
+.appt2-head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.datechip {
+  flex-shrink: 0;
+  width: 64px;
+  border-radius: 14px;
+  background: #eef2e8;
+  text-align: center;
+  padding: 0.5rem 0 0.55rem;
+  line-height: 1.1;
+}
+.datechip .dc-dow,
+.datechip .dc-mon {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--sage);
+}
+.datechip .dc-day {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+.appt2-who {
+  flex: 1;
+  min-width: 0;
+}
+.appt2-name {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--heading);
+}
+.appt2-name a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.appt2-date {
+  text-transform: capitalize;
+}
+.appt2-when {
+  margin-top: 0.28rem;
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.appt2-contact {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.appt2-items {
+  list-style: none;
+  margin: 1.05rem 0 0;
+  padding: 0.95rem 0 0;
+  border-top: 1px solid #eef0ea;
+}
+.appt2-items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+  font-size: 0.97rem;
+}
+.appt2-price {
+  font-weight: 600;
+  color: var(--heading);
+  white-space: nowrap;
+}
+.appt2-money {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.appt2-total-label {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.appt2-money-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.appt2-amount {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+.appt2-paid {
+  color: var(--sage-deep);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.appt2-note {
+  margin-top: 0.9rem;
+  background: #f7f8f5;
+  border: 1px solid #edf0e8;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.appt2-note svg {
+  color: var(--sage);
+  flex-shrink: 0;
+}
+.appt2-note strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.appt2 .appt-actions.staff {
+  margin-top: 1rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid #eef0ea;
+  position: relative;
+}
+
+/* Overflow menu inside the actions row */
+.appt-menu-wrap {
+  margin-left: auto;
+  position: relative;
+  display: inline-flex;
+}
+.appt-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4rem;
+}
+.appt-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+.appt-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 41;
+  width: 210px;
+  background: #fff;
+  border: 1px solid #e7eae4;
+  border-radius: 14px;
+  box-shadow: 0 20px 44px rgba(31, 41, 55, 0.16);
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+}
+.appt-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.92rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 9px;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+.appt-menu-item:hover {
+  background: #f3f4f6;
+}
+.appt-menu-item.danger {
+  color: #b91c1c;
+}
+
 .form-card {
   display: flex;
   flex-direction: column;

@@ -11,7 +11,7 @@ import { displayContact, displayName } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setCitasQuery, setCitasStatus } from "../store/slices/uiSlice";
-import AppointmentActions from "./AppointmentActions";
+import PanelAppointmentCard from "./PanelAppointmentCard";
 import { SkeletonCards } from "../components/Skeleton";
 
 const STATUS_FILTERS = [
@@ -109,56 +109,12 @@ export default function Citas() {
       )}
 
       {filtered.map((a) => (
-        <article key={a.id} className="card appt">
-          <div className="appt-head">
-            <div>
-              <h3 className="appt-date">
-                {formatDateEs(a.date)} · {formatTime12h(a.start_time)}
-              </h3>
-              <p className="appt-ref">
-                {a.reference_code} · {a.source}
-                {a.status === "por_confirmar" && a.confirmation_expires_at
-                  ? ` · Vence ${new Date(a.confirmation_expires_at).toLocaleString("es-DO")}`
-                  : ""}
-              </p>
-            </div>
-            <span className={`pill status-${a.status}`}>
-              {STATUS_LABELS[a.status]}
-            </span>
-          </div>
-          <p className="appt-patient">
-            {a.patient_id ? (
-              <Link to={`/panel/clientes/${a.patient_id}`}>{displayName(a)}</Link>
-            ) : (
-              <strong>{displayName(a)}</strong>
-            )}{" "}
-            <span className="muted">{displayContact(a)}</span>
-          </p>
-          <ul className="appt-items">
-            {a.appointment_services.map((i) => (
-              <li key={i.id}>
-                <span>
-                  {i.service_name}
-                  {i.quantity > 1 ? ` × ${i.quantity}` : ""}
-                </span>
-                <span>{formatPrice(i.unit_price * i.quantity)}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="appt-foot">
-            <span className="appt-total">
-              {a.total_is_estimate ? "Total estimado: " : "Total: "}
-              <strong>{formatPrice(a.total_price)}</strong>
-            </span>
-            {a.payment_status === "pagado" ? (
-              <span className="muted">Pagado</span>
-            ) : (
-              <span className="pill pill-pay">Pago pendiente</span>
-            )}
-          </div>
-          {a.internal_notes && <p className="note">Nota interna: {a.internal_notes}</p>}
-          <AppointmentActions appt={a} onChanged={() => void reload()} />
-        </article>
+        <PanelAppointmentCard
+          key={a.id}
+          appt={a}
+          onChanged={() => void reload()}
+          showContact
+        />
       ))}
     </>
   );
