@@ -31,7 +31,11 @@ export default function PanelLayout() {
   const { user, signOut } = useAuth();
   const { appointments, reload } = usePanelData();
   const location = useLocation();
-  const [profileName, setProfileName] = useState<string | null>(null);
+  // undefined = lookup still running (render no chip yet, so the
+  // email-prefix fallback never flashes before the real name arrives).
+  const [profileName, setProfileName] = useState<string | undefined>(
+    undefined,
+  );
 
   // The identity shown top-right is the person's first name: the auth
   // profile name when present, else their patient record's name, else
@@ -39,13 +43,14 @@ export default function PanelLayout() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
+    setProfileName(undefined);
     void supabase
       .from("patients")
       .select("full_name")
       .eq("auth_user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
-        if (!cancelled && data?.full_name) setProfileName(data.full_name);
+        if (!cancelled) setProfileName(data?.full_name ?? "");
       });
     return () => {
       cancelled = true;
@@ -55,11 +60,12 @@ export default function PanelLayout() {
   const meta = user?.user_metadata as
     | { full_name?: string; name?: string }
     | undefined;
+  const metaName = meta?.full_name || meta?.name || "";
   const fullName =
-    meta?.full_name ||
-    meta?.name ||
-    profileName ||
-    (user?.email ? user.email.split("@")[0] : "");
+    metaName ||
+    (profileName === undefined
+      ? ""
+      : profileName || (user?.email ? user.email.split("@")[0] : ""));
   const firstName = fullName.trim().split(/\s+/)[0] || "";
   const initial = (firstName.charAt(0) || "?").toUpperCase();
 
