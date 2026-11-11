@@ -12,6 +12,7 @@ export const panelKeys = {
 export const patientKeys = {
   appointments: (patientId: string) =>
     ["patient", "appointments", patientId] as const,
+  services: ["patient", "services"] as const,
 };
 
 export const availabilityKey = (date: string, duration: number) =>

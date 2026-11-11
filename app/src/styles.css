@@ -475,6 +475,324 @@ input:disabled {
   gap: 0.8rem;
 }
 
+/* ---------- confirmation modal (shared: Panel + patient) ---------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(17, 24, 39, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.modal-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(31, 41, 55, 0.25);
+  width: min(430px, 100%);
+  padding: 1.4rem;
+}
+.modal-card h3 {
+  color: var(--heading);
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
+}
+.modal-appt {
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+.modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 1.1rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Patient appointment card (redesign, shared Mis Citas + Historial) ---------- */
+.kpi-flex {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.9rem;
+}
+.kpi-ic {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: #eef2e8;
+  color: var(--sage);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.kpi-flex .kpi-value,
+.kpi-flex .kpi-label {
+  display: block;
+}
+.pcard-head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.pchip {
+  flex-shrink: 0;
+  width: 64px;
+  border-radius: 14px;
+  background: #eef2e8;
+  text-align: center;
+  padding: 0.5rem 0 0.55rem;
+  line-height: 1.1;
+}
+.pchip .pc-dow,
+.pchip .pc-mon {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--sage);
+}
+.pchip .pc-day {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+.pcard-who {
+  flex: 1;
+  min-width: 0;
+}
+.pcard-date {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--heading);
+}
+.pcard-when {
+  margin-top: 0.28rem;
+  font-weight: 600;
+  font-size: 0.94rem;
+}
+.pcard-ref {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.pcard-pills {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+.pill-soon {
+  background: #eef2e8;
+  color: var(--sage-deep);
+}
+.pcard-items {
+  list-style: none;
+  margin: 1.05rem 0 0;
+  padding: 0.95rem 0 0;
+  border-top: 1px solid #eef0ea;
+}
+.pcard-items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+  font-size: 0.97rem;
+}
+.pcard-price {
+  font-weight: 600;
+  color: var(--heading);
+  white-space: nowrap;
+}
+.pcard-money {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.pcard-total-label {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.pcard-money-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+.pcard-amount {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+.pcard-cash {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.pcard-cash svg {
+  color: var(--sage);
+}
+.pcard-paid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--sage-deep);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.pcard-note {
+  margin-top: 0.9rem;
+  background: #f7f8f5;
+  border: 1px solid #edf0e8;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.pcard-note svg {
+  color: var(--sage);
+  flex-shrink: 0;
+}
+.pcard-actions {
+  margin-top: 1rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+.pcard-actions .btn.danger-ghost {
+  margin-left: auto;
+}
+.reserve-cta {
+  margin-top: 1rem;
+  border: 1.5px dashed #c9d2bd;
+  background: #f7f8f5;
+  border-radius: 18px;
+  padding: 1.05rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.reserve-cta p {
+  flex: 1;
+  min-width: 220px;
+}
+.reserve-cta strong {
+  color: var(--heading);
+  display: block;
+}
+.reserve-cta span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- Treatments (redesign) ---------- */
+.treat2-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.treat2-head h3 {
+  font-size: 1.08rem;
+  color: var(--heading);
+  line-height: 1.3;
+  margin: 0;
+}
+.treat2-count {
+  text-align: right;
+  flex-shrink: 0;
+}
+.treat2-n {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--heading);
+  line-height: 1;
+}
+.treat2-l {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.treat2-meta {
+  margin-top: 0.95rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.treat2-meta p {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+  font-size: 0.92rem;
+  margin: 0;
+}
+.treat2-meta svg {
+  color: var(--sage);
+  flex-shrink: 0;
+}
+.treat2-meta strong {
+  color: var(--heading);
+  font-weight: 700;
+}
+.treat2-foot {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.treat2-spent-l {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.treat2-spent-v {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+.treat2-foot .btn svg {
+  color: var(--sage);
+}
+.treat-summary {
+  margin-top: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 640px) {
+  .pchip {
+    width: 56px;
+    border-radius: 12px;
+  }
+  .pchip .pc-day {
+    font-size: 1.35rem;
+  }
+  .pcard-date {
+    font-size: 1.02rem;
+  }
+  .treat-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---------- Reschedule ---------- */
 .reschedule {
   margin-top: 1rem;
@@ -629,7 +947,6 @@ input:disabled {
 .cal-title {
   color: var(--heading);
   font-size: 1.05rem;
-  text-transform: capitalize;
 }
 .cal-nav {
   display: flex;
@@ -837,6 +1154,12 @@ input:disabled {
 
 /* ---------- Responsive: small tablets & phones (shared + patient) ---------- */
 @media (max-width: 640px) {
+  .modal-card {
+    padding: 1.1rem;
+  }
+  .modal-actions .btn {
+    flex: 1;
+  }
   .section-title {
     font-size: 1.12rem;
   }

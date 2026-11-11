@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   formatDateEs,
+  formatDateLongEs,
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
+  toClinicDateISO,
 } from "../lib/format";
 import { supabase } from "../lib/supabase";
 import { isNuevo } from "../lib/panel";
@@ -68,7 +70,7 @@ export default function ClienteDetalle() {
           {patient.phone ? ` · ${patient.phone}` : ""}
         </p>
         <p className="muted">
-          Cliente desde {patient.created_at.slice(0, 10)} · {own.length} citas ·{" "}
+          Cliente desde {formatDateLongEs(toClinicDateISO(patient.created_at))} · {own.length} citas ·{" "}
           {formatPrice(spent)} en tratamientos completados
           {patient.no_show_count > 0
             ? ` · No asistió ${patient.no_show_count} vez/veces`

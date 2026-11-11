@@ -26,6 +26,31 @@ export function usePatientAppointments(patientId: string | undefined) {
   });
 }
 
+export interface ServiceCatalogEntry {
+  id: string;
+  name: string;
+  duration_minutes: number;
+}
+
+async function fetchServicesCatalog(): Promise<ServiceCatalogEntry[]> {
+  const { data, error } = await supabase
+    .from("services")
+    .select("id, name, duration_minutes")
+    .eq("active", true);
+  if (error) {
+    throw new Error("No pudimos cargar el catálogo de tratamientos.");
+  }
+  return (data ?? []) as ServiceCatalogEntry[];
+}
+
+/** The public services catalog (RLS: public read) — used for durations. */
+export function useServicesCatalog() {
+  return useQuery({
+    queryKey: patientKeys.services,
+    queryFn: fetchServicesCatalog,
+  });
+}
+
 /**
  * All of the signed-in patient's appointments (RLS also enforces this
  * server-side), with the contract the patient screens were built

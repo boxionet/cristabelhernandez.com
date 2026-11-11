@@ -36,7 +36,7 @@ export default function MonthGrid({
   const selectedYm = value ? value.slice(0, 7) : "";
   const initialYear = value
     ? Number(value.slice(0, 4))
-    : new Date().getFullYear();
+    : Number(clinicToday().slice(0, 4));
   const [year, setYear] = useState(initialYear);
 
   const thisYm = clinicToday().slice(0, 7);

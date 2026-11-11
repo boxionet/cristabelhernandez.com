@@ -59,7 +59,9 @@ export default function MonthCalendar({
   return (
     <div className="cal">
       <div className="cal-head">
-        <h3 className="cal-title">{monthTitleOf(month)}</h3>
+        <h3 className="cal-title">
+          {monthTitleOf(month).replace(/^./, (c) => c.toUpperCase())}
+        </h3>
         <div className="cal-nav">
           <button
             type="button"

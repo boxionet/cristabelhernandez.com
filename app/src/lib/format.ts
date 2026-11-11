@@ -34,6 +34,64 @@ export function formatDateEs(dateISO: string): string {
   return `${WEEKDAYS[dt.getUTCDay()]} ${d} de ${MONTHS[m - 1]} de ${y}`;
 }
 
+// '2026-12-13' -> '13 de diciembre de 2026' — the Dominican long form
+// (owner's requested headline format: no weekday, lowercase "de").
+export function formatDateLongEs(dateISO: string): string {
+  const [y, m, d] = dateISO.split("-").map(Number);
+  return `${d} de ${MONTHS[m - 1]} de ${y}`;
+}
+
+const MONTHS_SHORT = [
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sep",
+  "oct",
+  "nov",
+  "dic",
+];
+
+// '2026-11-13' -> '13 nov 2026'
+export function formatDateShortEs(dateISO: string): string {
+  const [y, m, d] = dateISO.split("-").map(Number);
+  return `${d} ${MONTHS_SHORT[m - 1]} ${y}`;
+}
+
+export function capitalizeFirst(s: string): string {
+  return s.replace(/^./, (c) => c.toUpperCase());
+}
+
+/** The clinic-timezone (America/Santo_Domingo) calendar date of an instant. */
+export function toClinicDateISO(instantISO: string): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Santo_Domingo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date(instantISO));
+  const get = (t: string) => parts.find((p) => p.type === t)!.value;
+  return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+/** Clinic "today" (America/Santo_Domingo) as YYYY-MM-DD. */
+export function clinicTodayISO(): string {
+  return toClinicDateISO(new Date().toISOString());
+}
+
+/** Whole days from the clinic's today until the given clinic date. */
+export function daysUntilClinic(dateISO: string): number {
+  const toUtc = (iso: string) => {
+    const [y, m, d] = iso.split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((toUtc(dateISO) - toUtc(clinicTodayISO())) / 86_400_000);
+}
+
 export function formatTime12h(hhmmss: string): string {
   const [hRaw, mRaw] = hhmmss.split(":");
   let h = parseInt(hRaw, 10);

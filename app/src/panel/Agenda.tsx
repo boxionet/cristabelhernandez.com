@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
+  capitalizeFirst,
   formatDateEs,
   formatPrice,
   formatTime12h,
@@ -44,7 +45,7 @@ export default function Agenda() {
         </section>
 
         <div className="agenda-day">
-          <h3 className="day-title">{formatDateEs(date)}</h3>
+          <h3 className="day-title">{capitalizeFirst(formatDateEs(date))}</h3>
 
           {dayList.length === 0 && (
             <section className="card empty">

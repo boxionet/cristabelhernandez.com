@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { FiEdit3 } from "react-icons/fi";
 import {
-  formatDateEs,
+  formatDateLongEs,
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
@@ -53,7 +53,7 @@ export default function PanelAppointmentCard({
   const p = dateParts(appt.date);
   const vence =
     appt.status === "por_confirmar" && appt.confirmation_expires_at
-      ? ` · Vence ${new Date(appt.confirmation_expires_at).toLocaleString("es-DO")}`
+      ? ` · Vence ${new Date(appt.confirmation_expires_at).toLocaleString("es-DO", { timeZone: "America/Santo_Domingo" })}`
       : "";
 
   return (
@@ -77,7 +77,7 @@ export default function PanelAppointmentCard({
             </div>
           ) : (
             <div className="appt2-name appt2-date">
-              {formatDateEs(appt.date)}
+              {formatDateLongEs(appt.date)}
             </div>
           )}
           <p className="appt2-when">
