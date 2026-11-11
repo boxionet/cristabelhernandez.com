@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiMoreHorizontal, FiTrash2, FiXCircle } from "react-icons/fi";
 import {
   confirmHold,
+  displayName,
   markNoShow,
   releaseHold,
   updateAppointment,
   type PanelAppointment,
 } from "../lib/panel";
+import { formatDateEs, formatPrice, formatTime12h } from "../lib/format";
 import AppointmentServicesEditor from "./AppointmentServicesEditor";
 
 // Staff actions on one appointment. All direct RLS writes — the plan's
@@ -26,6 +28,7 @@ export default function AppointmentActions({
   const [rescheduling, setRescheduling] = useState(false);
   const [editingServices, setEditingServices] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cancelModal, setCancelModal] = useState(false);
   const [newDate, setNewDate] = useState(appt.date);
   const [newTime, setNewTime] = useState(appt.start_time.slice(0, 5));
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +64,16 @@ export default function AppointmentActions({
   const active = appt.status === "pendiente" || appt.status === "confirmada";
   const showMenu =
     (appt.status === "por_confirmar" && confirming !== "release") ||
-    (active && !rescheduling && confirming !== "cancel");
+    (active && !rescheduling);
+
+  useEffect(() => {
+    if (!cancelModal) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !busy) setCancelModal(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [cancelModal, busy]);
 
   return (
     <>
@@ -83,7 +95,7 @@ export default function AppointmentActions({
         </>
       )}
 
-      {active && !rescheduling && confirming !== "cancel" && (
+      {active && !rescheduling && (
         <>
           <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "completada" }))}>
             Completar
@@ -98,17 +110,6 @@ export default function AppointmentActions({
           </button>
           <button type="button" className="btn ghost small" disabled={busy} onClick={() => setEditingServices(true)}>
             Tratamientos
-          </button>
-        </>
-      )}
-      {active && confirming === "cancel" && (
-        <>
-          <span>¿Cancelar esta cita?</span>
-          <button type="button" className="btn ghost small" onClick={() => setConfirming(null)} disabled={busy}>
-            Volver
-          </button>
-          <button type="button" className="btn danger small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "cancelada" }))}>
-            Sí, cancelar
           </button>
         </>
       )}
@@ -163,7 +164,7 @@ export default function AppointmentActions({
                       className="appt-menu-item danger"
                       onClick={() => {
                         setMenuOpen(false);
-                        setConfirming("cancel");
+                        setCancelModal(true);
                       }}
                     >
                       <FiTrash2 aria-hidden /> Cancelar cita
@@ -199,6 +200,58 @@ export default function AppointmentActions({
         }}
         onCancel={() => setEditingServices(false)}
       />
+    )}
+    {cancelModal && (
+      <div
+        className="modal-backdrop"
+        onClick={() => {
+          if (!busy) setCancelModal(false);
+        }}
+      >
+        <div
+          className="modal-card"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Cancelar cita"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3>¿Cancelar esta cita?</h3>
+          <p className="modal-appt">
+            <strong>{displayName(appt)}</strong> · {formatDateEs(appt.date)} ·{" "}
+            {formatTime12h(appt.start_time)}
+            <br />
+            {appt.reference_code} · {formatPrice(appt.total_price)}
+            {appt.total_is_estimate ? " (estimado)" : ""}
+          </p>
+          <p className="muted">
+            La cita se marcará como cancelada y el horario quedará libre.
+          </p>
+          {error && <p className="error">{error}</p>}
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="btn ghost"
+              disabled={busy}
+              onClick={() => setCancelModal(false)}
+            >
+              Volver
+            </button>
+            <button
+              type="button"
+              className="btn danger"
+              disabled={busy}
+              onClick={() =>
+                void run(async () => {
+                  await updateAppointment(appt.id, { status: "cancelada" });
+                  setCancelModal(false);
+                })
+              }
+            >
+              Sí, cancelar
+            </button>
+          </div>
+        </div>
+      </div>
     )}
     </>
   );
