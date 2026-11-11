@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../auth";
 import { supabase } from "../lib/supabase";
+import { SkeletonForm } from "../components/Skeleton";
 
 export default function Perfil() {
   const { patient, user } = useAuth();
@@ -35,7 +36,7 @@ export default function Perfil() {
     setSaved(true);
   }
 
-  if (!patient) return <p className="muted">Cargando tu perfil…</p>;
+  if (!patient) return <SkeletonForm rows={3} />;
 
   return (
     <>

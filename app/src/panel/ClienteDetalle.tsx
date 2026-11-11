@@ -9,6 +9,7 @@ import {
 import { supabase } from "../lib/supabase";
 import { isNuevo, usePanelData } from "../lib/panel";
 import AppointmentActions from "./AppointmentActions";
+import { SkeletonCards } from "../components/Skeleton";
 
 export default function ClienteDetalle() {
   const { id } = useParams();
@@ -23,7 +24,7 @@ export default function ClienteDetalle() {
   }, [patient]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!patients || !appointments) return <p className="muted">Cargando…</p>;
+  if (!patients || !appointments) return <SkeletonCards count={2} />;
   if (!patient) {
     return (
       <section className="card empty">

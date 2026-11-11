@@ -8,6 +8,7 @@ import {
   usePanelData,
   type ServiceRow,
 } from "../lib/panel";
+import { SkeletonForm } from "../components/Skeleton";
 
 export default function NuevaCita() {
   const { patients, services, error } = usePanelData();
@@ -104,7 +105,7 @@ export default function NuevaCita() {
   }
 
   if (error) return <p className="error">{error}</p>;
-  if (!patients || !services) return <p className="muted">Cargando…</p>;
+  if (!patients || !services) return <SkeletonForm rows={5} />;
 
   if (done) {
     return (

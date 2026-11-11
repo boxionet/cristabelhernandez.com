@@ -1,17 +1,31 @@
 import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import type { IconType } from "react-icons";
+import {
+  FiBarChart2,
+  FiCalendar,
+  FiClipboard,
+  FiClock,
+  FiGrid,
+  FiLogOut,
+  FiPlus,
+  FiTag,
+  FiUsers,
+} from "react-icons/fi";
 import { useAuth } from "../auth";
 import { clinicToday, usePanelData } from "../lib/panel";
 
-const NAV = [
-  { to: "/panel/", label: "Panel", icon: "▦", end: true },
-  { to: "/panel/agenda", label: "Agenda", icon: "▤", end: false },
-  { to: "/panel/citas", label: "Citas", icon: "◷", end: false },
-  { to: "/panel/clientes", label: "Clientes", icon: "◯", end: false },
-  { to: "/panel/servicios", label: "Tratamientos", icon: "✦", end: false },
-  { to: "/panel/horario", label: "Horario", icon: "◔", end: false },
-  { to: "/panel/reportes", label: "Reportes", icon: "▥", end: false },
+const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
+  { to: "/panel/", label: "Dashboard", icon: FiGrid, end: true },
+  { to: "/panel/agenda", label: "Agenda", icon: FiCalendar, end: false },
+  { to: "/panel/citas", label: "Citas", icon: FiClipboard, end: false },
+  { to: "/panel/clientes", label: "Clientes", icon: FiUsers, end: false },
+  { to: "/panel/servicios", label: "Tratamientos", icon: FiTag, end: false },
+  { to: "/panel/horario", label: "Horario", icon: FiClock, end: false },
+  { to: "/panel/reportes", label: "Reportes", icon: FiBarChart2, end: false },
 ];
+
+const LOGO_URL = "/assets/svgs/cristabel_logo_horizontal.svg";
 
 export default function PanelLayout() {
   const { user, signOut } = useAuth();
@@ -36,11 +50,7 @@ export default function PanelLayout() {
     <div className="shell">
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-mark">CH</span>
-          <span className="brand-text">
-            Centro Estético
-            <small>Panel de administración</small>
-          </span>
+          <img className="brand-logo" src={LOGO_URL} alt="Centro Estético Dra. Cristabel Hernández" />
         </div>
         <nav className="nav">
           {NAV.map((item) => (
@@ -51,7 +61,7 @@ export default function PanelLayout() {
               className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
             >
               <span className="nav-icon" aria-hidden>
-                {item.icon}
+                <item.icon />
               </span>
               {item.label}
               {item.label === "Citas" && todayCount > 0 && (
@@ -72,15 +82,15 @@ export default function PanelLayout() {
           <span className="user-role">Admin</span>
         </div>
         <button className="nav-signout" onClick={() => void signOut()}>
-          Cerrar sesión
+          <FiLogOut aria-hidden /> Cerrar sesión
         </button>
       </aside>
 
       <div className="main">
         <header className="topbar">
-          <span className="topbar-title">Panel</span>
+          <span className="topbar-spacer" />
           <NavLink className="btn primary small" to="/panel/nueva-cita">
-            + Nueva cita
+            <FiPlus aria-hidden /> Nueva cita
           </NavLink>
         </header>
         <nav className="mobile-nav">

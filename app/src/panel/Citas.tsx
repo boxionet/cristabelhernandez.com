@@ -8,6 +8,7 @@ import {
 } from "../lib/format";
 import { displayContact, displayName, usePanelData } from "../lib/panel";
 import AppointmentActions from "./AppointmentActions";
+import { SkeletonCards } from "../components/Skeleton";
 
 const STATUS_FILTERS = [
   { key: "todas", label: "Todas" },
@@ -43,7 +44,7 @@ export default function Citas() {
   }, [appointments, status, query]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!appointments) return <p className="muted">Cargando las citas…</p>;
+  if (!appointments) return <SkeletonCards count={3} />;
 
   return (
     <>

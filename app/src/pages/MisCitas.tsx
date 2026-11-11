@@ -1,12 +1,19 @@
 import AppointmentCard from "../components/AppointmentCard";
 import { formatPrice, isUpcoming } from "../lib/format";
 import { useAppointments } from "../lib/useAppointments";
+import { SkeletonCards, SkeletonKpis } from "../components/Skeleton";
 
 export default function MisCitas() {
   const { rows, error, reload } = useAppointments();
 
   if (error) return <p className="error">{error}</p>;
-  if (!rows) return <p className="muted">Cargando tus citas…</p>;
+  if (!rows)
+    return (
+      <>
+        <SkeletonKpis count={3} />
+        <SkeletonCards count={2} />
+      </>
+    );
 
   const upcoming = rows.filter(isUpcoming);
   const completed = rows.filter((r) => r.status === "completada");

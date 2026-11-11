@@ -55,11 +55,11 @@ export default function Login() {
     <main className="login-wrap">
       <section className="card login-card">
         <div className="brand login-brand">
-          <span className="brand-mark">CH</span>
-          <span className="brand-text">
-            Centro Estético
-            <small>Dra. Cristabel Hernández</small>
-          </span>
+          <img
+            className="brand-logo"
+            src="/assets/svgs/cristabel_logo_horizontal.svg"
+            alt="Centro Estético Dra. Cristabel Hernández"
+          />
         </div>
         <h1>Mi Cuenta</h1>
         <p className="muted">

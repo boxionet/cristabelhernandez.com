@@ -1,12 +1,13 @@
 import AppointmentCard from "../components/AppointmentCard";
 import { isUpcoming } from "../lib/format";
 import { useAppointments } from "../lib/useAppointments";
+import { SkeletonCards } from "../components/Skeleton";
 
 export default function Historial() {
   const { rows, error } = useAppointments();
 
   if (error) return <p className="error">{error}</p>;
-  if (!rows) return <p className="muted">Cargando tu historial…</p>;
+  if (!rows) return <SkeletonCards count={3} />;
 
   const past = rows.filter((r) => !isUpcoming(r)).slice().reverse();
 

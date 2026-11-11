@@ -1,5 +1,6 @@
 export interface AppointmentItem {
   id: string;
+  service_id: string | null;
   service_name: string;
   unit_price: number;
   quantity: number;

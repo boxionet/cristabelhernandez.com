@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { formatPrice, STATUS_LABELS } from "../lib/format";
 import { clinicToday, usePanelData } from "../lib/panel";
+import { SkeletonKpis, SkeletonTable } from "../components/Skeleton";
 
 export default function Reportes() {
   const { appointments, error } = usePanelData();
@@ -49,7 +50,13 @@ export default function Reportes() {
   }, [appointments, month]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!data) return <p className="muted">Cargando reportes…</p>;
+  if (!data)
+    return (
+      <>
+        <SkeletonKpis count={3} />
+        <SkeletonTable rows={4} />
+      </>
+    );
 
   return (
     <>

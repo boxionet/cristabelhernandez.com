@@ -17,6 +17,7 @@ import NuevaCita from "./panel/NuevaCita";
 import PanelLayout from "./panel/PanelLayout";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
+import { SkeletonShell } from "./components/Skeleton";
 
 function CenteredCard({ children }: { children: ReactNode }) {
   return (
@@ -39,11 +40,7 @@ function RequirePatient({ children }: { children: ReactNode }) {
   }, [session, patient, ensureLinked]);
 
   if (loading) {
-    return (
-      <CenteredCard>
-        <p className="muted">Cargando…</p>
-      </CenteredCard>
-    );
+    return <SkeletonShell />;
   }
   if (!session) return <Navigate to="/mi-cuenta/login" replace />;
   if (linkError) {
@@ -61,11 +58,7 @@ function RequirePatient({ children }: { children: ReactNode }) {
     );
   }
   if (!patient) {
-    return (
-      <CenteredCard>
-        <p className="muted">Preparando tu cuenta…</p>
-      </CenteredCard>
-    );
+    return <SkeletonShell />;
   }
   return <>{children}</>;
 }
@@ -76,11 +69,7 @@ function RequirePatient({ children }: { children: ReactNode }) {
 function RequireAdmin({ children }: { children: ReactNode }) {
   const { loading, session, user } = useAuth();
   if (loading) {
-    return (
-      <CenteredCard>
-        <p className="muted">Cargando…</p>
-      </CenteredCard>
-    );
+    return <SkeletonShell />;
   }
   if (!session) return <Navigate to="/mi-cuenta/login" replace />;
   if (!isAdmin(user)) {

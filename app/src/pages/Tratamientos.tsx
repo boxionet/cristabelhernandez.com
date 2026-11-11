@@ -1,5 +1,6 @@
 import { formatDateEs, formatPrice } from "../lib/format";
 import { useAppointments } from "../lib/useAppointments";
+import { SkeletonCards } from "../components/Skeleton";
 
 interface Aggregate {
   name: string;
@@ -12,7 +13,7 @@ export default function Tratamientos() {
   const { rows, error } = useAppointments();
 
   if (error) return <p className="error">{error}</p>;
-  if (!rows) return <p className="muted">Cargando tus tratamientos…</p>;
+  if (!rows) return <SkeletonCards count={3} />;
 
   const byService = new Map<string, Aggregate>();
   for (const appt of rows) {

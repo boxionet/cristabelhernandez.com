@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../lib/format";
 import { isNuevo, usePanelData } from "../lib/panel";
+import { SkeletonCards } from "../components/Skeleton";
 
 export default function Clientes() {
   const { appointments, patients, error } = usePanelData();
@@ -32,7 +33,7 @@ export default function Clientes() {
   }, [patients, appointments, query]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!patients || !appointments) return <p className="muted">Cargando clientes…</p>;
+  if (!patients || !appointments) return <SkeletonCards count={4} />;
 
   return (
     <>

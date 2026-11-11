@@ -6,6 +6,7 @@ import {
   updateAppointment,
   type PanelAppointment,
 } from "../lib/panel";
+import AppointmentServicesEditor from "./AppointmentServicesEditor";
 
 // Staff actions on one appointment. All direct RLS writes — the plan's
 // staff override: no 24h window, holds can be confirmed or released.
@@ -19,6 +20,7 @@ export default function AppointmentActions({
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState<"cancel" | "release" | null>(null);
   const [rescheduling, setRescheduling] = useState(false);
+  const [editingServices, setEditingServices] = useState(false);
   const [newDate, setNewDate] = useState(appt.date);
   const [newTime, setNewTime] = useState(appt.start_time.slice(0, 5));
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +55,7 @@ export default function AppointmentActions({
   const active = appt.status === "pendiente" || appt.status === "confirmada";
 
   return (
+    <>
     <div className="appt-actions staff">
       {appt.status === "por_confirmar" && confirming !== "release" && (
         <>
@@ -88,6 +91,9 @@ export default function AppointmentActions({
           )}
           <button type="button" className="btn ghost small" disabled={busy} onClick={() => setRescheduling(true)}>
             Mover
+          </button>
+          <button type="button" className="btn ghost small" disabled={busy} onClick={() => setEditingServices(true)}>
+            Tratamientos
           </button>
           <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => markNoShow(appt))}>
             No asistió
@@ -128,5 +134,16 @@ export default function AppointmentActions({
       )}
       {error && <span className="error">{error}</span>}
     </div>
+    {editingServices && active && (
+      <AppointmentServicesEditor
+        appt={appt}
+        onDone={() => {
+          setEditingServices(false);
+          onChanged();
+        }}
+        onCancel={() => setEditingServices(false)}
+      />
+    )}
+    </>
   );
 }

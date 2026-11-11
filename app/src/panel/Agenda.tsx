@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { formatPrice, formatTime12h, STATUS_LABELS } from "../lib/format";
 import { clinicToday, displayName, usePanelData } from "../lib/panel";
 import AppointmentActions from "./AppointmentActions";
+import { SkeletonCards, SkeletonStrip } from "../components/Skeleton";
 
 const DAY_NAMES = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
 
@@ -22,7 +23,13 @@ export default function Agenda() {
   }, [date]);
 
   if (error) return <p className="error">{error}</p>;
-  if (!appointments) return <p className="muted">Cargando la agenda…</p>;
+  if (!appointments)
+    return (
+      <>
+        <SkeletonStrip />
+        <SkeletonCards count={2} />
+      </>
+    );
 
   const dayList = appointments.filter((a) => a.date === date);
   const countFor = (d: string) =>

@@ -215,6 +215,51 @@ export interface ManualBookingInput {
   note?: string;
 }
 
+// Replace an existing appointment's treatments (staff edit). Totals,
+// duration and the estimate flag are recomputed from the CURRENT
+// catalog, exactly like create_booking. The appointment row is updated
+// first so the exclusion constraint re-validates the new time range —
+// on a conflict (23P01) nothing else is touched.
+export async function updateAppointmentServices(
+  appt: PanelAppointment,
+  items: { service: ServiceRow; quantity: number }[],
+): Promise<void> {
+  let total = 0;
+  let duration = 0;
+  let estimate = false;
+  for (const { service, quantity } of items) {
+    total += service.price * quantity;
+    duration += service.duration_minutes * quantity;
+    estimate = estimate || service.price_from || service.price_note !== null;
+  }
+  const { error: upErr } = await supabase
+    .from("appointments")
+    .update({
+      total_price: total,
+      total_is_estimate: estimate,
+      duration_minutes: duration,
+    })
+    .eq("id", appt.id);
+  if (upErr) throw upErr;
+  const { error: delErr } = await supabase
+    .from("appointment_services")
+    .delete()
+    .eq("appointment_id", appt.id);
+  if (delErr) throw delErr;
+  const { error: insErr } = await supabase.from("appointment_services").insert(
+    items.map(({ service, quantity }) => ({
+      appointment_id: appt.id,
+      service_id: service.id,
+      service_name: service.name,
+      unit_price: service.price,
+      quantity,
+      price_from: service.price_from,
+      price_note: service.price_note,
+    })),
+  );
+  if (insErr) throw insErr;
+}
+
 // Mirrors create_booking's math (totals/duration/estimate always from
 // the catalog) but writes directly with admin RLS rights, so manual
 // bookings are confirmed immediately (status pendiente) and email is

@@ -7,6 +7,7 @@ import {
   usePanelData,
   type PanelAppointment,
 } from "../lib/panel";
+import { SkeletonCards, SkeletonKpis } from "../components/Skeleton";
 
 function servicesSummary(a: PanelAppointment): string {
   return a.appointment_services.map((i) => i.service_name).join(", ");
@@ -16,7 +17,13 @@ export default function Dashboard() {
   const { appointments, patients, error } = usePanelData();
 
   if (error) return <p className="error">{error}</p>;
-  if (!appointments || !patients) return <p className="muted">Cargando el panel…</p>;
+  if (!appointments || !patients)
+    return (
+      <>
+        <SkeletonKpis count={4} />
+        <SkeletonCards count={2} />
+      </>
+    );
 
   const today = clinicToday();
   const month = today.slice(0, 7);

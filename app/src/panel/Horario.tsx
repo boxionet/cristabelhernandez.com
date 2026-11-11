@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { FiCheck } from "react-icons/fi";
 import { supabase } from "../lib/supabase";
 import { clinicToday, usePanelData, type ScheduleRow } from "../lib/panel";
+import { SkeletonTable } from "../components/Skeleton";
 
 const DAY_NAMES = [
   "Domingo",
@@ -78,7 +80,12 @@ function ScheduleEditor({
         <button type="button" className="btn primary small" onClick={() => void save()}>
           Guardar
         </button>
-        {saved && <span className="success"> ✓</span>}
+        {saved && (
+          <span className="success">
+            {" "}
+            <FiCheck aria-hidden />
+          </span>
+        )}
       </td>
     </tr>
   );
@@ -93,7 +100,7 @@ export default function Horario() {
   const [reason, setReason] = useState("");
 
   if (error) return <p className="error">{error}</p>;
-  if (!schedule || !exceptions) return <p className="muted">Cargando el horario…</p>;
+  if (!schedule || !exceptions) return <SkeletonTable rows={7} />;
 
   async function addException() {
     if (!date) return;

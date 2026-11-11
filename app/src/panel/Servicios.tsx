@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { FiCheck } from "react-icons/fi";
 import { formatPrice } from "../lib/format";
 import { supabase } from "../lib/supabase";
 import { usePanelData, type ServiceRow } from "../lib/panel";
+import { SkeletonTable } from "../components/Skeleton";
 
 function ServiceEditor({
   service,
@@ -104,7 +106,12 @@ function ServiceEditor({
         <button type="button" className="btn primary small" onClick={() => void save()}>
           Guardar
         </button>
-        {saved && <span className="success"> ✓</span>}
+        {saved && (
+          <span className="success">
+            {" "}
+            <FiCheck aria-hidden />
+          </span>
+        )}
       </td>
     </tr>
   );
@@ -128,7 +135,7 @@ export default function Servicios() {
   const [addError, setAddError] = useState<string | null>(null);
 
   if (error) return <p className="error">{error}</p>;
-  if (!services) return <p className="muted">Cargando tratamientos…</p>;
+  if (!services) return <SkeletonTable rows={6} />;
 
   async function addService() {
     setAddError(null);
@@ -159,33 +166,6 @@ export default function Servicios() {
 
   return (
     <>
-      <h2 className="section-title">Tratamientos (catálogo)</h2>
-      <section className="card">
-        <table className="table services-table">
-          <thead>
-            <tr>
-              <th>Tratamiento</th>
-              <th>Precio (RD$)</th>
-              <th>Etiqueta</th>
-              <th>Min</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.map((s) => (
-              <ServiceEditor key={s.id} service={s} onSaved={() => void reload()} />
-            ))}
-          </tbody>
-        </table>
-        <p className="muted">
-          Los cambios se reflejan enseguida en la página de servicios y en el
-          portal. Desactivar un tratamiento lo oculta de la web sin borrar su
-          historial. Precios de referencia: la Toxina Frontal está en{" "}
-          {formatPrice(13000)}.
-        </p>
-      </section>
-
       <h2 className="section-title">Agregar tratamiento</h2>
       <section className="card form-card">
         <div className="form-grid">
@@ -225,6 +205,33 @@ export default function Servicios() {
         <button type="button" className="btn primary" onClick={() => void addService()}>
           Agregar
         </button>
+      </section>
+
+      <h2 className="section-title">Tratamientos (catálogo)</h2>
+      <section className="card">
+        <table className="table services-table">
+          <thead>
+            <tr>
+              <th>Tratamiento</th>
+              <th>Precio (RD$)</th>
+              <th>Etiqueta</th>
+              <th>Min</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {services.map((s) => (
+              <ServiceEditor key={s.id} service={s} onSaved={() => void reload()} />
+            ))}
+          </tbody>
+        </table>
+        <p className="muted">
+          Los cambios se reflejan enseguida en la página de servicios y en el
+          portal. Desactivar un tratamiento lo oculta de la web sin borrar su
+          historial. Precios de referencia: la Toxina Frontal está en{" "}
+          {formatPrice(13000)}.
+        </p>
       </section>
     </>
   );
