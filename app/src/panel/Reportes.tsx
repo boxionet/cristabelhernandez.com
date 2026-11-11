@@ -1,7 +1,14 @@
 import { useMemo, useState } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { formatPrice, STATUS_LABELS } from "../lib/format";
 import { clinicToday, usePanelData } from "../lib/panel";
+import DatePicker, { formatMonthDisplay } from "../components/DatePicker";
 import { SkeletonKpis, SkeletonTable } from "../components/Skeleton";
+
+function shiftMonthKey(monthKey: string, delta: number): string {
+  const [y, m] = monthKey.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
+}
 
 export default function Reportes() {
   const { appointments, error } = usePanelData();
@@ -60,13 +67,31 @@ export default function Reportes() {
 
   return (
     <>
-      <div className="agenda-head">
+      <div className="reportes-head">
         <h2 className="section-title">Reportes</h2>
-        <input
-          type="month"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-        />
+        <div className="month-nav">
+          <button
+            type="button"
+            className="cal-arrow"
+            aria-label="Mes anterior"
+            onClick={() => setMonth(shiftMonthKey(month, -1))}
+          >
+            <FiChevronLeft />
+          </button>
+          <DatePicker
+            value={`${month}-01`}
+            onChange={(iso) => setMonth(iso.slice(0, 7))}
+            displayFormat={formatMonthDisplay}
+          />
+          <button
+            type="button"
+            className="cal-arrow"
+            aria-label="Mes siguiente"
+            onClick={() => setMonth(shiftMonthKey(month, 1))}
+          >
+            <FiChevronRight />
+          </button>
+        </div>
       </div>
 
       <section className="kpis">

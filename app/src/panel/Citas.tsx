@@ -59,7 +59,10 @@ export default function Citas() {
       <section className="card manual-card">
         <div className="manual-card-text">
           <h3>
-            <FiPhone aria-hidden /> Citas por teléfono o WhatsApp
+            <span className="manual-icon">
+              <FiPhone aria-hidden />
+            </span>
+            Citas por teléfono o WhatsApp
           </h3>
           <p>Registra aquí las citas que llegan por teléfono o WhatsApp.</p>
         </div>

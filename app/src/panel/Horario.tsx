@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { FiCheck } from "react-icons/fi";
 import { supabase } from "../lib/supabase";
-import { clinicToday, usePanelData, type ScheduleRow } from "../lib/panel";
+import { usePanelData, type ScheduleRow } from "../lib/panel";
+import DatePicker from "../components/DatePicker";
 import { SkeletonTable } from "../components/Skeleton";
 
 const DAY_NAMES = [
@@ -183,11 +184,10 @@ export default function Horario() {
         <div className="form-grid">
           <label>
             Fecha
-            <input
-              type="date"
+            <DatePicker
               value={date}
-              min={clinicToday()}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={setDate}
+              placeholder="Elige la fecha"
             />
           </label>
           <label>

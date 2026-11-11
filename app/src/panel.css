@@ -103,12 +103,12 @@
 }
 .bar {
   width: 70%;
-  background: var(--sage);
+  background: #c7d2fe;
   border-radius: 6px 6px 0 0;
   min-height: 6px;
 }
 .bar.max {
-  background: var(--gold);
+  background: #6366f1;
 }
 .bar-count {
   font-weight: 700;
@@ -240,103 +240,12 @@
   border-color: var(--heading);
 }
 
-/* --- Agenda: modern month calendar + day list --- */
+/* --- Agenda layout (calendar styles live in styles.css) --- */
 .agenda-layout {
   display: grid;
   grid-template-columns: 380px 1fr;
   gap: 1.1rem;
   align-items: start;
-}
-.cal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.9rem;
-}
-.cal-title {
-  color: var(--heading);
-  font-size: 1.05rem;
-  text-transform: capitalize;
-}
-.cal-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.cal-arrow {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink);
-  cursor: pointer;
-  font-size: 1rem;
-}
-.cal-arrow:hover {
-  background: #f3f4f6;
-}
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-}
-.cal-dow {
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  padding: 0.3rem 0;
-}
-.cal-day {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  background: none;
-  border: none;
-  border-radius: 12px;
-  padding: 0.35rem 0 0.3rem;
-  cursor: pointer;
-  font-family: inherit;
-}
-.cal-day:hover {
-  background: #f3f4f6;
-}
-.cal-num {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.92rem;
-  color: var(--ink);
-}
-.cal-day.dim .cal-num {
-  color: #b6bcc4;
-}
-.cal-num.today {
-  box-shadow: inset 0 0 0 2px var(--sage);
-  font-weight: 800;
-}
-.cal-num.selected {
-  background: var(--sage);
-  color: #fff;
-  font-weight: 700;
-}
-.cal-count {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: var(--sage);
-  line-height: 1;
-}
-.cal-count.none {
-  visibility: hidden;
 }
 .agenda-day .day-title {
   color: var(--heading);
@@ -344,6 +253,7 @@
   margin-bottom: 0.7rem;
   text-transform: capitalize;
 }
+
 
 /* --- Citas header + manual booking card --- */
 .citas-head {
@@ -357,25 +267,60 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  background: var(--sage-deep);
-  color: #fff;
+  background: #f7f8f5;
+  border: 1px solid #e3e7dd;
+  box-shadow: none;
 }
 .manual-card-text h3 {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #fff;
+  gap: 0.6rem;
+  color: var(--heading);
   font-size: 1rem;
 }
+.manual-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--sage-tint);
+  color: var(--sage-deep);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 .manual-card-text p {
-  margin: 0.3rem 0 0;
+  margin: 0.3rem 0 0 2.75rem;
   font-size: 0.88rem;
-  opacity: 0.88;
+  color: var(--muted);
 }
 .manual-card-btn {
-  background: #fff;
-  color: var(--heading);
+  background: var(--sage);
+  color: #fff;
   flex-shrink: 0;
+}
+.manual-card-btn:hover {
+  background: #718562;
+}
+
+/* --- Reportes month navigation --- */
+.reportes-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Sign-out sits at the very end (bottom) of the Panel menu. */
+.sidebar .nav-signout {
+  margin-top: auto;
+  text-align: left;
 }
 .appt-patient {
   margin: 0.8rem 0 0;

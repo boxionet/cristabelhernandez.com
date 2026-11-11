@@ -53,7 +53,10 @@ export default function Layout() {
               <span className="avatar" aria-hidden>
                 {firstName.charAt(0).toUpperCase()}
               </span>
-              <span className="user-name">{firstName}</span>
+              <span className="user-meta">
+                <span className="user-name">{firstName}</span>
+                <small className="user-role-text">Paciente</small>
+              </span>
             </span>
           )}
         </header>

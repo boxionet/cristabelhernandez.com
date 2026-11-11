@@ -110,9 +110,6 @@ export default function PanelLayout() {
             </NavLink>
           ))}
         </nav>
-        <div className="user-chip">
-          <span className="user-role">Admin</span>
-        </div>
         <button className="nav-signout" onClick={() => void signOut()}>
           <FiLogOut aria-hidden /> Cerrar sesión
         </button>
@@ -126,7 +123,10 @@ export default function PanelLayout() {
               <span className="avatar" aria-hidden>
                 {initial}
               </span>
-              <span className="user-name">{firstName}</span>
+              <span className="user-meta">
+                <span className="user-name">{firstName}</span>
+                <small className="user-role-text">Admin</small>
+              </span>
             </span>
           )}
         </header>
