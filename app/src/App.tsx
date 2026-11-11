@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { AuthProvider, isAdmin, useAuth } from "./auth";
 import Layout from "./components/Layout";
 import Historial from "./pages/Historial";
@@ -83,6 +83,11 @@ function RequireAdmin({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+function ClienteRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/panel/pacientes/${id ?? ""}`} replace />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -112,8 +117,13 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="citas" element={<Citas />} />
-          <Route path="clientes" element={<Clientes />} />
-          <Route path="clientes/:id" element={<ClienteDetalle />} />
+          <Route path="pacientes" element={<Clientes />} />
+          <Route path="pacientes/:id" element={<ClienteDetalle />} />
+          <Route
+            path="clientes"
+            element={<Navigate to="/panel/pacientes" replace />}
+          />
+          <Route path="clientes/:id" element={<ClienteRedirect />} />
           <Route path="nueva-cita" element={<NuevaCita />} />
           <Route path="servicios" element={<ServiciosPanel />} />
           <Route path="horario" element={<Horario />} />

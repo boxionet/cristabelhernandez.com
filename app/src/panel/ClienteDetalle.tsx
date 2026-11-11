@@ -35,8 +35,8 @@ export default function ClienteDetalle() {
     return (
       <section className="card empty">
         <p>No encontramos este cliente.</p>
-        <Link className="btn ghost" to="/panel/clientes">
-          Volver a clientes
+        <Link className="btn ghost" to="/panel/pacientes">
+          Volver a pacientes
         </Link>
       </section>
     );
@@ -64,7 +64,7 @@ export default function ClienteDetalle() {
   return (
     <>
       <p>
-        <Link to="/panel/clientes">← Clientes</Link>
+        <Link to="/panel/pacientes">← Pacientes</Link>
       </p>
       <section className="card">
         <div className="client-card-head">
@@ -78,7 +78,7 @@ export default function ClienteDetalle() {
           {patient.phone ? ` · ${patient.phone}` : ""}
         </p>
         <p className="muted">
-          Cliente desde {formatDateLongEs(toClinicDateISO(patient.created_at))} · {own.length} citas ·{" "}
+          Paciente desde {formatDateLongEs(toClinicDateISO(patient.created_at))} · {own.length} citas ·{" "}
           {formatPrice(spent)} en tratamientos completados
           {patient.no_show_count > 0
             ? ` · No asistió ${patient.no_show_count} vez/veces`

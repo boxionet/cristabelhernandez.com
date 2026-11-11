@@ -46,7 +46,7 @@ export default function Clientes() {
 
   return (
     <>
-      <h2 className="section-title">Clientes</h2>
+      <h2 className="section-title">Pacientes</h2>
       <div className="search-bar">
         <FiSearch aria-hidden />
         <input
@@ -58,7 +58,7 @@ export default function Clientes() {
       </div>
       {rows.length === 0 && (
         <section className="card empty">
-          <p>No hay clientes con esa búsqueda.</p>
+          <p>No hay pacientes con esa búsqueda.</p>
         </section>
       )}
       <section className="clients-grid">
@@ -67,7 +67,7 @@ export default function Clientes() {
           return (
             <Link
               key={p.id}
-              to={`/panel/clientes/${p.id}`}
+              to={`/panel/pacientes/${p.id}`}
               className="card client2"
             >
               <div className="client2-head">

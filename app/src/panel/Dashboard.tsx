@@ -329,16 +329,16 @@ export default function Dashboard() {
             ))}
           </div>
           <div className="recent-block">
-            <h4>Clientes recientes</h4>
+            <h4>Pacientes recientes</h4>
             {recentPatients.length === 0 && (
-              <p className="muted">Aún no hay clientes registrados.</p>
+              <p className="muted">Aún no hay pacientes registrados.</p>
             )}
             {recentPatients.map((p) => {
               const first = firstDateOf(p.id);
               return (
                 <Link
                   key={p.id}
-                  to={`/panel/clientes/${p.id}`}
+                  to={`/panel/pacientes/${p.id}`}
                   className="recent-row"
                 >
                   <span className="recent-avatar">

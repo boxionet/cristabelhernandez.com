@@ -2095,3 +2095,40 @@ body #banner-712 {
     aspect-ratio: 1;
     flex: none;
 }
+
+/* --------------------------------------- */
+/*   Mi Cuenta account button (header)     */
+/* --------------------------------------- */
+#cs-navigation {
+    .cs-account-btn {
+        width: calc(44 / 16 * 1rem);
+        height: calc(44 / 16 * 1rem);
+        border-radius: 50%;
+        border: 1.5px solid var(--primary);
+        background-color: transparent;
+        color: #3e4c35;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        /* prevent flexbox from squishing it */
+        flex: none;
+        transition: background-color 0.2s;
+
+        svg {
+            width: calc(21 / 16 * 1rem);
+            height: calc(21 / 16 * 1rem);
+        }
+
+        &:hover {
+            background-color: rgba(132, 149, 115, 0.14);
+        }
+    }
+}
+
+@media only screen and (max-width: 1023.5px) {
+    #cs-navigation {
+        .cs-account-btn {
+            margin-left: calc(12 / 16 * 1rem);
+        }
+    }
+}

@@ -68,7 +68,7 @@ export default function PanelAppointmentCard({
           {showPatientName ? (
             <div className="appt2-name">
               {appt.patient_id ? (
-                <Link to={`/panel/clientes/${appt.patient_id}`}>
+                <Link to={`/panel/pacientes/${appt.patient_id}`}>
                   {displayName(appt)}
                 </Link>
               ) : (
