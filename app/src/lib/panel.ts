@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import { supabase } from "./supabase";
 import type { Appointment } from "./types";
 
@@ -82,43 +81,6 @@ export function isNuevo(patientId: string, all: PanelAppointment[]): boolean {
       a.status !== "no_show",
   ).length;
   return count <= 1;
-}
-
-export function usePanelData() {
-  const [appointments, setAppointments] = useState<PanelAppointment[] | null>(null);
-  const [patients, setPatients] = useState<PatientRow[] | null>(null);
-  const [services, setServices] = useState<ServiceRow[] | null>(null);
-  const [schedule, setSchedule] = useState<ScheduleRow[] | null>(null);
-  const [exceptions, setExceptions] = useState<ExceptionRow[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const reload = useCallback(async () => {
-    const [a, p, s, w, e] = await Promise.all([
-      supabase
-        .from("appointments")
-        .select("*, appointment_services(*), patients(full_name,email,phone)")
-        .order("starts_at", { ascending: true }),
-      supabase.from("patients").select("*").order("created_at", { ascending: false }),
-      supabase.from("services").select("*").order("sort_order", { ascending: true }),
-      supabase.from("weekly_schedule").select("*").order("weekday", { ascending: true }),
-      supabase.from("date_exceptions").select("*").order("date", { ascending: true }),
-    ]);
-    if (a.error || p.error || s.error || w.error || e.error) {
-      setError("No pudimos cargar los datos del panel. Recarga la página.");
-      return;
-    }
-    setAppointments((a.data ?? []) as PanelAppointment[]);
-    setPatients((p.data ?? []) as PatientRow[]);
-    setServices((s.data ?? []) as ServiceRow[]);
-    setSchedule((w.data ?? []) as ScheduleRow[]);
-    setExceptions((e.data ?? []) as ExceptionRow[]);
-  }, []);
-
-  useEffect(() => {
-    void reload();
-  }, [reload]);
-
-  return { appointments, patients, services, schedule, exceptions, error, reload };
 }
 
 // ---------- Panel actions (direct RLS writes; staff override) ----------

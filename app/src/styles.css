@@ -740,18 +740,52 @@ input:disabled {
 .datepicker-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 50;
 }
 .datepicker-pop {
-  position: absolute;
-  z-index: 41;
-  top: calc(100% + 6px);
-  left: 0;
-  width: 330px;
-  max-width: 86vw;
+  position: fixed;
+  z-index: 60;
+  width: min(330px, calc(100vw - 16px));
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 18px 44px rgba(31, 41, 55, 0.18);
   border: 1px solid #e5e7eb;
   padding: 1rem;
+}
+
+/* ---------- Responsive: small tablets & phones (shared + patient) ---------- */
+@media (max-width: 640px) {
+  .section-title {
+    font-size: 1.12rem;
+  }
+  .topbar-title {
+    font-size: 1.1rem;
+  }
+  .user-role-text {
+    display: none; /* avatar + first name only on small screens */
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  .login-card {
+    padding: 1.5rem 1.1rem;
+  }
+  .kpi-value {
+    font-size: 1.3rem;
+  }
+  .appt-head {
+    flex-wrap: wrap;
+  }
+  /* 16px inputs stop iOS Safari from auto-zooming on focus. */
+  .content input,
+  .content select,
+  .content textarea,
+  .login-card input {
+    font-size: 16px;
+  }
 }

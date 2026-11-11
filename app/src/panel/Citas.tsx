@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { FiPhone, FiPlus } from "react-icons/fi";
 import {
@@ -7,7 +7,10 @@ import {
   formatTime12h,
   STATUS_LABELS,
 } from "../lib/format";
-import { displayContact, displayName, usePanelData } from "../lib/panel";
+import { displayContact, displayName } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setCitasQuery, setCitasStatus } from "../store/slices/uiSlice";
 import AppointmentActions from "./AppointmentActions";
 import { SkeletonCards } from "../components/Skeleton";
 
@@ -23,8 +26,12 @@ const STATUS_FILTERS = [
 
 export default function Citas() {
   const { appointments, error, reload } = usePanelData();
-  const [status, setStatus] = useState("todas");
-  const [query, setQuery] = useState("");
+  // Filters live in Redux so they survive navigation.
+  const status = useAppSelector((s) => s.ui.citasStatus);
+  const query = useAppSelector((s) => s.ui.citasQuery);
+  const dispatch = useAppDispatch();
+  const setStatus = (v: string) => dispatch(setCitasStatus(v));
+  const setQuery = (v: string) => dispatch(setCitasQuery(v));
 
   const filtered = useMemo(() => {
     if (!appointments) return [];

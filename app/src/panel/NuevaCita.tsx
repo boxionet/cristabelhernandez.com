@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { fetchSlots } from "../lib/api";
+import { useAvailability } from "../lib/queries/availability";
 import { formatPrice, formatTime12h } from "../lib/format";
 import {
   clinicToday,
   createManualBooking,
-  usePanelData,
   type ServiceRow,
 } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonForm } from "../components/Skeleton";
 
 export default function NuevaCita() {
@@ -19,8 +19,6 @@ export default function NuevaCita() {
   const [phone, setPhone] = useState("");
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [date, setDate] = useState(clinicToday());
-  const [slots, setSlots] = useState<string[] | null>(null);
-  const [dayOpen, setDayOpen] = useState(true);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [source, setSource] = useState<"telefono" | "whatsapp" | "presencial">("telefono");
   const [note, setNote] = useState("");
@@ -42,26 +40,16 @@ export default function NuevaCita() {
   );
   const total = items.reduce((sum, i) => sum + i.service.price * i.quantity, 0);
 
+  // Availability is server state: TanStack Query keyed by date+duration.
+  const availability = useAvailability(date, duration, duration > 0);
+  const slots: string[] | null =
+    duration === 0 || availability.isPending
+      ? null
+      : (availability.data?.slots ?? []);
+  const dayOpen = availability.data?.open ?? true;
+
   useEffect(() => {
-    if (duration === 0) {
-      setSlots(null);
-      return;
-    }
-    let cancelled = false;
-    setSlots(null);
     setStartTime(null);
-    fetchSlots(date, duration).then((res) => {
-      if (cancelled) return;
-      if (res) {
-        setDayOpen(res.open);
-        setSlots(res.slots);
-      } else {
-        setSlots([]);
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
   }, [date, duration]);
 
   async function submit() {

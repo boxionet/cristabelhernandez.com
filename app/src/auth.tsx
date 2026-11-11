@@ -1,17 +1,44 @@
 import {
-  createContext,
-  useContext,
+  useCallback,
   useEffect,
   useRef,
-  useState,
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
-import { linkPatient } from "./lib/api";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import {
+  isAdminUser,
+  linkPatientThunk,
+  linkReset,
+  sessionChanged,
+} from "./store/slices/authSlice";
 import type { Patient } from "./lib/types";
 
-interface AuthContextValue {
+// Auth lives in the Redux auth slice. This provider is only the
+// bridge: it mirrors Supabase's session listener into the store.
+// Components read auth through useAuth() (below) or the store hooks.
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) dispatch(sessionChanged(data.session));
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
+      dispatch(sessionChanged(sess));
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, [dispatch]);
+
+  return <>{children}</>;
+}
+
+export interface AuthContextValue {
   loading: boolean;
   session: Session | null;
   user: User | null;
@@ -22,89 +49,55 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue>({
-  loading: true,
-  session: null,
-  user: null,
-  patient: null,
-  linkError: null,
-  retryLink: () => {},
-  ensureLinked: () => {},
-  signOut: async () => {},
-});
+export function useAuth(): AuthContextValue {
+  const dispatch = useAppDispatch();
+  const auth = useAppSelector((s) => s.auth);
+  const linkingFor = useRef<string | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<Session | null>(null);
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [linkError, setLinkError] = useState<string | null>(null);
-  const linkedFor = useRef<string | null>(null);
+  const ensureLinked = useCallback(() => {
+    const sess = auth.session;
+    if (!sess) return;
+    // The thunk also guards, but skip dispatching while a link for
+    // this user is already in flight or done.
+    if (auth.patient && auth.linkedFor === sess.user.id) return;
+    if (linkingFor.current === sess.user.id) return;
+    linkingFor.current = sess.user.id;
+    void dispatch(linkPatientThunk(sess.access_token))
+      .unwrap()
+      .catch(() => {
+        linkingFor.current = null;
+      });
+  }, [auth.session, auth.patient, auth.linkedFor, dispatch]);
 
-  async function doLink(sess: Session) {
-    if (linkedFor.current === sess.user.id) return;
-    linkedFor.current = sess.user.id;
-    setLinkError(null);
-    try {
-      const { patient } = await linkPatient(sess.access_token);
-      setPatient(patient);
-    } catch (e) {
-      linkedFor.current = null;
-      setLinkError(e instanceof Error ? e.message : "link_failed");
+  const retryLink = useCallback(() => {
+    linkingFor.current = null;
+    dispatch(linkReset());
+    if (auth.session) {
+      linkingFor.current = auth.session.user.id;
+      void dispatch(linkPatientThunk(auth.session.access_token))
+        .unwrap()
+        .catch(() => {
+          linkingFor.current = null;
+        });
     }
-  }
+  }, [auth.session, dispatch]);
 
-  useEffect(() => {
-    let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setLoading(false);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
-      setSession(sess);
-      setLoading(false);
-      if (!sess) {
-        linkedFor.current = null;
-        setPatient(null);
-      }
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut();
   }, []);
 
-  const value: AuthContextValue = {
-    loading,
-    session,
-    user: session?.user ?? null,
-    patient,
-    linkError,
-    retryLink: () => {
-      if (session) {
-        linkedFor.current = null;
-        void doLink(session);
-      }
-    },
-    ensureLinked: () => {
-      if (session) void doLink(session);
-    },
-    signOut: async () => {
-      await supabase.auth.signOut();
-    },
+  return {
+    loading: auth.status === "loading",
+    session: auth.session,
+    user: auth.session?.user ?? null,
+    patient: auth.patient,
+    linkError: auth.linkStatus === "error" ? auth.linkError : null,
+    retryLink,
+    ensureLinked,
+    signOut,
   };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth(): AuthContextValue {
-  return useContext(AuthContext);
 }
 
 export function isAdmin(user: User | null): boolean {
-  return Boolean(
-    user &&
-      (user.app_metadata as { role?: string } | undefined)?.role === "admin",
-  );
+  return isAdminUser(user);
 }

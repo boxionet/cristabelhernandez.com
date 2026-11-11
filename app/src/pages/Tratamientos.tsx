@@ -1,5 +1,5 @@
 import { formatDateEs, formatPrice } from "../lib/format";
-import { useAppointments } from "../lib/useAppointments";
+import { useAppointments } from "../lib/queries/patientQueries";
 import { SkeletonCards } from "../components/Skeleton";
 
 interface Aggregate {

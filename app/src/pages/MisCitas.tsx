@@ -1,6 +1,6 @@
 import AppointmentCard from "../components/AppointmentCard";
 import { formatPrice, isUpcoming } from "../lib/format";
-import { useAppointments } from "../lib/useAppointments";
+import { useAppointments } from "../lib/queries/patientQueries";
 import { SkeletonCards, SkeletonKpis } from "../components/Skeleton";
 
 export default function MisCitas() {

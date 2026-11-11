@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../lib/format";
-import { isNuevo, usePanelData } from "../lib/panel";
+import { isNuevo } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonCards } from "../components/Skeleton";
 
 export default function Clientes() {

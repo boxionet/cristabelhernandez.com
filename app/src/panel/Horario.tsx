@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { FiCheck } from "react-icons/fi";
 import { supabase } from "../lib/supabase";
-import { usePanelData, type ScheduleRow } from "../lib/panel";
+import { type ScheduleRow } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
 import DatePicker from "../components/DatePicker";
 import { SkeletonTable } from "../components/Skeleton";
 

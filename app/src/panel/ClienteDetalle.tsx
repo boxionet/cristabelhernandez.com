@@ -7,7 +7,8 @@ import {
   STATUS_LABELS,
 } from "../lib/format";
 import { supabase } from "../lib/supabase";
-import { isNuevo, usePanelData } from "../lib/panel";
+import { isNuevo } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
 import AppointmentActions from "./AppointmentActions";
 import { SkeletonCards } from "../components/Skeleton";
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   formatDateEs,
@@ -6,14 +6,20 @@ import {
   formatTime12h,
   STATUS_LABELS,
 } from "../lib/format";
-import { clinicToday, displayName, usePanelData } from "../lib/panel";
+import { displayName } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setAgendaDate } from "../store/slices/uiSlice";
 import AppointmentActions from "./AppointmentActions";
 import MonthCalendar from "../components/MonthCalendar";
 import { SkeletonCards } from "../components/Skeleton";
 
 export default function Agenda() {
   const { appointments, error, reload } = usePanelData();
-  const [date, setDate] = useState(clinicToday());
+  // The selected day lives in Redux so it survives navigation.
+  const date = useAppSelector((s) => s.ui.agendaDate);
+  const dispatch = useAppDispatch();
+  const setDate = (d: string) => dispatch(setAgendaDate(d));
 
   const counts = useMemo(() => {
     const map: Record<string, number> = {};

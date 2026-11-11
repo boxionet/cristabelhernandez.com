@@ -1,6 +1,6 @@
 import AppointmentCard from "../components/AppointmentCard";
 import { isUpcoming } from "../lib/format";
-import { useAppointments } from "../lib/useAppointments";
+import { useAppointments } from "../lib/queries/patientQueries";
 import { SkeletonCards } from "../components/Skeleton";
 
 export default function Historial() {

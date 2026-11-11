@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import type { IconType } from "react-icons";
 import {
   FiBarChart2,
@@ -12,8 +11,11 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { useAuth } from "../auth";
-import { supabase } from "../lib/supabase";
-import { clinicToday, usePanelData } from "../lib/panel";
+import { clinicToday } from "../lib/panel";
+import {
+  usePanelAppointments,
+  useStaffProfileName,
+} from "../lib/queries/panelQueries";
 
 const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
   { to: "/panel/", label: "Panel", icon: FiGrid, end: true },
@@ -29,51 +31,27 @@ const LOGO_URL = "/assets/svgs/cristabel_logo_horizontal.svg";
 
 export default function PanelLayout() {
   const { user, signOut } = useAuth();
-  const { appointments, reload } = usePanelData();
-  const location = useLocation();
-  // undefined = lookup still running (render no chip yet, so the
-  // email-prefix fallback never flashes before the real name arrives).
-  const [profileName, setProfileName] = useState<string | undefined>(
-    undefined,
-  );
+  // Sidebar badges read the shared appointments query (React Query
+  // cache + invalidations keep them fresh; no manual reloads).
+  const { data: appointments } = usePanelAppointments();
+  const profile = useStaffProfileName(user?.id);
 
   // The identity shown top-right is the person's first name: the auth
   // profile name when present, else their patient record's name, else
-  // the email prefix as a last resort.
-  useEffect(() => {
-    if (!user) return;
-    let cancelled = false;
-    setProfileName(undefined);
-    void supabase
-      .from("patients")
-      .select("full_name")
-      .eq("auth_user_id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!cancelled) setProfileName(data?.full_name ?? "");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [user]);
-
+  // the email prefix as a last resort. While the profile query is in
+  // flight, no chip renders (so the fallback never flashes).
   const meta = user?.user_metadata as
     | { full_name?: string; name?: string }
     | undefined;
   const metaName = meta?.full_name || meta?.name || "";
   const fullName =
     metaName ||
-    (profileName === undefined
+    (profile.isLoading
       ? ""
-      : profileName || (user?.email ? user.email.split("@")[0] : ""));
+      : profile.data || (user?.email ? user.email.split("@")[0] : ""));
   const firstName = fullName.trim().split(/\s+/)[0] || "";
   const initial = (firstName.charAt(0) || "?").toUpperCase();
 
-  // The layout keeps its own data copy for the sidebar badges; refresh
-  // it on navigation so actions taken on a page don't leave stale counts.
-  useEffect(() => {
-    void reload();
-  }, [location.pathname, reload]);
   const today = clinicToday();
   const todayCount = (appointments ?? []).filter(
     (a) =>
@@ -129,6 +107,15 @@ export default function PanelLayout() {
               </span>
             </span>
           )}
+          <button
+            type="button"
+            className="topbar-signout"
+            onClick={() => void signOut()}
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
+          >
+            <FiLogOut aria-hidden />
+          </button>
         </header>
         <nav className="mobile-nav">
           {NAV.map((item) => (

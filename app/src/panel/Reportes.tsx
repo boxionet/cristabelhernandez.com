@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { formatPrice, STATUS_LABELS } from "../lib/format";
-import { clinicToday, usePanelData } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setReportMonth } from "../store/slices/uiSlice";
 import DatePicker, { formatMonthDisplay } from "../components/DatePicker";
 import { SkeletonKpis, SkeletonTable } from "../components/Skeleton";
 
@@ -12,7 +14,10 @@ function shiftMonthKey(monthKey: string, delta: number): string {
 
 export default function Reportes() {
   const { appointments, error } = usePanelData();
-  const [month, setMonth] = useState(clinicToday().slice(0, 7));
+  // The report month lives in Redux so it survives navigation.
+  const month = useAppSelector((s) => s.ui.reportMonth);
+  const dispatch = useAppDispatch();
+  const setMonth = (m: string) => dispatch(setReportMonth(m));
 
   const data = useMemo(() => {
     if (!appointments) return null;

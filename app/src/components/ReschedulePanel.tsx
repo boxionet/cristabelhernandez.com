@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth";
-import { errorText, fetchSlots, rescheduleAppointment } from "../lib/api";
+import { errorText, rescheduleAppointment } from "../lib/api";
+import { useAvailability } from "../lib/queries/availability";
 import { formatTime12h } from "../lib/format";
 import type { Appointment } from "../lib/types";
 
@@ -27,38 +28,32 @@ export default function ReschedulePanel({
 }) {
   const { session } = useAuth();
   const [date, setDate] = useState(appointment.date);
-  const [slots, setSlots] = useState<string[] | null>(null);
-  const [open, setOpen] = useState(true);
   const [picked, setPicked] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    setSlots(null);
-    setPicked(null);
-    fetchSlots(date, appointment.duration_minutes).then((res) => {
-      if (cancelled) return;
-      if (res) {
-        setOpen(res.open);
-        // The appointment's own current slot counts as available to itself.
-        const list = [...res.slots];
-        if (date === appointment.date) {
-          const own = appointment.start_time.slice(0, 5);
-          if (!list.includes(own)) {
-            list.push(own);
-            list.sort();
-          }
-        }
-        setSlots(list);
-      } else {
-        setSlots([]);
+  // Availability is server state: TanStack Query keyed by date+duration.
+  const availability = useAvailability(date, appointment.duration_minutes);
+  const open = availability.data?.open ?? true;
+  const slots = useMemo<string[] | null>(() => {
+    if (availability.isPending) return null;
+    const res = availability.data;
+    if (!res) return [];
+    const list = [...res.slots];
+    // The appointment's own current slot counts as available to itself.
+    if (date === appointment.date) {
+      const own = appointment.start_time.slice(0, 5);
+      if (!list.includes(own)) {
+        list.push(own);
+        list.sort();
       }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [date, appointment]);
+    }
+    return list;
+  }, [availability.isPending, availability.data, date, appointment]);
+
+  useEffect(() => {
+    setPicked(null);
+  }, [date]);
 
   async function confirm() {
     if (!picked || !session) return;

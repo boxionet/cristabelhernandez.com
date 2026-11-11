@@ -2,7 +2,8 @@ import { useState } from "react";
 import { FiCheck } from "react-icons/fi";
 import { formatPrice } from "../lib/format";
 import { supabase } from "../lib/supabase";
-import { usePanelData, type ServiceRow } from "../lib/panel";
+import { type ServiceRow } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonTable } from "../components/Skeleton";
 
 function ServiceEditor({

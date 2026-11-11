@@ -4,9 +4,9 @@ import {
   clinicToday,
   displayName,
   isNuevo,
-  usePanelData,
   type PanelAppointment,
 } from "../lib/panel";
+import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonCards, SkeletonKpis } from "../components/Skeleton";
 
 function servicesSummary(a: PanelAppointment): string {

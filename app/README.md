@@ -62,3 +62,22 @@ the Supabase SQL Editor (project `bgahgawcjokcrpzkexvx`, us-east-1).
   run in the SQL Editor); anon-key requests to `patients` /
   `appointments` must return 401 (RLS + grants), the catalog
   (`services`) is public by design.
+
+## App architecture (state & data)
+
+- **Redux Toolkit** (`app/src/store/`) holds client state only:
+  `slices/authSlice.ts` (Supabase session + linked patient;
+  `linkPatientThunk`), `slices/uiSlice.ts` (cross-screen UI state:
+  Agenda date, Reportes month, Citas filters). Add one slice per
+  feature under `slices/`; components use the typed hooks in
+  `store/hooks.ts`. Form-local state stays in components on purpose.
+- **TanStack Query** (`app/src/lib/queryClient.ts`, keys in
+  `lib/queries/keys.ts`) owns all server state: panel collections
+  (`lib/queries/panelQueries.ts`), patient appointments
+  (`lib/queries/patientQueries.ts`), availability
+  (`lib/queries/availability.ts`). Writes stay as imperative
+  functions (RLS writes in `lib/panel.ts`, function calls in
+  `lib/api.ts`) and finish by invalidating the matching query keys
+  (`usePanelData().reload()` / `useAppointments().reload()`).
+- `auth.tsx` is only a bridge: it mirrors the Supabase session
+  listener into the auth slice and exposes the `useAuth()` facade.

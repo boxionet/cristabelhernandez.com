@@ -1,10 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../auth";
 import { supabase } from "../lib/supabase";
+import { useAppDispatch } from "../store/hooks";
+import { patientUpdated } from "../store/slices/authSlice";
 import { SkeletonForm } from "../components/Skeleton";
 
 export default function Perfil() {
   const { patient, user } = useAuth();
+  const dispatch = useAppDispatch();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
@@ -33,6 +36,14 @@ export default function Perfil() {
       setError("No pudimos guardar los cambios. Inténtalo de nuevo.");
       return;
     }
+    // Keep the auth slice's patient in sync (top bar name, etc.).
+    dispatch(
+      patientUpdated({
+        ...patient,
+        fullName: fullName.trim(),
+        phone: phone.trim() || null,
+      }),
+    );
     setSaved(true);
   }
 

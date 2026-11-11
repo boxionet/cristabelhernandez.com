@@ -545,3 +545,81 @@
   display: inline-flex;
   gap: 0.5rem;
 }
+
+/* ---------- Responsive: tablet & mobile (Panel) ---------- */
+.topbar-signout {
+  display: none; /* desktop uses the sidebar's sign-out */
+}
+
+@media (max-width: 1150px) {
+  .agenda-layout {
+    grid-template-columns: 1fr;
+  }
+  .cal-card {
+    max-width: 460px;
+    width: 100%;
+    margin-inline: auto;
+  }
+  .agenda-day {
+    max-width: 720px;
+    width: 100%;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar-signout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-left: 0.5rem;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .content.wide {
+    padding-bottom: 2.5rem;
+  }
+  .citas-head {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Wide tables scroll sideways inside their card instead of
+     breaking the layout (Horario, Reportes, client detail). */
+  .card table.table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .svc-row {
+    flex-wrap: wrap;
+  }
+  .filter-row .search-input {
+    min-width: 0;
+  }
+  .chip-row {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .manual-card-text p {
+    margin-left: 0;
+  }
+  .month-nav .datepicker-btn {
+    min-width: 0;
+  }
+  .bar {
+    width: 84%;
+  }
+  .kpis.four .kpi {
+    padding: 0.9rem;
+  }
+}
