@@ -896,7 +896,7 @@
             width: 100%;
             /* 16px - 32px */
             padding: clamp(1rem, 4vw, 2rem);
-            background-color: #faf6f2;
+            background-color: #fffdf9;
             /* 16px - 32px */
             border-radius: calc(16/16 * 1rem);
             display: grid;
@@ -1087,7 +1087,7 @@
             /* 20px - 40px top & bottom */
             /* 20px - 40px left & right */
             padding: clamp(1.25rem, 3.15vw, 2.5rem) clamp(1.25rem, 3.15vw, 2.5rem);
-            background-color: #faf6f2;
+            background-color: #fffdf9;
             /* prevents padding from adding to height and width */
             box-sizing: border-box;
             display: flex;

@@ -2095,3 +2095,49 @@ body #banner-712 {
     aspect-ratio: 1;
     flex: none;
 }
+
+/* --------------------------------------- */
+/*   Mi Cuenta account button (header)     */
+/* --------------------------------------- */
+#cs-navigation {
+    .cs-account-btn {
+        width: calc(44 / 16 * 1rem);
+        height: calc(44 / 16 * 1rem);
+        border-radius: 50%;
+        border: 1.5px solid var(--primary);
+        background-color: transparent;
+        color: #3e4c35;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        /* prevent flexbox from squishing it */
+        flex: none;
+        transition:
+            background-color 0.3s,
+            border-color 0.3s,
+            color 0.3s;
+
+        svg {
+            width: calc(21 / 16 * 1rem);
+            height: calc(21 / 16 * 1rem);
+        }
+
+        /* Same hover as the Reservar Cita button: fills with the
+           brown #705d3f and the icon turns white. */
+        &:hover {
+            background-color: #705d3f;
+            border-color: #705d3f;
+            color: #fff;
+        }
+    }
+}
+
+/* The account icon is desktop-only; on mobile and tablet the
+   Mi Cuenta text item lives in the hamburger menu instead. */
+@media only screen and (max-width: 1023.5px) {
+    #cs-navigation {
+        .cs-account-btn {
+            display: none;
+        }
+    }
+}

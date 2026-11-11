@@ -2,6 +2,28 @@
   publish = "public/"
   command = "npm run build"
 
+# Booking app (app/): SPA fallback for the two gated areas only.
+# The React app is built into public/app by the root build (build:app).
+[[redirects]]
+  from = "/mi-cuenta"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mi-cuenta/*"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/panel"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/panel/*"
+  to = "/app/index.html"
+  status = 200
+
 [[plugins]]
   # Installs the Lighthouse Build Plugin for all deploy contexts
   package = "@netlify/plugin-lighthouse"
