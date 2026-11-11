@@ -84,6 +84,7 @@ export default function Reportes() {
             <FiChevronLeft />
           </button>
           <DatePicker
+            mode="month"
             value={`${month}-01`}
             onChange={(iso) => setMonth(iso.slice(0, 7))}
             displayFormat={formatMonthDisplay}

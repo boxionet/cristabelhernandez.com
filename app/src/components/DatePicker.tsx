@@ -7,6 +7,7 @@ import {
 } from "react";
 import { FiCalendar } from "react-icons/fi";
 import MonthCalendar, { monthTitleOf } from "./MonthCalendar";
+import MonthGrid from "./MonthGrid";
 import { formatDateEs } from "../lib/format";
 
 /**
@@ -23,11 +24,14 @@ export default function DatePicker({
   onChange,
   placeholder = "Elige una fecha",
   displayFormat,
+  mode = "day",
 }: {
   value: string;
   onChange: (iso: string) => void;
   placeholder?: string;
   displayFormat?: (iso: string) => string;
+  /** "day" shows the month calendar; "month" shows the year + month-tile grid. */
+  mode?: "day" | "month";
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
@@ -107,13 +111,23 @@ export default function DatePicker({
                 : { top: 0, left: 0, visibility: "hidden" }
             }
           >
-            <MonthCalendar
-              value={value}
-              onPick={(iso) => {
-                onChange(iso);
-                setOpen(false);
-              }}
-            />
+            {mode === "month" ? (
+              <MonthGrid
+                value={value}
+                onPick={(iso) => {
+                  onChange(iso);
+                  setOpen(false);
+                }}
+              />
+            ) : (
+              <MonthCalendar
+                value={value}
+                onPick={(iso) => {
+                  onChange(iso);
+                  setOpen(false);
+                }}
+              />
+            )}
           </div>
         </>
       )}
