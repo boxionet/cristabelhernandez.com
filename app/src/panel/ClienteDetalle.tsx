@@ -12,9 +12,12 @@ import { supabase } from "../lib/supabase";
 import { isNuevo } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import PanelAppointmentCard from "./PanelAppointmentCard";
+import AsyncButton from "../components/AsyncButton";
+import { useToast } from "../components/Toast";
 import { SkeletonCards } from "../components/Skeleton";
 
 export default function ClienteDetalle() {
+  const toast = useToast();
   const { id } = useParams();
   const { appointments, patients, error, reload } = usePanelData();
   const [notes, setNotes] = useState("");
@@ -45,10 +48,15 @@ export default function ClienteDetalle() {
     .reduce((s, a) => s + a.total_price, 0);
 
   async function saveNotes() {
-    await supabase
+    const { error: notesError } = await supabase
       .from("patients")
       .update({ notes: notes.trim() || null })
       .eq("id", patient!.id);
+    if (notesError) {
+      toast.error(`No se pudieron guardar las notas: ${notesError.message}`);
+      return;
+    }
+    toast.success("Notas guardadas");
     setSaved(true);
     void reload();
   }
@@ -89,9 +97,13 @@ export default function ClienteDetalle() {
           />
         </label>
         <div className="appt-actions">
-          <button type="button" className="btn primary small" onClick={() => void saveNotes()}>
+          <AsyncButton
+            className="btn primary small"
+            pendingText="Guardando…"
+            onClick={saveNotes}
+          >
             Guardar notas
-          </button>
+          </AsyncButton>
           {saved && <span className="success">Guardado.</span>}
           <Link className="btn ghost small" to={`/panel/nueva-cita?paciente=${patient.id}`}>
             Nueva cita para este cliente

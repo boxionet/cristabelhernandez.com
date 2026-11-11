@@ -3,6 +3,7 @@ import { useAuth } from "../auth";
 import { errorText, rescheduleAppointment } from "../lib/api";
 import { useAvailability } from "../lib/queries/availability";
 import { formatTime12h } from "../lib/format";
+import { useToast } from "./Toast";
 import type { Appointment } from "../lib/types";
 
 function todayISO(): string {
@@ -27,6 +28,7 @@ export default function ReschedulePanel({
   onClose: () => void;
 }) {
   const { session } = useAuth();
+  const toast = useToast();
   const [date, setDate] = useState(appointment.date);
   const [picked, setPicked] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,6 +63,7 @@ export default function ReschedulePanel({
     setError(null);
     try {
       await rescheduleAppointment(session.access_token, appointment.id, date, picked);
+      toast.success("Cita reprogramada");
       onDone();
     } catch (e) {
       setError(errorText(e));

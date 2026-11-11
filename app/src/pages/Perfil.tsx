@@ -4,8 +4,10 @@ import { supabase } from "../lib/supabase";
 import { useAppDispatch } from "../store/hooks";
 import { patientUpdated } from "../store/slices/authSlice";
 import { SkeletonForm } from "../components/Skeleton";
+import { useToast } from "../components/Toast";
 
 export default function Perfil() {
+  const toast = useToast();
   const { patient, user } = useAuth();
   const dispatch = useAppDispatch();
   const [fullName, setFullName] = useState("");
@@ -44,6 +46,7 @@ export default function Perfil() {
         phone: phone.trim() || null,
       }),
     );
+    toast.success("Cambios guardados");
     setSaved(true);
   }
 

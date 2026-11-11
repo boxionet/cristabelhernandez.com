@@ -12,6 +12,7 @@ import {
 } from "../lib/format";
 import type { Appointment } from "../lib/types";
 import ReschedulePanel from "./ReschedulePanel";
+import { useToast } from "./Toast";
 
 const DOW = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
 const MON = [
@@ -51,6 +52,7 @@ export default function AppointmentCard({
   showCountdown?: boolean;
 }) {
   const { session } = useAuth();
+  const toast = useToast();
   const [cancelModal, setCancelModal] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -87,6 +89,7 @@ export default function AppointmentCard({
     setError(null);
     try {
       await cancelAppointment(session.access_token, appointment.id);
+      toast.success("Cita cancelada");
       setCancelModal(false);
       onChanged?.();
     } catch (e) {

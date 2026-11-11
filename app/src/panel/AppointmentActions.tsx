@@ -10,6 +10,7 @@ import {
 } from "../lib/panel";
 import { formatDateEs, formatPrice, formatTime12h } from "../lib/format";
 import AppointmentServicesEditor from "./AppointmentServicesEditor";
+import { useToast } from "../components/Toast";
 
 // Staff actions on one appointment. All direct RLS writes — the plan's
 // staff override: no 24h window, holds can be confirmed or released.
@@ -31,32 +32,32 @@ export default function AppointmentActions({
   const [cancelModal, setCancelModal] = useState(false);
   const [newDate, setNewDate] = useState(appt.date);
   const [newTime, setNewTime] = useState(appt.start_time.slice(0, 5));
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
-  async function run(fn: () => Promise<void>) {
+  async function run(fn: () => Promise<void>, successMessage?: string) {
     setBusy(true);
-    setError(null);
     setMenuOpen(false);
     try {
       await fn();
+      if (successMessage) toast.success(successMessage);
       onChanged();
     } catch {
-      setError("No se pudo guardar el cambio.");
+      toast.error("No se pudo guardar el cambio. Inténtalo de nuevo.");
       setBusy(false);
     }
   }
 
   async function saveReschedule() {
     setBusy(true);
-    setError(null);
     try {
       await updateAppointment(appt.id, { date: newDate, start_time: newTime });
       setRescheduling(false);
+      toast.success("Cita movida");
       onChanged();
-    } catch (e) {
-      const code = (e as { code?: string })?.code;
-      void code;
-      setError("No se pudo mover la cita (puede chocar con otra). Revisa el horario.");
+    } catch {
+      toast.error(
+        "No se pudo mover la cita (puede chocar con otra). Revisa el horario.",
+      );
       setBusy(false);
     }
   }
@@ -79,7 +80,7 @@ export default function AppointmentActions({
     <>
     <div className="appt-actions staff">
       {appt.status === "por_confirmar" && confirming !== "release" && (
-        <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => confirmHold(appt))}>
+        <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => confirmHold(appt), "Cita confirmada")}>
           Confirmar
         </button>
       )}
@@ -89,7 +90,7 @@ export default function AppointmentActions({
           <button type="button" className="btn ghost small" onClick={() => setConfirming(null)} disabled={busy}>
             Volver
           </button>
-          <button type="button" className="btn danger small" disabled={busy} onClick={() => void run(() => releaseHold(appt.id))}>
+          <button type="button" className="btn danger small" disabled={busy} onClick={() => void run(() => releaseHold(appt.id), "Apartado liberado")}>
             Sí, liberar
           </button>
         </>
@@ -97,11 +98,11 @@ export default function AppointmentActions({
 
       {active && !rescheduling && (
         <>
-          <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "completada" }))}>
+          <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "completada" }), "Cita completada")}>
             Completar
           </button>
           {appt.payment_status === "pendiente" && (
-            <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }))}>
+            <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }), "Pago registrado")}>
               Marcar pagado
             </button>
           )}
@@ -114,7 +115,7 @@ export default function AppointmentActions({
         </>
       )}
       {appt.status === "completada" && appt.payment_status === "pendiente" && (
-        <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }))}>
+        <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }), "Pago registrado")}>
           Marcar pagado
         </button>
       )}
@@ -155,7 +156,7 @@ export default function AppointmentActions({
                     <button
                       type="button"
                       className="appt-menu-item"
-                      onClick={() => void run(() => markNoShow(appt))}
+                      onClick={() => void run(() => markNoShow(appt), "Marcada como no asistió")}
                     >
                       <FiXCircle aria-hidden /> No asistió
                     </button>
@@ -189,7 +190,6 @@ export default function AppointmentActions({
           </button>
         </span>
       )}
-      {error && <span className="error">{error}</span>}
     </div>
     {editingServices && active && (
       <AppointmentServicesEditor
@@ -226,7 +226,6 @@ export default function AppointmentActions({
           <p className="muted">
             La cita se marcará como cancelada y el horario quedará libre.
           </p>
-          {error && <p className="error">{error}</p>}
           <div className="modal-actions">
             <button
               type="button"
@@ -244,7 +243,7 @@ export default function AppointmentActions({
                 void run(async () => {
                   await updateAppointment(appt.id, { status: "cancelada" });
                   setCancelModal(false);
-                })
+                }, "Cita cancelada")
               }
             >
               Sí, cancelar

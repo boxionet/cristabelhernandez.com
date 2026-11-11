@@ -50,7 +50,9 @@ export interface ExceptionRow {
   is_closed: boolean;
   open_time: string | null;
   close_time: string | null;
-  reason: string | null;
+  /** The DB column is `label` (the insert used to send `reason`, which
+   * PostgREST rejected — the add silently failed until 2026-11-11). */
+  label: string | null;
 }
 
 export function clinicToday(): string {

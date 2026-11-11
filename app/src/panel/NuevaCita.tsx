@@ -249,7 +249,13 @@ export default function NuevaCita() {
           disabled={busy}
           onClick={() => void submit()}
         >
-          {busy ? "Creando…" : "Crear cita confirmada"}
+          {busy ? (
+            <>
+              <span className="spinner" aria-hidden /> Creando…
+            </>
+          ) : (
+            "Crear cita confirmada"
+          )}
         </button>
       </section>
     </>

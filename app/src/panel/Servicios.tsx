@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { FiCheck } from "react-icons/fi";
 import { formatPrice } from "../lib/format";
 import { supabase } from "../lib/supabase";
 import { type ServiceRow } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonTable } from "../components/Skeleton";
+import AsyncButton from "../components/AsyncButton";
+import { useToast } from "../components/Toast";
 
 function ServiceEditor({
   service,
@@ -18,10 +19,10 @@ function ServiceEditor({
   const [priceFrom, setPriceFrom] = useState(service.price_from);
   const [priceNote, setPriceNote] = useState(service.price_note ?? "");
   const [active, setActive] = useState(service.active);
-  const [saved, setSaved] = useState(false);
+  const toast = useToast();
 
   async function save() {
-    await supabase
+    const { error } = await supabase
       .from("services")
       .update({
         price,
@@ -31,7 +32,11 @@ function ServiceEditor({
         active,
       })
       .eq("id", service.id);
-    setSaved(true);
+    if (error) {
+      toast.error(`No se pudo guardar ${service.name}: ${error.message}`);
+      return;
+    }
+    toast.success(`${service.name} guardado`);
     onSaved();
   }
 
@@ -50,7 +55,6 @@ function ServiceEditor({
           value={price}
           onChange={(e) => {
             setPrice(Number(e.target.value) || 0);
-            setSaved(false);
           }}
           className="num-input"
         />
@@ -62,7 +66,6 @@ function ServiceEditor({
             checked={priceFrom}
             onChange={(e) => {
               setPriceFrom(e.target.checked);
-              setSaved(false);
             }}
           />
           Desde
@@ -71,7 +74,6 @@ function ServiceEditor({
           value={priceNote}
           onChange={(e) => {
             setPriceNote(e.target.value);
-            setSaved(false);
           }}
           placeholder="c/ampolla, 3 sesiones…"
           className="note-input"
@@ -85,7 +87,6 @@ function ServiceEditor({
           value={duration}
           onChange={(e) => {
             setDuration(Number(e.target.value) || 0);
-            setSaved(false);
           }}
           className="num-input"
         />
@@ -97,22 +98,19 @@ function ServiceEditor({
             checked={active}
             onChange={(e) => {
               setActive(e.target.checked);
-              setSaved(false);
             }}
           />
           Activo
         </label>
       </td>
       <td>
-        <button type="button" className="btn primary small" onClick={() => void save()}>
+        <AsyncButton
+          className="btn primary small"
+          pendingText="Guardando…"
+          onClick={save}
+        >
           Guardar
-        </button>
-        {saved && (
-          <span className="success">
-            {" "}
-            <FiCheck aria-hidden />
-          </span>
-        )}
+        </AsyncButton>
       </td>
     </tr>
   );
@@ -128,6 +126,7 @@ function slugify(name: string): string {
 }
 
 export default function Servicios() {
+  const toast = useToast();
   const { services, error, reload } = usePanelData();
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Facial");
@@ -160,6 +159,7 @@ export default function Servicios() {
       setAddError("No se pudo agregar (¿nombre repetido?).");
       return;
     }
+    toast.success("Tratamiento agregado");
     setName("");
     setPrice(0);
     void reload();
@@ -203,9 +203,13 @@ export default function Servicios() {
           </label>
         </div>
         {addError && <p className="error">{addError}</p>}
-        <button type="button" className="btn primary" onClick={() => void addService()}>
+        <AsyncButton
+          className="btn primary"
+          pendingText="Agregando…"
+          onClick={addService}
+        >
           Agregar
-        </button>
+        </AsyncButton>
       </section>
 
       <h2 className="section-title">Tratamientos (catálogo)</h2>
