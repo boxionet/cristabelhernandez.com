@@ -113,7 +113,12 @@
    cart's space, so the columns can never overlap at any width or
    zoom. The content columns are width-capped, so positions stay
    within a few pixels of today's. Mobile (<64rem) is untouched:
-   the desktop cart stays display:none there. */
+   the desktop cart stays display:none there.
+   Shrink behavior (follow-up fix, same day): the cart's flex basis
+   is its full 450px but it may shrink to a 304px floor, and the
+   content columns may shrink below their content width (min-width:0
+   + flexible bases), so narrowing the window compresses both
+   columns instead of pushing the cart past the window's edge. */
 @media only screen and (min-width: 64rem) {
   #booking-flow-services .booking-cart-sidebar-desktop,
   #booking-flow-date-time .booking-cart-sidebar-desktop,
@@ -122,7 +127,8 @@
     top: 7.5rem;
     left: auto;
     margin-left: 0;
-    flex: 0 0 28.125rem;
+    flex: 0 1 28.125rem;
+    min-width: 19rem;
     width: 28.125rem;
     align-self: flex-start;
   }
@@ -130,5 +136,17 @@
   #booking-flow-date-time .booking-main-wrapper,
   #booking-flow-datos .booking-confirmation-container {
     padding-right: 2.5rem;
+  }
+  #booking-flow-date-time .booking-left-content {
+    flex: 1 1 50rem;
+    min-width: 0;
+  }
+  #booking-flow-services .booking-services-content {
+    flex: 0 1 37.5rem;
+    min-width: 0;
+  }
+  #booking-flow-datos .booking-confirmation-content {
+    flex: 1 1 43.75rem;
+    min-width: 0;
   }
 }
