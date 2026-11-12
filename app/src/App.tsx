@@ -22,6 +22,14 @@ import ServiciosPanel from "./panel/Servicios";
 import BookingLayout from "./booking/BookingLayout";
 import ReservarStart from "./booking/ReservarStart";
 import Servicios from "./booking/Servicios";
+import FechaHora from "./booking/FechaHora";
+import Datos from "./booking/Datos";
+import Confirmacion from "./booking/Confirmacion";
+import {
+  RequireBookingConfirmation,
+  RequireBookingDateTime,
+  RequireBookingServices,
+} from "./booking/guards";
 import { SkeletonShell } from "./components/Skeleton";
 import { profileComplete } from "./lib/profile";
 
@@ -164,6 +172,30 @@ export default function App() {
         <Route path="/reservar" element={<BookingLayout />}>
           <Route index element={<ReservarStart />} />
           <Route path="servicios" element={<Servicios />} />
+          <Route
+            path="fecha-hora"
+            element={
+              <RequireBookingServices>
+                <FechaHora />
+              </RequireBookingServices>
+            }
+          />
+          <Route
+            path="datos"
+            element={
+              <RequireBookingDateTime>
+                <Datos />
+              </RequireBookingDateTime>
+            }
+          />
+          <Route
+            path="confirmacion"
+            element={
+              <RequireBookingConfirmation>
+                <Confirmacion />
+              </RequireBookingConfirmation>
+            }
+          />
         </Route>
         <Route path="*" element={<Navigate to="/mi-cuenta" replace />} />
       </Routes>

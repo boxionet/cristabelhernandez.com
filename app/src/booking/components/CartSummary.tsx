@@ -5,16 +5,28 @@ import type { BookingService } from "../../lib/queries/bookingQueries";
 import { calcBookingTotals, formatServicePrice } from "../constants";
 import { formatPrice } from "../../lib/format";
 
-// The servicios-step cart: desktop sidebar + mobile bottom bar with
-// the expandable panel. Same markup and classes as the static page.
-// Totals switch to "Total estimado" when any cart item carries a
-// "desde" or per-unit price.
+// The cart summary shared by the servicios, fecha-hora and datos
+// steps: desktop sidebar + mobile bottom bar with the expandable
+// panel. Same markup and classes as the static pages. Totals switch
+// to "Total estimado" when any cart item carries a "desde" or
+// per-unit price.
+//
+// The continue button varies per step: servicios/fecha-hora show it
+// in both the sidebar and the bottom bar ("Continuar"); datos shows
+// only the bottom-bar button ("Reservar Cita") because the form
+// carries its own submit button. The caller owns the disabled rule.
 export default function CartSummary({
   catalog,
   onContinue,
+  continueLabel = "Continuar",
+  continueDisabled,
+  showDesktopContinue = true,
 }: {
   catalog: BookingService[];
   onContinue: () => void;
+  continueLabel?: string;
+  continueDisabled?: boolean;
+  showDesktopContinue?: boolean;
 }) {
   const dispatch = useAppDispatch();
   const services = useAppSelector((s) => s.booking.services);
@@ -28,6 +40,7 @@ export default function CartSummary({
     );
   const totals = calcBookingTotals(services, catalog);
   const empty = entries.length === 0;
+  const disabled = continueDisabled ?? empty;
 
   const hours = Math.floor(totals.durationMinutes / 60);
   const mins = totals.durationMinutes % 60;
@@ -88,14 +101,17 @@ export default function CartSummary({
             precio final se confirma en tu evaluación.
           </p>
         </div>
-        <button
-          className="booking-cart-continue-btn"
-          disabled={empty}
-          type="button"
-          onClick={onContinue}
-        >
-          Continuar
-        </button>
+        {showDesktopContinue && (
+          <button
+            className="booking-cart-continue-btn"
+            id="continue-btn-desktop"
+            disabled={disabled}
+            type="button"
+            onClick={onContinue}
+          >
+            {continueLabel}
+          </button>
+        )}
       </aside>
 
       <div className={`booking-cart-bottom-bar${empty ? "" : " visible"}`}>
@@ -145,11 +161,12 @@ export default function CartSummary({
           </button>
           <button
             className="booking-cart-bottom-continue-btn"
-            disabled={empty}
+            id="continue-btn-mobile"
+            disabled={disabled}
             type="button"
             onClick={onContinue}
           >
-            Continuar
+            {continueLabel}
           </button>
         </div>
 

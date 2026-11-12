@@ -209,6 +209,7 @@ export interface BookingSummary {
   durationMinutes: number;
   totalPrice: number;
   totalIsEstimate: boolean;
+  confirmationExpiresAt: string | null;
   patientName: string | null;
   items: BookingSummaryItem[];
 }

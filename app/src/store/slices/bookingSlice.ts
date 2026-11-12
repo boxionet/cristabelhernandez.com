@@ -99,6 +99,19 @@ const bookingSlice = createSlice({
     setBookingResult(state, action: PayloadAction<BookingResult>) {
       state.result = action.payload;
     },
+    /**
+     * A successful submit lands on the confirmation page: the draft
+     * is consumed (services/date/time/customer cleared) so pressing
+     * Back into the flow can never re-submit the same booking, while
+     * the result stays for the confirmation copy. Entering
+     * /reservar/ later resets everything, result included.
+     */
+    consumeDraft(state) {
+      const result = state.result;
+      const fresh = { ...initialBookingState, customer: { ...emptyCustomer } };
+      fresh.result = result;
+      return fresh;
+    },
     /** Fresh start: entering /reservar/ always clears the draft. */
     resetBooking() {
       return { ...initialBookingState, customer: { ...emptyCustomer } };
@@ -116,6 +129,7 @@ export const {
   setIdempotencyKey,
   clearIdempotencyKey,
   setBookingResult,
+  consumeDraft,
   resetBooking,
 } = bookingSlice.actions;
 

@@ -1,10 +1,13 @@
 # Mi Cuenta + Panel — web app
 
-One React + TypeScript (Vite) app serving both gated areas of the
-booking system (plan: `peachy-style-booking-portal-plan.md` §2):
+One React + TypeScript (Vite) app serving the gated areas of the
+booking system and the public booking flow (plan:
+`peachy-style-booking-portal-plan.md` §2):
 
 - `/mi-cuenta/*` — patient portal
 - `/panel/*` — staff dashboard (admin role)
+- `/reservar/*` — public booking flow (Phase 3 React migration,
+  2026-11-12; same URLs the old static pages used)
 
 Data comes from Supabase via supabase-js with Row Level Security;
 Netlify Functions handle privileged operations only (guest booking
@@ -16,8 +19,8 @@ be lifted into its own repo later.
 
 The root site build runs this app automatically (`build:app` in the
 root `package.json`, after the Eleventy build). Vite outputs to
-`../public/app`; Netlify redirects `/mi-cuenta/*` and `/panel/*` to
-`/app/index.html`.
+`../public/app`; Netlify redirects `/mi-cuenta/*`, `/panel/*` and
+`/reservar/*` to `/app/index.html`.
 
 ## Environment
 

@@ -21,7 +21,7 @@ exports.handler = async (event) => {
     const { data: appt, error } = await supabase
       .from("appointments")
       .select(
-        "id,reference_code,status,date,start_time,duration_minutes,total_price,total_is_estimate,patient_id,guest_name",
+        "id,reference_code,status,date,start_time,duration_minutes,total_price,total_is_estimate,patient_id,guest_name,confirmation_expires_at",
       )
       .eq("reference_code", ref)
       .maybeSingle();
@@ -52,6 +52,7 @@ exports.handler = async (event) => {
       durationMinutes: appt.duration_minutes,
       totalPrice: appt.total_price,
       totalIsEstimate: appt.total_is_estimate,
+      confirmationExpiresAt: appt.confirmation_expires_at,
       patientName,
       items: (items || []).map((i) => ({
         service_name: i.service_name,
