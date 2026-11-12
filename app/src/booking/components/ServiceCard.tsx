@@ -13,7 +13,10 @@ export default function ServiceCard({
   selected: boolean;
   onToggle: (slug: string) => void;
 }) {
-  const description = SERVICE_DESCRIPTIONS[service.slug];
+  // The database description wins; the hardcoded map below is only
+  // the fallback for rows that have none yet (see constants.ts).
+  const description =
+    service.description || SERVICE_DESCRIPTIONS[service.slug];
   return (
     <div
       className={`booking-service-card${selected ? " selected" : ""}`}

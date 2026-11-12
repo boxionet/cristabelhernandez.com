@@ -28,6 +28,7 @@ export interface ServiceRow {
   id: string;
   slug: string;
   name: string;
+  description: string | null;
   category: string;
   price: number;
   price_from: boolean;

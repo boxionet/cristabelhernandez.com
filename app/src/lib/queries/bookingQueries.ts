@@ -13,6 +13,7 @@ export interface BookingService {
   id: string;
   slug: string;
   name: string;
+  description: string;
   price: number;
   priceFrom: boolean;
   priceNote: string;
@@ -25,7 +26,7 @@ async function fetchBookingCatalog(): Promise<BookingService[]> {
   const { data, error } = await supabase
     .from("services")
     .select(
-      "id, slug, name, price, price_from, price_note, duration_minutes, category, sort_order",
+      "id, slug, name, description, price, price_from, price_note, duration_minutes, category, sort_order",
     )
     .eq("active", true)
     .order("sort_order", { ascending: true });
@@ -36,6 +37,7 @@ async function fetchBookingCatalog(): Promise<BookingService[]> {
     id: row.id as string,
     slug: row.slug as string,
     name: row.name as string,
+    description: (row.description as string | null) ?? "",
     price: row.price as number,
     priceFrom: Boolean(row.price_from),
     priceNote: (row.price_note as string | null) ?? "",

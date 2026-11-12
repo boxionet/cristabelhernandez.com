@@ -157,7 +157,7 @@ export default function Confirmacion() {
       badge: "Pendiente de confirmación",
       title: "¡Tu cita fue recibida!",
       sub1: "Hemos recibido tu solicitud de cita. En breve nos pondremos en contacto contigo para confirmar la fecha y hora seleccionadas.",
-      sub2: "Hemos enviado un resumen de tu cita a tu correo electrónico.",
+      sub2: `Hemos enviado un resumen de tu cita a tu correo electrónico.${ref ? ` Referencia de tu cita: ${ref}.` : ""}`,
       showCard: true,
     };
   }, [estado, ref, result, summary]);

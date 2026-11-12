@@ -19,6 +19,7 @@ function ServiceEditor({
   const [duration, setDuration] = useState(service.duration_minutes);
   const [priceFrom, setPriceFrom] = useState(service.price_from);
   const [priceNote, setPriceNote] = useState(service.price_note ?? "");
+  const [description, setDescription] = useState(service.description ?? "");
   const [active, setActive] = useState(service.active);
   const toast = useToast();
 
@@ -30,6 +31,7 @@ function ServiceEditor({
         duration_minutes: duration,
         price_from: priceFrom,
         price_note: priceNote.trim() || null,
+        description: description.trim() || null,
         active,
       })
       .eq("id", service.id);
@@ -47,6 +49,16 @@ function ServiceEditor({
         <strong>{service.name}</strong>
         <br />
         <small className="muted">{service.category}</small>
+        <textarea
+          value={description}
+          onChange={(e) => {
+            setDescription(e.target.value);
+          }}
+          placeholder="Descripción que verán las pacientes…"
+          rows={2}
+          className="desc-input"
+          aria-label={`Descripción de ${service.name}`}
+        />
       </td>
       <td>
         <input
@@ -133,6 +145,7 @@ export default function Servicios() {
   const [category, setCategory] = useState("facial");
   const [price, setPrice] = useState(0);
   const [duration, setDuration] = useState(45);
+  const [description, setDescription] = useState("");
   const [addError, setAddError] = useState<string | null>(null);
 
   if (error) return <p className="error">{error}</p>;
@@ -151,6 +164,7 @@ export default function Servicios() {
     const { error } = await supabase.from("services").insert({
       slug: slugify(name),
       name: name.trim(),
+      description: description.trim() || null,
       category,
       price,
       duration_minutes: duration,
@@ -169,6 +183,7 @@ export default function Servicios() {
     }
     toast.success("Tratamiento agregado");
     setName("");
+    setDescription("");
     setPrice(0);
     void reload();
   }
@@ -216,6 +231,17 @@ export default function Servicios() {
           >
             <FiPlus /> Agregar
           </AsyncButton>
+        </div>
+        <div className="add-row">
+          <label className="add-field grow">
+            Descripción (opcional)
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="La línea que verán las pacientes debajo del tratamiento…"
+              rows={2}
+            />
+          </label>
         </div>
         {addError && <p className="error">{addError}</p>}
       </section>

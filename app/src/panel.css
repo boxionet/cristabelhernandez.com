@@ -1324,6 +1324,27 @@
 .add-row .btn {
   flex-shrink: 0;
 }
+/* Servicios: description textareas — same treatment as the other
+   Panel inputs. The editor one lives inside the existing name cell
+   so the catalog table keeps its columns. */
+.add-field textarea,
+.desc-input {
+  border: 1px solid #d7dccd;
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  width: 100%;
+}
+.desc-input {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  min-width: 220px;
+}
+.add-row + .add-row {
+  margin-top: 0.9rem;
+}
 @media (max-width: 640px) {
   .add-row {
     flex-wrap: wrap;

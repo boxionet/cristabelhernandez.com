@@ -89,7 +89,6 @@ export default function Datos() {
   const [noteOpen, setNoteOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const prefilled = useRef(false);
 
   const signedIn = Boolean(session);
 
@@ -101,26 +100,35 @@ export default function Datos() {
   }, [session, patient, ensureLinked]);
 
   // Prefill once, filling only fields the patient has not typed in.
+  // Email and name/phone resolve at different times: the session user
+  // is available immediately, but the patient record only arrives
+  // after ensureLinked() finishes. A single "done" flag would consume
+  // the prefill on the email alone and starve the name/phone fill, so
+  // each source gets its own flag and fills when its data lands.
+  const emailPrefilled = useRef(false);
+  const patientPrefilled = useRef(false);
   useEffect(() => {
-    if (prefilled.current) return;
+    if (emailPrefilled.current || !user?.email) return;
+    if (!booking.customer.email) {
+      dispatch(setCustomer({ email: user.email }));
+    }
+    emailPrefilled.current = true;
+  }, [user, booking.customer.email, dispatch]);
+  useEffect(() => {
+    if (patientPrefilled.current || !patient) return;
     const patch: Partial<typeof booking.customer> = {};
-    if (user?.email && !booking.customer.email) patch.email = user.email;
-    if (patient) {
-      const [first, ...rest] = (patient.fullName || "").trim().split(/\s+/);
-      if (first && !booking.customer.firstName) patch.firstName = first;
-      const last = rest.join(" ");
-      if (last && !booking.customer.lastName) patch.lastName = last;
-      if (patient.phone && !booking.customer.phone) {
-        patch.phone = formatPhoneNumber(patient.phone);
-      }
+    const [first, ...rest] = (patient.fullName || "").trim().split(/\s+/);
+    if (first && !booking.customer.firstName) patch.firstName = first;
+    const last = rest.join(" ");
+    if (last && !booking.customer.lastName) patch.lastName = last;
+    if (patient.phone && !booking.customer.phone) {
+      patch.phone = formatPhoneNumber(patient.phone);
     }
     if (Object.keys(patch).length > 0) {
-      prefilled.current = true;
       dispatch(setCustomer(patch));
-    } else if (user || patient) {
-      prefilled.current = true;
     }
-  }, [user, patient, booking.customer, dispatch]);
+    patientPrefilled.current = true;
+  }, [patient, booking.customer, dispatch]);
 
   // Warm the captcha widget so a guest submit is instant.
   useEffect(() => {

@@ -1,10 +1,11 @@
 import type { BookingService } from "../lib/queries/bookingQueries";
 
 // Static booking content that lives in NO database table: the
-// "Destacados" row and the per-service marketing line under each
-// card. Ported verbatim from the static servicios page. A service
-// added later in the Panel (no entry here) simply renders without a
-// description line.
+// "Destacados" row. Per-service description lines now live in the
+// services.description column (editable in Panel -> Tratamientos,
+// backfilled for the 13 seed services by migration 007); the map
+// below is only the fallback for rows whose description is empty,
+// so a service added before the backfill still renders its line.
 
 export const FEATURED_SERVICE_SLUGS = [
   "toxina-frontal",
