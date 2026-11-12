@@ -9,6 +9,7 @@ import { store } from "./store";
 import { queryClient } from "./lib/queryClient";
 import "./styles.css";
 import "./panel.css";
+import "./booking.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -19,6 +19,9 @@ import PanelLayout from "./panel/PanelLayout";
 import PorConfirmar from "./panel/PorConfirmar";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
+import BookingLayout from "./booking/BookingLayout";
+import ReservarStart from "./booking/ReservarStart";
+import Servicios from "./booking/Servicios";
 import { SkeletonShell } from "./components/Skeleton";
 import { profileComplete } from "./lib/profile";
 
@@ -154,6 +157,13 @@ export default function App() {
           <Route path="servicios" element={<ServiciosPanel />} />
           <Route path="horario" element={<Horario />} />
           <Route path="reportes" element={<Reportes />} />
+        </Route>
+        {/* Public booking flow (Phase 3 React migration): same URLs
+            the static pages used, served by the Netlify redirect to
+            this app. No auth gate — guests book without an account. */}
+        <Route path="/reservar" element={<BookingLayout />}>
+          <Route index element={<ReservarStart />} />
+          <Route path="servicios" element={<Servicios />} />
         </Route>
         <Route path="*" element={<Navigate to="/mi-cuenta" replace />} />
       </Routes>

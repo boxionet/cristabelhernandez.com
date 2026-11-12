@@ -120,6 +120,117 @@ export async function fetchSlots(
   }
 }
 
+// --- Public booking flow (Phase 3: React migration) -------------------
+// These calls carry NO session by default: the caller attaches the
+// patient's token when signed in (verified booking) or a captcha
+// token when booking without an account. createBooking reports every
+// HTTP outcome instead of throwing, so the caller can map 409
+// (slot_taken) and 401 (stale session) to their own flows; it throws
+// only on network failure.
+
+export interface CreateBookingItem {
+  slug: string;
+  quantity: number;
+}
+
+export interface CreateBookingPayload {
+  name: string;
+  email: string;
+  phone: string;
+  note?: string;
+  items: CreateBookingItem[];
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:MM (24h)
+  idempotencyKey: string;
+  captchaToken?: string | null;
+}
+
+export interface CreateBookingOutcome {
+  ok: boolean;
+  status: number;
+  data: Record<string, unknown>;
+}
+
+export async function createBooking(
+  payload: CreateBookingPayload,
+  accessToken?: string | null,
+): Promise<CreateBookingOutcome> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+  const res = await fetch("/.netlify/functions/booking-create", {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  return { ok: res.ok, status: res.status, data };
+}
+
+export interface DayAvailability {
+  date: string;
+  open: boolean;
+  available: boolean;
+}
+
+// Per-day open/available flags for a date range (the booking date
+// carousel), for the cart's total duration.
+export async function fetchDayRange(
+  fromISO: string,
+  toISO: string,
+  durationMinutes: number,
+): Promise<DayAvailability[] | null> {
+  try {
+    const res = await fetch(
+      `/.netlify/functions/booking-availability?from=${encodeURIComponent(fromISO)}&to=${encodeURIComponent(toISO)}&durationMinutes=${durationMinutes}`,
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as { days?: DayAvailability[] };
+    return data.days ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export interface BookingSummaryItem {
+  service_name: string;
+  unit_price: number;
+  quantity: number;
+  price_from: boolean;
+  price_note: string | null;
+}
+
+export interface BookingSummary {
+  referenceCode: string;
+  status: string;
+  date: string;
+  startTime: string;
+  durationMinutes: number;
+  totalPrice: number;
+  totalIsEstimate: boolean;
+  patientName: string | null;
+  items: BookingSummaryItem[];
+}
+
+// Server-driven confirmation lookup: the reference code is the
+// capability (it only ever travels in the patient's own email and in
+// the redirect that follows a validated link click). The response
+// carries NO contact details — name, date, services and total only.
+export async function fetchBookingSummary(
+  referenceCode: string,
+): Promise<BookingSummary | null> {
+  try {
+    const res = await fetch(
+      `/.netlify/functions/booking-lookup?ref=${encodeURIComponent(referenceCode)}`,
+    );
+    if (!res.ok) return null;
+    return (await res.json()) as BookingSummary;
+  } catch {
+    return null;
+  }
+}
+
 export const ERROR_MESSAGES: Record<string, string> = {
   outside_window:
     "Esta cita ya está dentro de las 24 horas previas: para cambiarla o cancelarla, llámanos o escríbenos.",

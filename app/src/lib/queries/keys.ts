@@ -18,5 +18,14 @@ export const patientKeys = {
 export const availabilityKey = (date: string, duration: number) =>
   ["availability", date, duration] as const;
 
+export const bookingKeys = {
+  all: ["booking"] as const,
+  catalog: ["booking", "catalog"] as const,
+  days: (from: string, to: string, duration: number) =>
+    ["booking", "days", from, to, duration] as const,
+  confirmation: (referenceCode: string) =>
+    ["booking", "confirmation", referenceCode] as const,
+};
+
 export const staffProfileKey = (userId: string) =>
   ["staff-profile", userId] as const;
