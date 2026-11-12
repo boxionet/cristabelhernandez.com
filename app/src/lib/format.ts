@@ -114,6 +114,18 @@ export function formatDateTimeShortEs(instantISO: string): string {
   return `${date}, ${get("hour")}:${get("minute")} ${get("dayPeriod")}`;
 }
 
+/** '2026-11-13T19:00:00+00:00' -> '3:00 PM' (clinic timezone). */
+export function formatTimeShortEs(instantISO: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Santo_Domingo",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(new Date(instantISO));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${get("hour")}:${get("minute")} ${get("dayPeriod")}`;
+}
+
 export const STATUS_LABELS: Record<string, string> = {
   por_confirmar: "Esperando verificación",
   pendiente: "Pendiente",

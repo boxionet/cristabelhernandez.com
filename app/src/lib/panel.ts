@@ -71,6 +71,11 @@ export function displayName(a: PanelAppointment): string {
   return a.patients?.full_name || a.guest_name || "—";
 }
 
+/** Comma-joined service names for one-line summaries (dashboard rows). */
+export function servicesSummary(a: PanelAppointment): string {
+  return a.appointment_services.map((i) => i.service_name).join(", ");
+}
+
 export function displayContact(a: PanelAppointment): string {
   return a.patients?.phone || a.patients?.email || a.guest_phone || a.guest_email || "";
 }
