@@ -130,7 +130,7 @@ export default function Servicios() {
   const toast = useToast();
   const { services, error, reload } = usePanelData();
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("Facial");
+  const [category, setCategory] = useState("facial");
   const [price, setPrice] = useState(0);
   const [duration, setDuration] = useState(45);
   const [addError, setAddError] = useState<string | null>(null);
@@ -157,7 +157,14 @@ export default function Servicios() {
       sort_order: maxOrder + 1,
     });
     if (error) {
-      setAddError("No se pudo agregar (¿nombre repetido?).");
+      // Show the real reason instead of a generic guess: a slug
+      // collision (23505) means a repeated name; anything else is
+      // reported verbatim so the next failure explains itself.
+      if (error.code === "23505") {
+        setAddError("Ya existe un tratamiento con ese nombre.");
+      } else {
+        setAddError(`No se pudo agregar: ${error.message}`);
+      }
       return;
     }
     toast.success("Tratamiento agregado");
@@ -178,8 +185,8 @@ export default function Servicios() {
           <label className="add-field mid">
             Categoría
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option>Facial</option>
-              <option>Corporal</option>
+              <option value="facial">Facial</option>
+              <option value="corporal">Corporal</option>
             </select>
           </label>
           <label className="add-field num">
