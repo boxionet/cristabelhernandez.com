@@ -82,22 +82,14 @@ export function formatServicePrice(service: {
   return text;
 }
 
-// The start times the booking flow offers, in 24h form — the static
-// slot grid from the old fecha-hora page, verbatim. The availability
-// engine is the source of truth for conflicts, but the offered set
-// stays this grid: the intersection of the two is what a patient can
-// pick, exactly as the static page behaved (it disabled grid slots
-// the engine did not offer).
+// The start times the booking flow offers, in 24h form — one slot
+// every hour, on the hour (clinic policy, user decision 2026-11-12).
+// The availability engine generates slots on the same hourly step,
+// so the intersection of the two is what a patient can pick.
 export const STATIC_SLOT_TIMES_24H = [
   "09:00",
   "10:00",
-  "10:15",
-  "10:30",
-  "10:45",
   "11:00",
-  "11:15",
-  "11:30",
-  "11:45",
   "12:00",
   "13:00",
   "14:00",

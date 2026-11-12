@@ -163,23 +163,39 @@
 }
 
 /* "Cerrar sesión" text button in the booking header (user feedback
-   2026-11-12): plain text, no chrome. The logo is absolutely
-   centered, so the right slot never pushes it. Slightly smaller on
-   narrow phones so it clears the logo. */
+   2026-11-12): plain text, no chrome, pinned to the right end of
+   the nav bar. Absolutely positioned against the sticky header
+   (the logo is absolutely centered the same way), so its place
+   never depends on the flex row. The right offset mirrors the
+   header container's padding at each breakpoint. Slightly smaller
+   on narrow phones so it clears the logo. */
 .booking-signout-btn {
   background: none;
   border: none;
   color: var(--booking-main-text);
   cursor: pointer;
-  flex-shrink: 0;
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 0.5rem 0;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
   white-space: nowrap;
 }
 .booking-signout-btn:hover {
   text-decoration: underline;
+}
+@media only screen and (min-width: 37.5rem) {
+  .booking-signout-btn {
+    right: 2rem;
+  }
+}
+@media only screen and (min-width: 64rem) {
+  .booking-signout-btn {
+    right: 3.125rem;
+  }
 }
 @media only screen and (max-width: 30rem) {
   .booking-signout-btn {

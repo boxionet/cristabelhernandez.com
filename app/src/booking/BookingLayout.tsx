@@ -68,6 +68,7 @@ export default function BookingLayout() {
               decoding="async"
             />
           </a>
+          <div className="booking-header-spacer"></div>
           {session ? (
             <button
               className="booking-signout-btn"
@@ -76,9 +77,7 @@ export default function BookingLayout() {
             >
               Cerrar sesión
             </button>
-          ) : (
-            <div className="booking-header-spacer"></div>
-          )}
+          ) : null}
         </div>
       </header>
       <main id="main" className="booking-main">
