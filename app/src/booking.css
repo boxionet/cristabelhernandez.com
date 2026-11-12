@@ -85,3 +85,21 @@
 #booking-flow-date-time .booking-calendar-modal.active .booking-calendar-popup {
   max-width: calc(100vw - 2rem);
 }
+
+/* Calendar button (user feedback 2026-11-12): same pattern as the
+   selected date tile — brown fill, white icon, rounded corners —
+   so it reads as a button, not a bare glyph. */
+#booking-flow-date-time .booking-calendar-btn {
+  background-color: var(--booking-primary-button);
+  border-radius: 0.75rem;
+  color: #fff;
+  height: 2.75rem;
+  width: 2.75rem;
+}
+#booking-flow-date-time .booking-calendar-btn:hover {
+  background-color: var(--booking-primary-button-hover);
+}
+#booking-flow-date-time .booking-calendar-btn svg {
+  height: 1.375rem;
+  width: 1.375rem;
+}
