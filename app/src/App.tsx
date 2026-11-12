@@ -16,6 +16,7 @@ import Dashboard from "./panel/Dashboard";
 import Horario from "./panel/Horario";
 import NuevaCita from "./panel/NuevaCita";
 import PanelLayout from "./panel/PanelLayout";
+import PorConfirmar from "./panel/PorConfirmar";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
 import { SkeletonShell } from "./components/Skeleton";
@@ -141,6 +142,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="citas" element={<Citas />} />
+          <Route path="por-confirmar" element={<PorConfirmar />} />
           <Route path="pacientes" element={<Clientes />} />
           <Route path="pacientes/:id" element={<ClienteDetalle />} />
           <Route

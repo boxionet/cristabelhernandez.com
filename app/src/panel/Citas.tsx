@@ -108,14 +108,18 @@ export default function Citas() {
         </section>
       )}
 
-      {filtered.map((a) => (
-        <PanelAppointmentCard
-          key={a.id}
-          appt={a}
-          onChanged={() => void reload()}
-          showContact
-        />
-      ))}
+      {filtered.length > 0 && (
+        <div className="appt-list">
+          {filtered.map((a) => (
+            <PanelAppointmentCard
+              key={a.id}
+              appt={a}
+              onChanged={() => void reload()}
+              showContact
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 }

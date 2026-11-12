@@ -910,22 +910,12 @@ input:disabled {
   border-top: 1px solid #eef0ea;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 0.8rem;
   flex-wrap: wrap;
 }
 .treat2-meta {
   margin-bottom: 1rem;
-}
-.treat2-spent-l {
-  display: block;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-.treat2-spent-v {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--heading);
 }
 .treat2-foot .btn svg {
   color: var(--sage);

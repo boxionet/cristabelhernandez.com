@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import type { IconType } from "react-icons";
 import {
   FiBarChart2,
+  FiBell,
   FiCalendar,
   FiClipboard,
   FiClock,
@@ -11,6 +12,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { useAuth } from "../auth";
+import NotificationBell from "../components/NotificationBell";
 import UserMenu from "../components/UserMenu";
 import { clinicToday } from "../lib/panel";
 import {
@@ -22,6 +24,7 @@ const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
   { to: "/panel/", label: "Panel", icon: FiGrid, end: true },
   { to: "/panel/agenda", label: "Agenda", icon: FiCalendar, end: false },
   { to: "/panel/citas", label: "Citas", icon: FiClipboard, end: false },
+  { to: "/panel/por-confirmar", label: "Por confirmar", icon: FiBell, end: false },
   { to: "/panel/pacientes", label: "Pacientes", icon: FiUsers, end: false },
   { to: "/panel/servicios", label: "Tratamientos", icon: FiTag, end: false },
   { to: "/panel/horario", label: "Horario", icon: FiClock, end: false },
@@ -59,6 +62,11 @@ export default function PanelLayout() {
   const pendingHolds = (appointments ?? []).filter(
     (a) => a.status === "por_confirmar",
   ).length;
+  // The action queue: verified citas awaiting the Dra's decision.
+  // The bell and the "Por confirmar" nav badge share this count.
+  const pendingCount = (appointments ?? []).filter(
+    (a) => a.status === "pendiente",
+  ).length;
 
   return (
     <div className="shell">
@@ -82,7 +90,10 @@ export default function PanelLayout() {
                 <span className="nav-badge">{todayCount}</span>
               )}
               {item.label === "Citas" && pendingHolds > 0 && (
-                <span className="nav-badge amber">{pendingHolds} por confirmar</span>
+                <span className="nav-badge amber">{pendingHolds} por verificar</span>
+              )}
+              {item.label === "Por confirmar" && pendingCount > 0 && (
+                <span className="nav-badge amber">{pendingCount}</span>
               )}
             </NavLink>
           ))}
@@ -95,6 +106,11 @@ export default function PanelLayout() {
       <div className="main">
         <header className="topbar">
           <span className="topbar-spacer" />
+          <NotificationBell
+            count={pendingCount}
+            to="/panel/por-confirmar"
+            label="Citas por confirmar"
+          />
           <UserMenu mode="panel" fullName={fullName} email={user?.email ?? ""} />
           <button
             type="button"

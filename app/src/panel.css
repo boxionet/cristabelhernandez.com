@@ -251,10 +251,15 @@
   gap: 1.1rem;
   align-items: start;
 }
+.agenda-day {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .agenda-day .day-title {
   color: var(--heading);
   font-size: 1.05rem;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0;
 }
 
 
@@ -436,6 +441,11 @@
   margin-top: 0.15rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+.appt2-vence {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 .appt2-items {
   list-style: none;
@@ -816,6 +826,45 @@
 /* ---------- Responsive: tablet & mobile (Panel) ---------- */
 .topbar-signout {
   display: none; /* desktop uses the sidebar's sign-out */
+}
+
+/* Notification bell (Panel topbar, left of the identity chip). */
+.notification-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 0.6rem;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.notification-bell:hover {
+  color: var(--ink);
+  border-color: #9ca3af;
+}
+.notification-bell svg {
+  width: 19px;
+  height: 19px;
+}
+.notification-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
 }
 
 @media (max-width: 1150px) {
