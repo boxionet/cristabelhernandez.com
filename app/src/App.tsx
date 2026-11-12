@@ -27,6 +27,7 @@ import Datos from "./booking/Datos";
 import Confirmacion from "./booking/Confirmacion";
 import {
   RequireBookingConfirmation,
+  RequireBookingCustomerType,
   RequireBookingDateTime,
   RequireBookingServices,
 } from "./booking/guards";
@@ -171,7 +172,14 @@ export default function App() {
             this app. No auth gate — guests book without an account. */}
         <Route path="/reservar" element={<BookingLayout />}>
           <Route index element={<ReservarStart />} />
-          <Route path="servicios" element={<Servicios />} />
+          <Route
+            path="servicios"
+            element={
+              <RequireBookingCustomerType>
+                <Servicios />
+              </RequireBookingCustomerType>
+            }
+          />
           <Route
             path="fecha-hora"
             element={

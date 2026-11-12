@@ -59,9 +59,6 @@ export default function PanelLayout() {
     (a) =>
       a.date === today && a.status !== "cancelada" && a.status !== "no_show",
   ).length;
-  const pendingHolds = (appointments ?? []).filter(
-    (a) => a.status === "por_confirmar",
-  ).length;
   // The action queue: verified citas awaiting the Dra's decision.
   // The bell and the "Por confirmar" nav badge share this count.
   const pendingCount = (appointments ?? []).filter(
@@ -88,9 +85,6 @@ export default function PanelLayout() {
               {item.label}
               {item.label === "Citas" && todayCount > 0 && (
                 <span className="nav-badge">{todayCount}</span>
-              )}
-              {item.label === "Citas" && pendingHolds > 0 && (
-                <span className="nav-badge amber">{pendingHolds} por verificar</span>
               )}
               {item.label === "Por confirmar" && pendingCount > 0 && (
                 <span className="nav-badge amber">{pendingCount}</span>
