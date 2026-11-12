@@ -2,10 +2,13 @@ import { formatTime12h } from "../../lib/format";
 import { STATIC_SLOT_TIMES_24H } from "../constants";
 
 // The time-slot grid — same markup and classes as the static
-// fecha-hora page, but rendered from the engine's offered slots
-// (intersected with the static start-time grid) instead of a static
-// grid with disabled slots. No offered slot is ever rendered as
-// selectable when the engine did not offer it.
+// fecha-hora page, rendered from the engine's offered slots
+// intersected with the static start-time grid (the clinic's offered
+// set stays that grid, exactly as the static page behaved — it
+// disabled grid slots the engine did not offer). No offered slot is
+// ever rendered as selectable when the engine did not offer it.
+// When the intersection is empty the grid would otherwise render
+// blank, so an explicit empty message is shown instead.
 export default function TimeGrid({
   slots,
   selectedTime,
@@ -46,7 +49,13 @@ export default function TimeGrid({
           </button>
         </div>
       )}
-      {!loading && !loadError && (
+      {!loading && !loadError && visible.length === 0 && (
+        <p className="booking-time-end-note">
+          No hay horarios disponibles para este día. Prueba con otra
+          fecha.
+        </p>
+      )}
+      {!loading && !loadError && visible.length > 0 && (
         <>
           <div
             className="booking-time-grid"

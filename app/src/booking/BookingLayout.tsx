@@ -1,12 +1,18 @@
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth";
 
 // The public booking shell — ports layouts/booking.html: the booking
 // header (back button + horizontal logo), no footer, and the
-// `booking-page` body class the booking styles scope under.
+// `booking-page` body class the booking styles scope under. When the
+// patient is signed in, the right slot shows a plain "Cerrar sesión"
+// text button; signing out keeps the in-progress booking (the draft
+// lives in memory, independent of the session) and the flow
+// continues as a guest.
 export default function BookingLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { session, signOut } = useAuth();
   const path = location.pathname.replace(/\/$/, "") || "/reservar";
 
   useEffect(() => {
@@ -62,7 +68,17 @@ export default function BookingLayout() {
               decoding="async"
             />
           </a>
-          <div className="booking-header-spacer"></div>
+          {session ? (
+            <button
+              className="booking-signout-btn"
+              type="button"
+              onClick={() => void signOut()}
+            >
+              Cerrar sesión
+            </button>
+          ) : (
+            <div className="booking-header-spacer"></div>
+          )}
         </div>
       </header>
       <main id="main" className="booking-main">
