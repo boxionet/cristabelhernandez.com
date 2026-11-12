@@ -60,24 +60,27 @@
   padding: 0.75rem 1rem;
 }
 
-/* MARKED ADDITION (2026-11-12, Phase 4 user feedback): the compiled
-   fecha-hora styles position .booking-calendar-modal fixed with no
-   offsets, so the popup rendered below the fold and clicking the
-   calendar icon appeared to do nothing. Center it as a viewport
-   overlay and show the dimming layer the component already renders
-   (clicking it closes the calendar). */
+/* MARKED ADDITION (2026-11-12, Phase 4 user feedback): the calendar
+   opens as a popover anchored under the calendar button (as on the
+   old page), not a centered screen overlay — the compiled styles
+   positioned it fixed with no offsets, so it rendered below the
+   fold. The header row is the positioning context; the overlay is
+   a transparent full-screen click-catcher that closes the popover. */
+#booking-flow-date-time .booking-header-top {
+  position: relative;
+}
 #booking-flow-date-time .booking-calendar-modal.active {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  inset: 0;
-  padding: 1rem;
+  display: block !important;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 9999;
 }
 #booking-flow-date-time .booking-calendar-modal.active .booking-calendar-overlay {
   display: block;
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: transparent;
 }
 #booking-flow-date-time .booking-calendar-modal.active .booking-calendar-popup {
   max-width: calc(100vw - 2rem);

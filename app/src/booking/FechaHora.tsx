@@ -143,6 +143,12 @@ export default function FechaHora() {
                 />
               </svg>
             </button>
+            <CalendarModal
+              open={calendarOpen}
+              selectedISO={selectedDate}
+              onPick={selectDate}
+              onClose={() => setCalendarOpen(false)}
+            />
           </div>
 
           <div className="booking-date-section">
@@ -254,12 +260,6 @@ export default function FechaHora() {
         )}
       </div>
 
-      <CalendarModal
-        open={calendarOpen}
-        selectedISO={selectedDate}
-        onPick={selectDate}
-        onClose={() => setCalendarOpen(false)}
-      />
     </section>
   );
 }
