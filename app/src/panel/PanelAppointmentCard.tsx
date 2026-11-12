@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { FiEdit3 } from "react-icons/fi";
 import {
   formatDateLongEs,
+  formatDateTimeShortEs,
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
@@ -51,10 +52,11 @@ export default function PanelAppointmentCard({
   showContact?: boolean;
 }) {
   const p = dateParts(appt.date);
-  const vence =
-    appt.status === "por_confirmar" && appt.confirmation_expires_at
-      ? ` · Vence ${new Date(appt.confirmation_expires_at).toLocaleString("es-DO", { timeZone: "America/Santo_Domingo" })}`
-      : "";
+  // The verification-link expiry is NOT the appointment: it lives on
+  // its own muted line below, only on unverified holds, so the two
+  // date-times can never be confused.
+  const venceAt =
+    appt.status === "por_confirmar" ? appt.confirmation_expires_at : null;
 
   return (
     <article className="card appt2">
@@ -81,10 +83,16 @@ export default function PanelAppointmentCard({
             </div>
           )}
           <p className="appt2-when">
+            {showPatientName && <>{formatDateLongEs(appt.date)} · </>}
             {formatTime12h(appt.start_time)} · {appt.duration_minutes} min ·{" "}
             {appt.reference_code} · {appt.source}
-            {vence}
           </p>
+          {venceAt && (
+            <p className="appt2-vence">
+              El enlace de verificación vence el{" "}
+              {formatDateTimeShortEs(venceAt)}
+            </p>
+          )}
           {showContact && (
             <p className="appt2-contact">{displayContact(appt)}</p>
           )}

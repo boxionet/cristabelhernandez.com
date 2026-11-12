@@ -16,8 +16,21 @@ import Dashboard from "./panel/Dashboard";
 import Horario from "./panel/Horario";
 import NuevaCita from "./panel/NuevaCita";
 import PanelLayout from "./panel/PanelLayout";
+import PorConfirmar from "./panel/PorConfirmar";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
+import BookingLayout from "./booking/BookingLayout";
+import ReservarStart from "./booking/ReservarStart";
+import Servicios from "./booking/Servicios";
+import FechaHora from "./booking/FechaHora";
+import Datos from "./booking/Datos";
+import Confirmacion from "./booking/Confirmacion";
+import {
+  RequireBookingConfirmation,
+  RequireBookingCustomerType,
+  RequireBookingDateTime,
+  RequireBookingServices,
+} from "./booking/guards";
 import { SkeletonShell } from "./components/Skeleton";
 import { profileComplete } from "./lib/profile";
 
@@ -141,6 +154,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="citas" element={<Citas />} />
+          <Route path="por-confirmar" element={<PorConfirmar />} />
           <Route path="pacientes" element={<Clientes />} />
           <Route path="pacientes/:id" element={<ClienteDetalle />} />
           <Route
@@ -152,6 +166,44 @@ export default function App() {
           <Route path="servicios" element={<ServiciosPanel />} />
           <Route path="horario" element={<Horario />} />
           <Route path="reportes" element={<Reportes />} />
+        </Route>
+        {/* Public booking flow (Phase 3 React migration): same URLs
+            the static pages used, served by the Netlify redirect to
+            this app. No auth gate — guests book without an account. */}
+        <Route path="/reservar" element={<BookingLayout />}>
+          <Route index element={<ReservarStart />} />
+          <Route
+            path="servicios"
+            element={
+              <RequireBookingCustomerType>
+                <Servicios />
+              </RequireBookingCustomerType>
+            }
+          />
+          <Route
+            path="fecha-hora"
+            element={
+              <RequireBookingServices>
+                <FechaHora />
+              </RequireBookingServices>
+            }
+          />
+          <Route
+            path="datos"
+            element={
+              <RequireBookingDateTime>
+                <Datos />
+              </RequireBookingDateTime>
+            }
+          />
+          <Route
+            path="confirmacion"
+            element={
+              <RequireBookingConfirmation>
+                <Confirmacion />
+              </RequireBookingConfirmation>
+            }
+          />
         </Route>
         <Route path="*" element={<Navigate to="/mi-cuenta" replace />} />
       </Routes>

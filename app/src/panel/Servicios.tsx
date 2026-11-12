@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatPrice } from "../lib/format";
 import { supabase } from "../lib/supabase";
 import { type ServiceRow } from "../lib/panel";
@@ -19,34 +19,128 @@ function ServiceEditor({
   const [duration, setDuration] = useState(service.duration_minutes);
   const [priceFrom, setPriceFrom] = useState(service.price_from);
   const [priceNote, setPriceNote] = useState(service.price_note ?? "");
-  const [active, setActive] = useState(service.active);
+  const [description, setDescription] = useState(service.description ?? "");
+  const [toggling, setToggling] = useState(false);
+  const [saveState, setSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const toast = useToast();
+  const savedTimer = useRef<number | null>(null);
 
-  async function save() {
+  useEffect(
+    () => () => {
+      if (savedTimer.current !== null) {
+        window.clearTimeout(savedTimer.current);
+      }
+    },
+    [],
+  );
+
+  // Every field saves itself — on blur, or immediately for the checkbox —
+  // and the switch saves the on/off state the moment it flips, so there
+  // is no pending state anywhere on the page: what the row shows is what
+  // the database holds. A failed save reverts the field to the stored
+  // value instead of leaving a lie on screen.
+  async function savePatch(
+    patch: Record<string, string | number | boolean | null>,
+    revert: () => void,
+  ) {
+    setSaveState("saving");
+    setSaveError(null);
     const { error } = await supabase
       .from("services")
-      .update({
-        price,
-        duration_minutes: duration,
-        price_from: priceFrom,
-        price_note: priceNote.trim() || null,
-        active,
-      })
+      .update(patch)
       .eq("id", service.id);
     if (error) {
+      revert();
+      setSaveError(error.message);
+      setSaveState("error");
       toast.error(`No se pudo guardar ${service.name}: ${error.message}`);
       return;
     }
-    toast.success(`${service.name} guardado`);
+    setSaveState("saved");
+    if (savedTimer.current !== null) {
+      window.clearTimeout(savedTimer.current);
+    }
+    savedTimer.current = window.setTimeout(
+      () => setSaveState("idle"),
+      2500,
+    );
+    onSaved();
+  }
+
+  function savePrice() {
+    if (price === service.price) return;
+    const prev = service.price;
+    void savePatch({ price }, () => setPrice(prev));
+  }
+
+  function saveDuration() {
+    if (duration === service.duration_minutes) return;
+    const prev = service.duration_minutes;
+    void savePatch({ duration_minutes: duration }, () => setDuration(prev));
+  }
+
+  function saveDescription() {
+    const next = description.trim() || null;
+    if (next === service.description) return;
+    const prev = service.description ?? "";
+    void savePatch({ description: next }, () => setDescription(prev));
+  }
+
+  function saveNote() {
+    const next = priceNote.trim() || null;
+    if (next === service.price_note) return;
+    const prev = service.price_note ?? "";
+    void savePatch({ price_note: next }, () => setPriceNote(prev));
+  }
+
+  function togglePriceFrom(checked: boolean) {
+    setPriceFrom(checked);
+    const prev = service.price_from;
+    void savePatch({ price_from: checked }, () => setPriceFrom(prev));
+  }
+
+  async function toggleActive() {
+    if (toggling) return;
+    const next = !service.active;
+    setToggling(true);
+    const { error } = await supabase
+      .from("services")
+      .update({ active: next })
+      .eq("id", service.id);
+    setToggling(false);
+    if (error) {
+      toast.error(
+        `No se pudo ${next ? "activar" : "desactivar"} ${service.name}: ${error.message}`,
+      );
+      return;
+    }
+    toast.success(`${service.name} ${next ? "activado" : "desactivado"}`);
     onSaved();
   }
 
   return (
-    <tr className={active ? "" : "row-inactive"}>
+    <tr className={service.active ? "" : "row-inactive"}>
       <td>
-        <strong>{service.name}</strong>
+        <strong>{service.name}</strong>{" "}
+        <span className="catsep">- {service.category}</span>
+        {!service.active && (
+          <span className="tag-inactive">Inactivo</span>
+        )}
         <br />
-        <small className="muted">{service.category}</small>
+        <textarea
+          value={description}
+          onChange={(e) => {
+            setDescription(e.target.value);
+          }}
+          onBlur={saveDescription}
+          placeholder="Descripción que verán las pacientes…"
+          rows={2}
+          className="desc-input"
+          aria-label={`Descripción de ${service.name}`}
+        />
       </td>
       <td>
         <input
@@ -57,28 +151,32 @@ function ServiceEditor({
           onChange={(e) => {
             setPrice(Number(e.target.value) || 0);
           }}
+          onBlur={savePrice}
           className="num-input"
         />
       </td>
       <td>
-        <label className="check-label">
+        <div className="etiqueta-row">
+          <label className="check-label">
+            <input
+              type="checkbox"
+              checked={priceFrom}
+              onChange={(e) => {
+                togglePriceFrom(e.target.checked);
+              }}
+            />
+            Desde
+          </label>
           <input
-            type="checkbox"
-            checked={priceFrom}
+            value={priceNote}
             onChange={(e) => {
-              setPriceFrom(e.target.checked);
+              setPriceNote(e.target.value);
             }}
+            onBlur={saveNote}
+            placeholder="c/ampolla, 3 sesiones…"
+            className="note-input"
           />
-          Desde
-        </label>
-        <input
-          value={priceNote}
-          onChange={(e) => {
-            setPriceNote(e.target.value);
-          }}
-          placeholder="c/ampolla, 3 sesiones…"
-          className="note-input"
-        />
+        </div>
       </td>
       <td>
         <input
@@ -89,29 +187,35 @@ function ServiceEditor({
           onChange={(e) => {
             setDuration(Number(e.target.value) || 0);
           }}
+          onBlur={saveDuration}
           className="num-input"
         />
       </td>
       <td>
-        <label className="check-label">
-          <input
-            type="checkbox"
-            checked={active}
-            onChange={(e) => {
-              setActive(e.target.checked);
-            }}
-          />
-          Activo
-        </label>
-      </td>
-      <td>
-        <AsyncButton
-          className="btn primary small"
-          pendingText="Guardando…"
-          onClick={save}
-        >
-          Guardar
-        </AsyncButton>
+        <div className="switch-cell">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={service.active}
+            aria-label={`${service.active ? "Desactivar" : "Activar"} ${service.name}`}
+            className={service.active ? "switch on" : "switch"}
+            disabled={toggling}
+            onClick={() => void toggleActive()}
+          >
+            <span className="track" aria-hidden />
+            <span className="knob" aria-hidden />
+          </button>
+          <span className="state-word">
+            {service.active ? "Activo" : "Inactivo"}
+          </span>
+        </div>
+        {saveState === "saving" && (
+          <p className="save-caption">Guardando…</p>
+        )}
+        {saveState === "saved" && <p className="save-caption">Guardado</p>}
+        {saveState === "error" && saveError && (
+          <p className="save-caption error">{saveError}</p>
+        )}
       </td>
     </tr>
   );
@@ -130,10 +234,14 @@ export default function Servicios() {
   const toast = useToast();
   const { services, error, reload } = usePanelData();
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("Facial");
+  const [category, setCategory] = useState("facial");
   const [price, setPrice] = useState(0);
   const [duration, setDuration] = useState(45);
+  const [description, setDescription] = useState("");
   const [addError, setAddError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"todos" | "activos" | "inactivos">(
+    "todos",
+  );
 
   if (error) return <p className="error">{error}</p>;
   if (!services) return <SkeletonTable rows={6} />;
@@ -151,20 +259,34 @@ export default function Servicios() {
     const { error } = await supabase.from("services").insert({
       slug: slugify(name),
       name: name.trim(),
+      description: description.trim() || null,
       category,
       price,
       duration_minutes: duration,
       sort_order: maxOrder + 1,
     });
     if (error) {
-      setAddError("No se pudo agregar (¿nombre repetido?).");
+      // Show the real reason instead of a generic guess: a slug
+      // collision (23505) means a repeated name; anything else is
+      // reported verbatim so the next failure explains itself.
+      if (error.code === "23505") {
+        setAddError("Ya existe un tratamiento con ese nombre.");
+      } else {
+        setAddError(`No se pudo agregar: ${error.message}`);
+      }
       return;
     }
     toast.success("Tratamiento agregado");
     setName("");
+    setDescription("");
     setPrice(0);
     void reload();
   }
+
+  const shown = services.filter(
+    (s) => filter === "todos" || (filter === "activos") === s.active,
+  );
+  const activeCount = services.filter((s) => s.active).length;
 
   return (
     <>
@@ -178,8 +300,8 @@ export default function Servicios() {
           <label className="add-field mid">
             Categoría
             <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option>Facial</option>
-              <option>Corporal</option>
+              <option value="facial">Facial</option>
+              <option value="corporal">Corporal</option>
             </select>
           </label>
           <label className="add-field num">
@@ -210,12 +332,55 @@ export default function Servicios() {
             <FiPlus /> Agregar
           </AsyncButton>
         </div>
+        <div className="add-row">
+          <label className="add-field grow">
+            Descripción (opcional)
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="La línea que verán las pacientes debajo del tratamiento…"
+              rows={2}
+            />
+          </label>
+        </div>
         {addError && <p className="error">{addError}</p>}
       </section>
 
       <h2 className="section-title">Tratamientos (catálogo)</h2>
+      <div
+        className="service-filters"
+        role="group"
+        aria-label="Filtrar tratamientos por estado"
+      >
+        <button
+          type="button"
+          className={filter === "todos" ? "filter-chip active" : "filter-chip"}
+          onClick={() => setFilter("todos")}
+        >
+          Todos <span className="n">{services.length}</span>
+        </button>
+        <button
+          type="button"
+          className={
+            filter === "activos" ? "filter-chip active" : "filter-chip"
+          }
+          onClick={() => setFilter("activos")}
+        >
+          Activos <span className="n">{activeCount}</span>
+        </button>
+        <button
+          type="button"
+          className={
+            filter === "inactivos" ? "filter-chip active" : "filter-chip"
+          }
+          onClick={() => setFilter("inactivos")}
+        >
+          Inactivos <span className="n">{services.length - activeCount}</span>
+        </button>
+      </div>
       <section className="card">
-        <table className="table services-table">
+        <div className="table-scroll">
+          <table className="table services-table">
           <thead>
             <tr>
               <th>Tratamiento</th>
@@ -223,15 +388,29 @@ export default function Servicios() {
               <th>Etiqueta</th>
               <th>Min</th>
               <th>Estado</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
-            {services.map((s) => (
-              <ServiceEditor key={s.id} service={s} onSaved={() => void reload()} />
-            ))}
+            {shown.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="muted">
+                  {filter === "activos"
+                    ? "No hay tratamientos activos."
+                    : "No hay tratamientos inactivos."}
+                </td>
+              </tr>
+            ) : (
+              shown.map((s) => (
+                <ServiceEditor
+                  key={s.id}
+                  service={s}
+                  onSaved={() => void reload()}
+                />
+              ))
+            )}
           </tbody>
-        </table>
+          </table>
+        </div>
         <p className="muted">
           Los cambios se reflejan enseguida en la página de servicios y en el
           portal. Desactivar un tratamiento lo oculta de la web sin borrar su

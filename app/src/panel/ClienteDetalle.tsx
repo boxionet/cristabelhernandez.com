@@ -117,17 +117,21 @@ export default function ClienteDetalle() {
           <p>Este paciente aún no tiene citas.</p>
         </section>
       )}
-      {own
-        .slice()
-        .reverse()
-        .map((a) => (
-          <PanelAppointmentCard
-            key={a.id}
-            appt={a}
-            onChanged={() => void reload()}
-            showPatientName={false}
-          />
-        ))}
+      {own.length > 0 && (
+        <div className="appt-list">
+          {own
+            .slice()
+            .reverse()
+            .map((a) => (
+              <PanelAppointmentCard
+                key={a.id}
+                appt={a}
+                onChanged={() => void reload()}
+                showPatientName={false}
+              />
+            ))}
+        </div>
+      )}
     </>
   );
 }

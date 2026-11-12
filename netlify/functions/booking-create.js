@@ -4,7 +4,7 @@
 // This layer validates input, resolves the caller's identity, maps
 // database errors to API errors, and sends the emails.
 const { serviceClient, getAuthUser, isVerified, json, siteOrigin } = require("./_booking/supabase");
-const { sendNewBookingEmails } = require("./_booking/email");
+const { sendOwnerBookingAlert, sendPatientVerificationEmail } = require("./_booking/email");
 const { verifyRecaptcha } = require("./_booking/captcha");
 const { clinicNow } = require("./_booking/time");
 const { randomUUID } = require("crypto");
@@ -125,18 +125,31 @@ exports.handler = async (event) => {
     const confirmUrl = appointment.confirmation_token
       ? `${origin}/.netlify/functions/booking-confirm?token=${appointment.confirmation_token}`
       : null;
-    const emailResults = await sendNewBookingEmails({
-      appointment,
-      items: items || [],
-      confirmUrl,
-      portalUrl: `${origin}/mi-cuenta/`,
-      panelUrl: `${origin}/panel/`,
-      // Verified bookings carry no guest_* fields, so the owner email
-      // would otherwise show "(ver en el Panel)" — pass the identity
-      // the caller booked with so the notification names the patient.
-      verifiedName: verified ? String(body.name).trim() : undefined,
-      verifiedEmail: verified ? email : undefined,
-    });
+    // Verify-first: a guest hold sends ONLY the verification email to
+    // the patient — the clinic alert fires from booking-confirm once
+    // the email owner clicks the link. A verified booking skips
+    // verification, so its clinic alert fires now.
+    const emailResults = { owner: false, patient: false };
+    if (verified) {
+      emailResults.owner = await sendOwnerBookingAlert({
+        appointment,
+        items: items || [],
+        panelUrl: `${origin}/panel/`,
+        patientName: String(body.name).trim(),
+        patientEmail: email,
+        patientPhone: body.phone ? String(body.phone).trim() : null,
+        intro:
+          "Nueva cita desde la web (paciente verificada — pendiente de confirmación en el Panel).",
+      });
+    } else if (confirmUrl) {
+      emailResults.patient = await sendPatientVerificationEmail({
+        appointment,
+        items: items || [],
+        confirmUrl,
+        portalUrl: `${origin}/mi-cuenta/`,
+        to: email,
+      });
+    }
 
     return json(201, {
       referenceCode: appointment.reference_code,

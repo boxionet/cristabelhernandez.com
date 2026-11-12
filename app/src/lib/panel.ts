@@ -28,6 +28,7 @@ export interface ServiceRow {
   id: string;
   slug: string;
   name: string;
+  description: string | null;
   category: string;
   price: number;
   price_from: boolean;
@@ -68,6 +69,11 @@ export function clinicToday(): string {
 
 export function displayName(a: PanelAppointment): string {
   return a.patients?.full_name || a.guest_name || "—";
+}
+
+/** Comma-joined service names for one-line summaries (dashboard rows). */
+export function servicesSummary(a: PanelAppointment): string {
+  return a.appointment_services.map((i) => i.service_name).join(", ");
 }
 
 export function displayContact(a: PanelAppointment): string {

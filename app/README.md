@@ -1,10 +1,13 @@
 # Mi Cuenta + Panel — web app
 
-One React + TypeScript (Vite) app serving both gated areas of the
-booking system (plan: `peachy-style-booking-portal-plan.md` §2):
+One React + TypeScript (Vite) app serving the gated areas of the
+booking system and the public booking flow (plan:
+`peachy-style-booking-portal-plan.md` §2):
 
 - `/mi-cuenta/*` — patient portal
 - `/panel/*` — staff dashboard (admin role)
+- `/reservar/*` — public booking flow (Phase 3 React migration,
+  2026-11-12; same URLs the old static pages used)
 
 Data comes from Supabase via supabase-js with Row Level Security;
 Netlify Functions handle privileged operations only (guest booking
@@ -16,8 +19,8 @@ be lifted into its own repo later.
 
 The root site build runs this app automatically (`build:app` in the
 root `package.json`, after the Eleventy build). Vite outputs to
-`../public/app`; Netlify redirects `/mi-cuenta/*` and `/panel/*` to
-`/app/index.html`.
+`../public/app`; Netlify redirects `/mi-cuenta/*`, `/panel/*` and
+`/reservar/*` to `/app/index.html`.
 
 ## Environment
 
@@ -47,21 +50,26 @@ the Supabase SQL Editor (project `bgahgawcjokcrpzkexvx`, us-east-1).
   confirmation link; redirect allowlist = production
   `https://cristabelhernandez.com/**` (plus the Deploy Preview URL
   while testing — remove it at go-live).
-- **Approval model (2026-11-11)**: every online booking lands in
-  `pendiente` and waits for the Dra in Citas (Aprobar / No aprobar);
-  approval sends the patient the confirmation email with the calendar
-  invite, rejection cancels + emails the patient. The decision runs
-  through `booking-decide` (admin session required) so the status
-  change and the email happen together. Guest holds confirmed via
-  the email link become `pendiente`; staff-created holds (manual
-  booking with an email, via `booking-request-confirmation`) resolve
-  straight to `confirmada` — the Dra already decided by creating
-  them; manual bookings without an email are `confirmada` at once.
-  Panel Confirmar on a hold is the approval itself (`confirmada`).
-  A patient rescheduling a `confirmada` cita drops it back to
-  `pendiente` (staff moves keep the status). Nothing sent before
-  approval carries a calendar invite. `booking-confirm` maps the RPC
-  outcome to the confirmation page's `estado` values (`confirmada` /
+- **Verify-first + approval model (2026-11-11/12)**: the patient
+  verifies her email BEFORE anything reaches the Dra. A guest (web)
+  booking sends only the "Verificar mi correo" email at creation; when
+  the email owner clicks the link, the hold becomes `pendiente` and
+  `booking-confirm` fires the clinic alert ("Nueva cita por confirmar").
+  Verified (signed-in) bookings skip verification and alert the clinic
+  at creation. Every online booking then waits for the Dra in Citas
+  (Confirmar / No confirmar); approval sends the patient the
+  confirmation email with the calendar invite, rejection cancels +
+  emails the patient. The decision runs through `booking-decide`
+  (admin session required) so the status change and the email happen
+  together. Staff-created holds (manual booking with an email, via
+  `booking-request-confirmation`) resolve straight to `confirmada` on
+  link click — the Dra already decided by creating them; manual
+  bookings without an email are `confirmada` at once. Panel Confirmar
+  on a hold is the approval itself (`confirmada`). A patient
+  rescheduling a `confirmada` cita drops it back to `pendiente`
+  (staff moves keep the status). Nothing sent before approval
+  carries a calendar invite. `booking-confirm` maps the RPC outcome
+  to the confirmation page's `estado` values (`confirmada` /
   `pendiente` / `expirada` / invalid) — the raw RPC values never
   matched the page, a latent Phase 3 bug fixed with this model.
 - **Scheduled functions**: `booking-sweep` every 15 min purges
