@@ -150,3 +150,14 @@
     min-width: 0;
   }
 }
+
+/* End-of-list note under the time slots (user feedback 2026-11-12):
+   the grid used to end at the last slot with blank space below,
+   looking unfinished. The note states plainly that the list is
+   complete and names the last slot (it varies with the treatment
+   duration). */
+#booking-flow-date-time .booking-time-end-note {
+  color: var(--booking-secondary-text);
+  font-size: 0.875rem;
+  margin: 1rem 0 0;
+}

@@ -47,44 +47,53 @@ export default function TimeGrid({
         </div>
       )}
       {!loading && !loadError && (
-        <div
-          className="booking-time-grid"
-          role="radiogroup"
-          aria-orientation="vertical"
-        >
-          {visible.map((time24h) => {
-            const label = formatTime12h(`${time24h}:00`);
-            const selected = selectedTime === time24h;
-            return (
-              <div
-                className="booking-time-slot-wrapper"
-                data-qa="timeslot"
-                key={time24h}
-              >
-                <button
-                  type="button"
-                  className={`booking-time-slot${selected ? " booking-time-slot--selected" : ""}`}
-                  aria-pressed={selected ? "true" : "false"}
-                  aria-live="polite"
-                  onClick={() => onSelect(time24h)}
+        <>
+          <div
+            className="booking-time-grid"
+            role="radiogroup"
+            aria-orientation="vertical"
+          >
+            {visible.map((time24h) => {
+              const label = formatTime12h(`${time24h}:00`);
+              const selected = selectedTime === time24h;
+              return (
+                <div
+                  className="booking-time-slot-wrapper"
+                  data-qa="timeslot"
+                  key={time24h}
                 >
-                  <p className="booking-time-slot-text">{label}</p>
-                </button>
-                <input
-                  type="radio"
-                  name="time-slot-selection"
-                  value={label}
-                  tabIndex={-1}
-                  aria-live="polite"
-                  aria-checked={selected ? "true" : "false"}
-                  className="booking-time-input"
-                  checked={selected}
-                  readOnly
-                />
-              </div>
-            );
-          })}
-        </div>
+                  <button
+                    type="button"
+                    className={`booking-time-slot${selected ? " booking-time-slot--selected" : ""}`}
+                    aria-pressed={selected ? "true" : "false"}
+                    aria-live="polite"
+                    onClick={() => onSelect(time24h)}
+                  >
+                    <p className="booking-time-slot-text">{label}</p>
+                  </button>
+                  <input
+                    type="radio"
+                    name="time-slot-selection"
+                    value={label}
+                    tabIndex={-1}
+                    aria-live="polite"
+                    aria-checked={selected ? "true" : "false"}
+                    className="booking-time-input"
+                    checked={selected}
+                    readOnly
+                  />
+                </div>
+              );
+            })}
+          </div>
+          {visible.length > 0 && (
+            <p className="booking-time-end-note">
+              No hay más horarios disponibles para este día. El último es
+              a las{" "}
+              {formatTime12h(`${visible[visible.length - 1]}:00`)}.
+            </p>
+          )}
+        </>
       )}
     </div>
   );
