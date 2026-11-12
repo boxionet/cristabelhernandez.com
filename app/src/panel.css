@@ -1342,6 +1342,126 @@
   font-size: 0.875rem;
   min-width: 220px;
 }
+
+/* Servicios: status filter + instant switch (user feedback 2026-11-12).
+   Top-aligned cells so the price, Desde, minutes, switch and row top
+   all share one baseline instead of floating mid-row against the tall
+   description box. */
+.services-table td {
+  vertical-align: top;
+}
+.service-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.8rem 0;
+}
+.filter-chip {
+  border: 1px solid #d7dccd;
+  background: #fff;
+  color: #4b5563;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filter-chip.active {
+  background: var(--sage-deep);
+  border-color: var(--sage-deep);
+  color: #fff;
+}
+.filter-chip .n {
+  opacity: 0.7;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+.catsep {
+  color: var(--muted);
+  font-weight: 400;
+}
+.etiqueta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.etiqueta-row .note-input {
+  margin-top: 0;
+}
+.tag-inactive {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #e8e8e8;
+  color: #555;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.switch-cell {
+  display: flex;
+  align-items: center;
+  padding-top: 0.55rem;
+}
+.switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.switch .track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #d1d5db;
+  transition: background 0.2s;
+}
+.switch .knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: left 0.2s;
+}
+.switch.on .track {
+  background: var(--sage);
+}
+.switch.on .knob {
+  left: 23px;
+}
+.switch:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+.switch:focus-visible {
+  outline: 2px solid var(--sage-deep);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+.state-word {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-left: 0.6rem;
+  white-space: nowrap;
+}
+.save-caption {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+.save-caption.error {
+  color: var(--danger);
+}
 .add-row + .add-row {
   margin-top: 0.9rem;
 }
