@@ -103,3 +103,32 @@
   height: 1.8rem;
   width: 1.8rem;
 }
+
+/* Cart: real flex column instead of fixed positioning (user feedback
+   2026-11-12). The fixed cart (left:50% + a fixed margin) guessed
+   where the content ended and disagreed with the container's reserve
+   padding — on fecha-hora by 14px — covering the calendar icon and
+   the last dates on wide screens, and clipping past the right edge
+   on narrow ones. As a sticky flex item the layout reserves the
+   cart's space, so the columns can never overlap at any width or
+   zoom. The content columns are width-capped, so positions stay
+   within a few pixels of today's. Mobile (<64rem) is untouched:
+   the desktop cart stays display:none there. */
+@media only screen and (min-width: 64rem) {
+  #booking-flow-services .booking-cart-sidebar-desktop,
+  #booking-flow-date-time .booking-cart-sidebar-desktop,
+  #booking-flow-datos .booking-cart-sidebar-desktop {
+    position: sticky;
+    top: 7.5rem;
+    left: auto;
+    margin-left: 0;
+    flex: 0 0 28.125rem;
+    width: 28.125rem;
+    align-self: flex-start;
+  }
+  #booking-flow-services .booking-services-container,
+  #booking-flow-date-time .booking-main-wrapper,
+  #booking-flow-datos .booking-confirmation-container {
+    padding-right: 2.5rem;
+  }
+}

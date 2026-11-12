@@ -379,7 +379,8 @@ export default function Servicios() {
         </button>
       </div>
       <section className="card">
-        <table className="table services-table">
+        <div className="table-scroll">
+          <table className="table services-table">
           <thead>
             <tr>
               <th>Tratamiento</th>
@@ -408,7 +409,8 @@ export default function Servicios() {
               ))
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
         <p className="muted">
           Los cambios se reflejan enseguida en la página de servicios y en el
           portal. Desactivar un tratamiento lo oculta de la web sin borrar su
