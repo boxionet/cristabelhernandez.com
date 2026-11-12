@@ -14,7 +14,6 @@ import {
 import { useAuth } from "../auth";
 import NotificationBell from "../components/NotificationBell";
 import UserMenu from "../components/UserMenu";
-import { clinicToday } from "../lib/panel";
 import {
   usePanelAppointments,
   useStaffProfileName,
@@ -54,11 +53,6 @@ export default function PanelLayout() {
       ? ""
       : profile.data || (user?.email ? user.email.split("@")[0] : ""));
 
-  const today = clinicToday();
-  const todayCount = (appointments ?? []).filter(
-    (a) =>
-      a.date === today && a.status !== "cancelada" && a.status !== "no_show",
-  ).length;
   // The action queue: verified citas awaiting the Dra's decision.
   // The bell and the "Por confirmar" nav badge share this count.
   const pendingCount = (appointments ?? []).filter(
@@ -83,9 +77,6 @@ export default function PanelLayout() {
                 <item.icon />
               </span>
               {item.label}
-              {item.label === "Citas" && todayCount > 0 && (
-                <span className="nav-badge">{todayCount}</span>
-              )}
               {item.label === "Por confirmar" && pendingCount > 0 && (
                 <span className="nav-badge amber">{pendingCount}</span>
               )}
