@@ -16,7 +16,7 @@ import { SkeletonCards } from "../components/Skeleton";
 
 const STATUS_FILTERS = [
   { key: "todas", label: "Todas" },
-  { key: "por_confirmar", label: "Por confirmar" },
+  { key: "por_confirmar", label: "Esperando verificación" },
   { key: "pendiente", label: "Pendientes" },
   { key: "confirmada", label: "Confirmadas" },
   { key: "completada", label: "Completadas" },

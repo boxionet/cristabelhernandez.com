@@ -286,7 +286,7 @@ permalink: "/reservar/confirmacion/"
         }
 
         // --- New-engine states (Phase 3) ---
-        // Arriving from the "Confirmar mi cita" email link (?estado=...)
+        // Arriving from the "Verificar mi correo" email link (?estado=...)
         // or right after a new-engine submit (sessionStorage result).
         function applyBookingState() {
             const params = new URLSearchParams(window.location.search);
@@ -319,21 +319,21 @@ permalink: "/reservar/confirmacion/"
                 // to approve it before it is a booking.
                 if (estado === 'pendiente') {
                     setBadge('Pendiente de confirmación');
-                    if (title) title.textContent = '¡Gracias por confirmar tu correo!';
+                    if (title) title.textContent = '¡Gracias por verificar tu correo!';
                     if (sub1) sub1.textContent = 'Tu cita' + (ref ? ` (referencia ${ref})` : '') + ' quedó registrada y pendiente de confirmación por el centro. Te enviaremos un correo cuando la doctora la confirme.';
                     if (sub2) sub2.textContent = 'Si necesitas cambiar o cancelar, entra a Mi Cuenta o contáctanos.';
                     return;
                 }
                 if (estado === 'expirada') {
                     setBadge('Enlace vencido');
-                    if (title) title.textContent = 'El enlace de confirmación venció';
-                    if (sub1) sub1.textContent = 'El espacio que apartaste se liberó porque la cita no se confirmó a tiempo.';
+                    if (title) title.textContent = 'El enlace venció';
+                    if (sub1) sub1.textContent = 'El espacio que apartaste se liberó porque el enlace no se usó a tiempo.';
                     if (sub2) sub2.textContent = 'Puedes reservar de nuevo desde Reservar, o llamarnos y con gusto te ayudamos.';
                     return;
                 }
                 setBadge('Enlace no válido');
                 if (title) title.textContent = 'Este enlace no es válido';
-                if (sub1) sub1.textContent = 'El enlace de confirmación no se reconoce. Si tu cita ya fue confirmada, no necesitas hacer nada más.';
+                if (sub1) sub1.textContent = 'El enlace no se reconoce. Si tu cita ya fue confirmada, no necesitas hacer nada más.';
                 if (sub2) sub2.textContent = 'Ante cualquier duda, contáctanos y con gusto te ayudamos.';
                 return;
             }
@@ -349,8 +349,8 @@ permalink: "/reservar/confirmacion/"
                     const exp = new Date(result.confirmationExpiresAt);
                     expiryText = ' Tienes hasta el ' + exp.toLocaleString('es-DO', { timeZone: 'America/Santo_Domingo', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }) + ' para confirmarla.';
                 }
-                if (sub1) sub1.textContent = 'Te enviamos un correo con el botón «Confirmar mi cita». Tu espacio queda apartado solo hasta que confirmes.' + expiryText;
-                if (sub2) sub2.textContent = 'Referencia de tu cita: ' + (result.referenceCode || '') + '. Si no confirmas a tiempo, el espacio se libera automáticamente.';
+                if (sub1) sub1.textContent = 'Te enviamos un correo con el botón «Verificar mi correo». Tu espacio queda apartado solo hasta que verifiques tu correo.' + expiryText;
+                if (sub2) sub2.textContent = 'Referencia de tu cita: ' + (result.referenceCode || '') + '. Si no verificas tu correo a tiempo, el espacio se libera automáticamente.';
             }
             sessionStorage.removeItem('cristabel_result');
             sessionStorage.removeItem('cristabel_idem');

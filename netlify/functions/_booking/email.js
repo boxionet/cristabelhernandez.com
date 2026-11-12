@@ -177,31 +177,29 @@ function appointmentDetailsRows({ appointment, items, when, totalLabel, extra })
 // Sends the pair of emails for a new booking. Never throws: a failed
 // email must not fail a booking that already exists in the database.
 //
-// Confirmation model: nothing sent before confirmation carries a
-// calendar invite — the patient must not treat a pending request as
-// booked. The confirmation email (sendApprovalEmail) is the one with
-// the .ics and the Google Calendar link. Verified bookings have no
-// guest_email, so today the patient email below only fires for guest
-// holds; verified patients learn their request is pending from the
-// confirmation page and from the confirmation email.
-async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl, panelUrl, verifiedName, verifiedEmail }) {
-  const resend = resendClient();
-  const isGuest = appointment.status === "por_confirmar";
-  const patientEmail = appointment.guest_email || null;
-  const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
-  const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
-  const results = { owner: false, patient: false };
-
-  // --- Clinic notification ---
+// Verify-first workflow: the patient verifies her email BEFORE anything
+// reaches the Dra. A guest booking sends ONLY the verification email at
+// creation; the clinic alert fires later, from booking-confirm, once the
+// email owner clicks the link and the hold becomes pendiente. Verified
+// (signed-in) bookings skip verification, so their clinic alert fires at
+// creation. Nothing sent before confirmation carries a calendar invite —
+// the patient must not treat a pending request as booked. The
+// confirmation email (sendApprovalEmail) is the one with the .ics and
+// the Google Calendar link.
+//
+// The two sends are split on purpose: booking-create calls exactly one
+// of them depending on identity, and booking-confirm calls the clinic
+// alert for web holds. Each returns a boolean and never throws.
+async function sendOwnerBookingAlert({ appointment, items, panelUrl, patientName, patientEmail, patientPhone, intro }) {
   try {
-    const ownerEmail = patientEmail || verifiedEmail || OWNER_EMAIL;
-    const intro = isGuest
-      ? "Nueva cita desde la web (por confirmar — la paciente aún no confirma su correo)."
-      : "Nueva cita desde la web (paciente verificada — pendiente de confirmación en el Panel).";
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const replyTo = patientEmail || OWNER_EMAIL;
     const patientRows = [
-      ["Paciente", escapeHtml(appointment.guest_name || verifiedName || "(ver en el Panel)")],
-      ...(ownerEmail !== OWNER_EMAIL ? [["Correo", escapeHtml(ownerEmail)]] : []),
-      ...(appointment.guest_phone ? [["Teléfono", escapeHtml(appointment.guest_phone)]] : []),
+      ["Paciente", escapeHtml(patientName || "(ver en el Panel)")],
+      ...(patientEmail ? [["Correo", escapeHtml(patientEmail)]] : []),
+      ...(patientPhone ? [["Teléfono", escapeHtml(patientPhone)]] : []),
     ];
     const ownerText = [
       intro,
@@ -212,9 +210,9 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl,
       itemsListText(items),
       `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
       ``,
-      `Paciente: ${appointment.guest_name || verifiedName || "(ver en el Panel)"}`,
-      ownerEmail !== OWNER_EMAIL ? `Correo: ${ownerEmail}` : "",
-      appointment.guest_phone ? `Teléfono: ${appointment.guest_phone}` : "",
+      `Paciente: ${patientName || "(ver en el Panel)"}`,
+      patientEmail ? `Correo: ${patientEmail}` : "",
+      patientPhone ? `Teléfono: ${patientPhone}` : "",
       ``,
       `Ver en el Panel: ${panelUrl}`,
     ]
@@ -223,7 +221,7 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl,
     await resend.emails.send({
       from: FROM,
       to: OWNER_EMAIL,
-      reply_to: ownerEmail,
+      reply_to: replyTo,
       subject: `Nueva cita por confirmar — ${appointment.reference_code}`,
       html: emailShell({
         preheader: "Nueva cita desde la web, pendiente de confirmación en el Panel.",
@@ -236,58 +234,64 @@ async function sendNewBookingEmails({ appointment, items, confirmUrl, portalUrl,
       }),
       text: ownerText,
     });
-    results.owner = true;
+    return true;
   } catch (e) {
     console.error("owner email failed", e);
+    return false;
   }
+}
 
-  // --- Patient email (guest holds only: verified bookings carry no guest_email) ---
-  if (patientEmail) {
-    try {
-      const confirmBlock = `\nIMPORTANTE: tu cita está apartada pero aún NO está confirmada.\nConfírmala aquí antes de que expire el plazo: ${confirmUrl}\nSi no la confirmas, el espacio se libera automáticamente.\n`;
-      const patientText = [
-        `Hola,`,
-        ``,
-        `Recibimos tu solicitud de cita en ${CLINIC_NAME}.`,
-        ``,
-        `Referencia: ${appointment.reference_code}`,
-        `Fecha: ${when}`,
-        `Servicios:`,
-        itemsListText(items),
-        `${totalLabel}: ${formatPrice(appointment.total_price)}`,
-        `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
-        confirmBlock,
-        `Puedes ver y administrar tus citas en: ${portalUrl}`,
-        `Si necesitas cambiar o cancelar, hazlo desde tu cuenta o responde a este correo.`,
-      ].join("\n");
-      const { data } = await resend.emails.send({
-        from: FROM,
-        to: patientEmail,
-        reply_to: OWNER_EMAIL,
-        subject: `Confirma tu cita — ${appointment.reference_code}`,
-        html: emailShell({
-          preheader: "Confirma tu cita con un toque — el espacio queda apartado hasta que expire el plazo.",
-          title: "Confirma tu cita",
-          body:
-            emailParagraph("Hola,") +
-            emailParagraph(`Recibimos tu solicitud de cita en el ${CLINIC_NAME}.`) +
-            emailParagraph(
-              "<strong>Tu cita está apartada, pero aún NO está confirmada.</strong> Confírmala antes de que expire el plazo; si no la confirmas, el espacio se libera automáticamente.",
-            ) +
-            emailButton("Confirmar mi cita", confirmUrl) +
-            emailDetails(appointmentDetailsRows({ appointment, items, when, totalLabel })) +
-            emailParagraph(
-              `Puedes ver y administrar tus citas en ${emailLink(portalUrl, "Mi Cuenta")}. Si necesitas cambiar o cancelar, hazlo desde tu cuenta o responde a este correo.`,
-            ),
-        }),
-        text: patientText,
-      });
-      results.patient = Boolean(data);
-    } catch (e) {
-      console.error("patient email failed", e);
-    }
+// The verification email for a guest (web) booking. The button verifies
+// the email address — it does NOT confirm the appointment. Only after
+// this click does the cita reach the Dra's queue as pendiente.
+async function sendPatientVerificationEmail({ appointment, items, confirmUrl, portalUrl, to }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const verifyBlock = `\nIMPORTANTE: verifica tu correo aquí antes de que expire el plazo para que tu cita pase a confirmación por el centro: ${confirmUrl}\nSi no lo verificas, el espacio se libera automáticamente.\n`;
+    const patientText = [
+      `Hola,`,
+      ``,
+      `Recibimos tu solicitud de cita en ${CLINIC_NAME}.`,
+      ``,
+      `Referencia: ${appointment.reference_code}`,
+      `Fecha: ${when}`,
+      `Servicios:`,
+      itemsListText(items),
+      `${totalLabel}: ${formatPrice(appointment.total_price)}`,
+      `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
+      verifyBlock,
+      `Puedes ver y administrar tus citas en: ${portalUrl}`,
+      `Si necesitas cambiar o cancelar, hazlo desde tu cuenta o responde a este correo.`,
+    ].join("\n");
+    const { data } = await resend.emails.send({
+      from: FROM,
+      to,
+      reply_to: OWNER_EMAIL,
+      subject: `Verifica tu correo para tu cita — ${appointment.reference_code}`,
+      html: emailShell({
+        preheader: "Verifica tu correo con un toque — tu cita pasará a confirmación por el centro.",
+        title: "Verifica tu correo",
+        body:
+          emailParagraph("Hola,") +
+          emailParagraph(`Recibimos tu solicitud de cita en el ${CLINIC_NAME}.`) +
+          emailParagraph(
+            "<strong>Tu cita está apartada.</strong> Verifica tu correo antes de que expire el plazo para que tu cita pase a confirmación por el centro; si no lo verificas, el espacio se libera automáticamente.",
+          ) +
+          emailButton("Verificar mi correo", confirmUrl) +
+          emailDetails(appointmentDetailsRows({ appointment, items, when, totalLabel })) +
+          emailParagraph(
+            `Puedes ver y administrar tus citas en ${emailLink(portalUrl, "Mi Cuenta")}. Si necesitas cambiar o cancelar, hazlo desde tu cuenta o responde a este correo.`,
+          ),
+      }),
+      text: patientText,
+    });
+    return Boolean(data);
+  } catch (e) {
+    console.error("patient verification email failed", e);
+    return false;
   }
-  return results;
 }
 
 // The Dra confirmed a pending request: THIS is the confirmation the
@@ -497,7 +501,7 @@ async function sendReminderEmail({ appointment, items, portalUrl, to }) {
 }
 
 // Clinic notification: the patient cancelled from her email link or
-// her account. Never throws — see sendNewBookingEmails.
+// her account. Never throws — returns a boolean.
 async function sendCancellationNotice({ appointment, when, panelUrl }) {
   try {
     const resend = resendClient();
@@ -573,7 +577,8 @@ module.exports = {
   emailLink,
   emailButton,
   emailDetails,
-  sendNewBookingEmails,
+  sendOwnerBookingAlert,
+  sendPatientVerificationEmail,
   sendApprovalEmail,
   sendRejectionEmail,
   sendConfirmationRequestEmail,

@@ -102,7 +102,7 @@ export function formatTime12h(hhmmss: string): string {
 }
 
 export const STATUS_LABELS: Record<string, string> = {
-  por_confirmar: "Por confirmar",
+  por_confirmar: "Esperando verificación",
   pendiente: "Pendiente",
   confirmada: "Confirmada",
   completada: "Completada",
