@@ -41,6 +41,14 @@ function isVerified(user) {
   return Boolean(user && user.email && user.email_confirmed_at);
 }
 
+// Staff: the role lives in app_metadata, set server-side only — the
+// same source the Panel's RequireAdmin gate reads from the JWT.
+function isAdmin(user) {
+  return Boolean(
+    user && user.app_metadata && user.app_metadata.role === "admin",
+  );
+}
+
 function json(statusCode, body) {
   return {
     statusCode,
@@ -58,4 +66,4 @@ function siteOrigin(event) {
   return "https://cristabelhernandez.com";
 }
 
-module.exports = { serviceClient, getAuthUser, isVerified, json, siteOrigin };
+module.exports = { serviceClient, getAuthUser, isVerified, isAdmin, json, siteOrigin };

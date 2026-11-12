@@ -1,8 +1,13 @@
 const { Resend } = require("resend");
+const {
+  FROM,
+  emailShell,
+  emailParagraph,
+  emailDetails,
+} = require("./_booking/email");
 
 // Contact form messages go to the clinic's public inbox.
 const CONTACT_EMAIL = "hola@cristabelhernandez.com";
-const FROM_EMAIL = "cristabel@mail.cristabelhernandez.com";
 
 function escapeHtml(value) {
   return String(value || "")
@@ -112,19 +117,27 @@ exports.handler = async (event) => {
 
   try {
     const result = await resend.emails.send({
-      from: FROM_EMAIL,
+      from: FROM,
       to: CONTACT_EMAIL,
       reply_to: email,
       subject: `Nuevo mensaje de contacto — ${name}`,
-      html: `
-        <h2>Nuevo mensaje desde el formulario de contacto</h2>
-        <p><strong>Nombre:</strong> ${escapeHtml(name)}</p>
-        <p><strong>Correo electrónico:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Teléfono:</strong> ${escapeHtml(phone)}</p>
-        <p><strong>Tratamiento de interés:</strong> ${escapeHtml(service || "No especificado")}</p>
-        <h3>Mensaje</h3>
-        <p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>
-      `,
+      html: emailShell({
+        preheader: "Nuevo mensaje desde el formulario de contacto.",
+        title: "Nuevo mensaje de contacto",
+        staff: true,
+        body:
+          emailDetails([
+            ["Nombre", escapeHtml(name)],
+            ["Correo", escapeHtml(email)],
+            ["Teléfono", escapeHtml(phone)],
+            ["Tratamiento de interés", escapeHtml(service || "No especificado")],
+          ]) +
+          emailParagraph("<strong>Mensaje</strong>") +
+          emailParagraph(escapeHtml(message).replace(/\n/g, "<br>")) +
+          emailParagraph(
+            `Responde directamente a este correo para contestarle a ${escapeHtml(name.split(" ")[0])}.`,
+          ),
+      }),
       text: `
 Nuevo mensaje desde el formulario de contacto
 

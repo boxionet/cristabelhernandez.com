@@ -130,6 +130,12 @@ exports.handler = async (event) => {
       items: items || [],
       confirmUrl,
       portalUrl: `${origin}/mi-cuenta/`,
+      panelUrl: `${origin}/panel/`,
+      // Verified bookings carry no guest_* fields, so the owner email
+      // would otherwise show "(ver en el Panel)" — pass the identity
+      // the caller booked with so the notification names the patient.
+      verifiedName: verified ? String(body.name).trim() : undefined,
+      verifiedEmail: verified ? email : undefined,
     });
 
     return json(201, {

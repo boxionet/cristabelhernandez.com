@@ -84,13 +84,65 @@ select count(*) as expired_left
 from public.appointments where reference_code = 'CH-TESTX';
 -- expect: 0
 
+-- TEST 7 (approval model, migration 006): a staff-created hold
+-- (source telefono) confirmed through the link goes straight to
+-- 'confirmada' — the Dra already decided by creating it.
+select reference_code, status
+from public.create_booking(
+  '[{"slug":"toxina-frontal","quantity":1}]'::jsonb,
+  '2026-11-20', '09:00', 'Paciente Telefono', 'telefono@example.com', '8095550101',
+  false, null, 'test-key-004', 'telefono');
+-- expect: status = por_confirmar
+
+select (public.confirm_booking(
+  (select confirmation_token from public.appointments
+   where idempotency_key = 'test-key-004'))) ->> 'status' as status_after_confirm;
+-- expect: confirmada
+
+select status, patient_id is not null as linked
+from public.appointments where idempotency_key = 'test-key-004';
+-- expect: status = confirmada, linked = true
+
+-- TEST 8 (approval model): a hold already linked to a patient row
+-- (manual booking with an email) keeps its patient on link confirm —
+-- no duplicate patient row, and it resolves to 'confirmada'.
+insert into public.patients (full_name, email, phone)
+values ('Paciente Ya Registrada', 'yaregistrada@example.com', '8095550102')
+returning id;
+
+insert into public.appointments (
+  reference_code, patient_id, date, start_time,
+  duration_minutes, total_price, status, source, confirmation_token,
+  confirmation_expires_at, idempotency_key)
+select 'CH-TESTY', id, '2026-11-20', '11:00',
+  30, 13000, 'por_confirmar', 'whatsapp', gen_random_uuid(),
+  now() + interval '24 hours', 'test-key-005'
+from public.patients where email = 'yaregistrada@example.com';
+
+select (public.confirm_booking(
+  (select confirmation_token from public.appointments
+   where idempotency_key = 'test-key-005'))) ->> 'status' as status_after_confirm;
+-- expect: confirmada
+
+select count(*) as patient_rows_for_email
+from public.patients where lower(email) = 'yaregistrada@example.com';
+-- expect: 1 (kept, not duplicated)
+
+select status, confirmation_token is null as token_cleared
+from public.appointments where idempotency_key = 'test-key-005';
+-- expect: status = confirmada, token_cleared = true
+
 -- CLEANUP: remove every test row
 delete from public.appointments
-where idempotency_key in ('test-key-001', 'test-key-002', 'test-key-003');
+where idempotency_key in ('test-key-001', 'test-key-002', 'test-key-003',
+                          'test-key-004', 'test-key-005');
 delete from public.patients
 where email in ('prueba@example.com', 'otro@example.com',
-                'choque@example.com', 'expira@example.com');
+                'choque@example.com', 'expira@example.com',
+                'telefono@example.com', 'yaregistrada@example.com');
 
-select (select count(*) from public.appointments) as appointments_left,
-       (select count(*) from public.patients) as patients_left;
--- expect: 0 and 0 (the database returns to its clean Phase 1 state)
+select (select count(*) from public.appointments
+         where idempotency_key like 'test-key-%') as test_appointments_left,
+       (select count(*) from public.patients
+         where email like '%@example.com') as test_patients_left;
+-- expect: 0 and 0 (only this script's rows are counted; real data stays)

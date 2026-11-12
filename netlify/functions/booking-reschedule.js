@@ -2,9 +2,9 @@
 // Same 24-hour window as cancel; the database exclusion constraint has
 // the final word on conflicts. POST JSON:
 //   { manageToken | appointmentId, newDate, newStartTime }
-const { serviceClient, json } = require("./_booking/supabase");
+const { serviceClient, json, siteOrigin } = require("./_booking/supabase");
 const { resolveAppointment, outsideWindow, FINAL_STATUSES } = require("./_booking/manage");
-const { sendSimpleEmail, OWNER_EMAIL } = require("./_booking/email");
+const { sendRescheduleNotice } = require("./_booking/email");
 const { formatDateEs, formatTime12h, clinicNow } = require("./_booking/time");
 
 exports.handler = async (event) => {
@@ -32,9 +32,17 @@ exports.handler = async (event) => {
     if (outsideWindow(appointment))
       return json(403, { error: "outside_window" });
 
+    // Confirmation model: moving a Dra-confirmed cita to a new slot
+    // voids the confirmation — the new slot goes back to 'pendiente'
+    // for the Dra to confirm again. Holds and pending requests keep
+    // their status.
+    const patch = { date: body.newDate, start_time: body.newStartTime };
+    const wasConfirmed = appointment.status === "confirmada";
+    if (wasConfirmed) patch.status = "pendiente";
+
     const { data: updated, error } = await supabase
       .from("appointments")
-      .update({ date: body.newDate, start_time: body.newStartTime })
+      .update(patch)
       .eq("id", appointment.id)
       .select()
       .single();
@@ -45,10 +53,11 @@ exports.handler = async (event) => {
     }
 
     const when = `${formatDateEs(updated.date)} a las ${formatTime12h(String(updated.start_time).slice(0, 5))}`;
-    await sendSimpleEmail({
-      to: OWNER_EMAIL,
-      subject: `Cita reprogramada — ${updated.reference_code}`,
-      text: `La cita ${updated.reference_code} se reprogramó para el ${when}.`,
+    await sendRescheduleNotice({
+      appointment: updated,
+      when,
+      wasConfirmed,
+      panelUrl: `${siteOrigin(event)}/panel/`,
     });
 
     return json(200, {

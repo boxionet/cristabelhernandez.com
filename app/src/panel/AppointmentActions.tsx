@@ -8,15 +8,23 @@ import {
   updateAppointment,
   type PanelAppointment,
 } from "../lib/panel";
+import { decideAppointment } from "../lib/api";
 import { formatDateEs, formatPrice, formatTime12h } from "../lib/format";
 import AppointmentServicesEditor from "./AppointmentServicesEditor";
 import { useToast } from "../components/Toast";
 
-// Staff actions on one appointment. All direct RLS writes — the plan's
-// staff override: no 24h window, holds can be confirmed or released.
-// Layout (owner-approved card design, 2026-11-11): the everyday actions
-// sit in the row; the rare/destructive ones (No asistió, Cancelar,
-// Liberar) live in the "···" overflow menu.
+// Staff actions on one appointment. Direct RLS writes for the plain
+// state changes (the plan's staff override: no 24h window, holds can
+// be confirmed or released); the approve/reject decision goes through
+// the booking-decide function so the status change and the patient
+// email happen together.
+// Layout (owner-approved card design, 2026-11-11, extended for the
+// approval model): the everyday actions sit in the row; the
+// rare/destructive ones live in the "···" overflow menu.
+//   por_confirmar: Confirmar (+ Liberar in the menu)
+//   pendiente:     Confirmar (+ Mover, Tratamientos; No confirmar in the menu)
+//   confirmada:    Completar, Marcar pagado, Mover, Tratamientos
+//                  (+ No asistió, Cancelar in the menu)
 export default function AppointmentActions({
   appt,
   onChanged,
@@ -29,7 +37,7 @@ export default function AppointmentActions({
   const [rescheduling, setRescheduling] = useState(false);
   const [editingServices, setEditingServices] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cancelModal, setCancelModal] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<"cancel" | "reject" | null>(null);
   const [newDate, setNewDate] = useState(appt.date);
   const [newTime, setNewTime] = useState(appt.start_time.slice(0, 5));
   const toast = useToast();
@@ -62,19 +70,21 @@ export default function AppointmentActions({
     }
   }
 
-  const active = appt.status === "pendiente" || appt.status === "confirmada";
+  const isPending = appt.status === "pendiente";
+  const isConfirmed = appt.status === "confirmada";
+  const active = isPending || isConfirmed;
   const showMenu =
     (appt.status === "por_confirmar" && confirming !== "release") ||
     (active && !rescheduling);
 
   useEffect(() => {
-    if (!cancelModal) return;
+    if (!confirmModal) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !busy) setCancelModal(false);
+      if (e.key === "Escape" && !busy) setConfirmModal(null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [cancelModal, busy]);
+  }, [confirmModal, busy]);
 
   return (
     <>
@@ -96,7 +106,28 @@ export default function AppointmentActions({
         </>
       )}
 
-      {active && !rescheduling && (
+      {isPending && !rescheduling && (
+        <>
+          <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(async () => {
+            const r = await decideAppointment(appt.id, "approve");
+            toast.success(
+              r.emailSent
+                ? "Cita confirmada — la paciente recibió la confirmación"
+                : "Cita confirmada, pero no se pudo enviar el correo de confirmación.",
+            );
+          })}>
+            Confirmar
+          </button>
+          <button type="button" className="btn ghost small" disabled={busy} onClick={() => setRescheduling(true)}>
+            Mover
+          </button>
+          <button type="button" className="btn ghost small" disabled={busy} onClick={() => setEditingServices(true)}>
+            Tratamientos
+          </button>
+        </>
+      )}
+
+      {isConfirmed && !rescheduling && (
         <>
           <button type="button" className="btn primary small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { status: "completada" }), "Cita completada")}>
             Completar
@@ -151,7 +182,19 @@ export default function AppointmentActions({
                     <FiTrash2 aria-hidden /> Liberar apartado
                   </button>
                 )}
-                {active && (
+                {isPending && (
+                  <button
+                    type="button"
+                    className="appt-menu-item danger"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setConfirmModal("reject");
+                    }}
+                  >
+                    <FiXCircle aria-hidden /> No confirmar
+                  </button>
+                )}
+                {isConfirmed && (
                   <>
                     <button
                       type="button"
@@ -165,7 +208,7 @@ export default function AppointmentActions({
                       className="appt-menu-item danger"
                       onClick={() => {
                         setMenuOpen(false);
-                        setCancelModal(true);
+                        setConfirmModal("cancel");
                       }}
                     >
                       <FiTrash2 aria-hidden /> Cancelar cita
@@ -201,21 +244,21 @@ export default function AppointmentActions({
         onCancel={() => setEditingServices(false)}
       />
     )}
-    {cancelModal && (
+    {confirmModal && (
       <div
         className="modal-backdrop"
         onClick={() => {
-          if (!busy) setCancelModal(false);
+          if (!busy) setConfirmModal(null);
         }}
       >
         <div
           className="modal-card"
           role="dialog"
           aria-modal="true"
-          aria-label="Cancelar cita"
+          aria-label={confirmModal === "reject" ? "No confirmar cita" : "Cancelar cita"}
           onClick={(e) => e.stopPropagation()}
         >
-          <h3>¿Cancelar esta cita?</h3>
+          <h3>{confirmModal === "reject" ? "¿No confirmar esta cita?" : "¿Cancelar esta cita?"}</h3>
           <p className="modal-appt">
             <strong>{displayName(appt)}</strong> · {formatDateEs(appt.date)} ·{" "}
             {formatTime12h(appt.start_time)}
@@ -224,14 +267,16 @@ export default function AppointmentActions({
             {appt.total_is_estimate ? " (estimado)" : ""}
           </p>
           <p className="muted">
-            La cita se marcará como cancelada y el horario quedará libre.
+            {confirmModal === "reject"
+              ? "La cita se marcará como cancelada, el horario quedará libre y la paciente recibirá un correo avisándole que su solicitud no fue confirmada."
+              : "La cita se marcará como cancelada y el horario quedará libre."}
           </p>
           <div className="modal-actions">
             <button
               type="button"
               className="btn ghost"
               disabled={busy}
-              onClick={() => setCancelModal(false)}
+              onClick={() => setConfirmModal(null)}
             >
               Volver
             </button>
@@ -241,12 +286,22 @@ export default function AppointmentActions({
               disabled={busy}
               onClick={() =>
                 void run(async () => {
-                  await updateAppointment(appt.id, { status: "cancelada" });
-                  setCancelModal(false);
-                }, "Cita cancelada")
+                  if (confirmModal === "reject") {
+                    const r = await decideAppointment(appt.id, "reject");
+                    setConfirmModal(null);
+                    toast.success(
+                      r.emailSent
+                        ? "Cita no confirmada — la paciente recibió el aviso"
+                        : "Cita no confirmada, pero no se pudo enviar el correo de aviso.",
+                    );
+                  } else {
+                    await updateAppointment(appt.id, { status: "cancelada" });
+                    setConfirmModal(null);
+                  }
+                }, confirmModal === "reject" ? undefined : "Cita cancelada")
               }
             >
-              Sí, cancelar
+              {confirmModal === "reject" ? "Sí, no confirmar" : "Sí, cancelar"}
             </button>
           </div>
         </div>

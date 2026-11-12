@@ -112,8 +112,9 @@ export async function markNoShow(appt: PanelAppointment): Promise<void> {
   }
 }
 
-// Staff confirms a guest hold by phone: same result as the patient
-// clicking "Confirmar mi cita" (patient find-or-create by email).
+// Staff confirms a hold (e.g. the patient confirmed by phone):
+// patient find-or-create by email, and the cita lands in 'confirmada'
+// — a staff decision IS the confirmation, so no second Confirmar step.
 export async function confirmHold(appt: PanelAppointment): Promise<void> {
   let patientId = appt.patient_id;
   if (!patientId && appt.guest_email) {
@@ -142,7 +143,7 @@ export async function confirmHold(appt: PanelAppointment): Promise<void> {
     .from("appointments")
     .update({
       patient_id: patientId,
-      status: "pendiente",
+      status: "confirmada",
       confirmation_token: null,
       confirmation_expires_at: null,
       guest_name: null,
@@ -225,12 +226,20 @@ export async function updateAppointmentServices(
 }
 
 // Mirrors create_booking's math (totals/duration/estimate always from
-// the catalog) but writes directly with admin RLS rights, so manual
-// bookings are confirmed immediately (status pendiente) and email is
-// optional (phone-only patients stay as guest data on the appointment).
+// the catalog) but writes directly with admin RLS rights. Approval
+// model: with an email the booking is created as a 'por_confirmar'
+// hold and the caller asks the patient to confirm through the
+// confirmation-request email (clicking resolves it to 'confirmada');
+// without an email there is no channel to confirm through, so the
+// booking is 'confirmada' at once — the Dra spoke to the patient
+// directly. Phone-only patients stay as guest data on the appointment.
 export async function createManualBooking(
   input: ManualBookingInput,
-): Promise<{ referenceCode: string }> {
+): Promise<{
+  referenceCode: string;
+  appointmentId: string;
+  needsConfirmation: boolean;
+}> {
   let total = 0;
   let duration = 0;
   let estimate = false;
@@ -265,6 +274,7 @@ export async function createManualBooking(
     }
   }
 
+  const needsConfirmation = Boolean(email);
   const base = {
     patient_id: patientId,
     guest_name: patientId ? null : input.fullName.trim(),
@@ -275,7 +285,7 @@ export async function createManualBooking(
     duration_minutes: duration,
     total_price: total,
     total_is_estimate: estimate,
-    status: "pendiente",
+    status: needsConfirmation ? "por_confirmar" : "confirmada",
     payment_status: "pendiente",
     source: input.source,
     internal_notes: input.note?.trim() || null,
@@ -306,7 +316,7 @@ export async function createManualBooking(
         await supabase.from("appointments").delete().eq("id", appt.id);
         throw new Error("items_failed");
       }
-      return { referenceCode: reference };
+      return { referenceCode: reference, appointmentId: appt.id, needsConfirmation };
     }
     lastError = error;
     if (error && (error as { code?: string }).code === "23P01") {

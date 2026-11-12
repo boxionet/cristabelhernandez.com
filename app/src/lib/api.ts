@@ -1,3 +1,4 @@
+import { supabase } from "./supabase";
 import type { Patient } from "./types";
 
 // Calls to the Netlify booking functions, always with the patient's
@@ -56,6 +57,51 @@ export async function rescheduleAppointment(
   if (!ok) {
     throw new Error(typeof data.error === "string" ? data.error : "reschedule_failed");
   }
+}
+
+// Staff-only function calls: the session is read here so Panel
+// components don't thread the token through the card tree.
+async function staffCallFunction(
+  name: string,
+  body: unknown,
+): Promise<{ ok: boolean; status: number; data: Record<string, unknown> }> {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+  if (!token) throw new Error("no_session");
+  return callFunction(name, token, body);
+}
+
+// The Dra's decision on a pending request (booking-decide): the
+// status change and the patient email happen together, server-side.
+export async function decideAppointment(
+  appointmentId: string,
+  action: "approve" | "reject",
+): Promise<{ status: string; emailSent: boolean }> {
+  const { ok, data } = await staffCallFunction("booking-decide", {
+    appointmentId,
+    action,
+  });
+  if (!ok) {
+    throw new Error(typeof data.error === "string" ? data.error : "decide_failed");
+  }
+  return data as unknown as { status: string; emailSent: boolean };
+}
+
+// Ask a patient to confirm a staff-created booking
+// (booking-request-confirmation): mints the token, sets the hold
+// expiry, and sends the confirmation-request email.
+export async function requestConfirmation(
+  appointmentId: string,
+): Promise<{ sent: boolean }> {
+  const { ok, data } = await staffCallFunction("booking-request-confirmation", {
+    appointmentId,
+  });
+  if (!ok) {
+    throw new Error(
+      typeof data.error === "string" ? data.error : "request_failed",
+    );
+  }
+  return data as unknown as { sent: boolean };
 }
 
 // Public availability (no auth needed) for the reschedule picker.

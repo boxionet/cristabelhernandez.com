@@ -72,12 +72,50 @@ window.BookingAPI = (function () {
       });
   }
 
+  // The Mi Cuenta app stores its Supabase session in localStorage
+  // under the default supabase-js key, on this same origin. When the
+  // patient is signed in with a still-valid token, the booking rides
+  // on that identity (verified mode: no email-confirm step, captcha
+  // skipped server-side). An expired or unreadable token means
+  // "guest" — a stale token must never be attached, or the server
+  // answers 401 instead of booking as a guest.
+  function validSessionToken() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (!key || !/^sb-.*-auth-token$/.test(key)) continue;
+        var session = JSON.parse(localStorage.getItem(key) || "null");
+        if (session && session.access_token && session.expires_at) {
+          // 30s buffer so a token expiring mid-request counts as out.
+          if (session.expires_at * 1000 > Date.now() + 30000) {
+            return session.access_token;
+          }
+        }
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  }
+
+  function hasValidSession() {
+    return validSessionToken() !== null;
+  }
+
   // Creates a booking. Resolves { ok, status, data } for every HTTP
   // outcome (including 409 slot_taken); rejects only on network failure.
-  function createBooking(payload) {
+  // options.authenticated === false never sends a session token (the
+  // guest path, and the retry after a 401); otherwise a valid token is
+  // attached when one exists.
+  function createBooking(payload, options) {
+    var headers = { "Content-Type": "application/json" };
+    var wantAuth = !options || options.authenticated !== false;
+    var token = wantAuth ? validSessionToken() : null;
+    if (token) headers.Authorization = "Bearer " + token;
     return fetch("/.netlify/functions/booking-create", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: headers,
       body: JSON.stringify(payload),
     }).then(function (res) {
       return res
@@ -106,6 +144,7 @@ window.BookingAPI = (function () {
     fetchServices: fetchServices,
     fetchSlots: fetchSlots,
     createBooking: createBooking,
+    hasValidSession: hasValidSession,
     to24h: to24h,
   };
 })();

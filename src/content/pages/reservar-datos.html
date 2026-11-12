@@ -571,8 +571,7 @@ permalink: "/reservar/datos/"
                             sessionStorage.setItem('cristabel_idem', idemKey);
                         }
                         try {
-                            const captchaToken = await window.getBookingCaptchaToken();
-                            const created = await window.BookingAPI.createBooking({
+                            const payload = {
                                 name: `${firstName} ${lastName}`,
                                 email,
                                 phone,
@@ -581,8 +580,30 @@ permalink: "/reservar/datos/"
                                 date: dateISO,
                                 startTime,
                                 idempotencyKey: idemKey,
-                                captchaToken,
-                            });
+                            };
+                            let created;
+                            if (window.BookingAPI.hasValidSession()) {
+                                // Signed in to Mi Cuenta: the booking
+                                // rides on the verified identity (no
+                                // email-confirm step, no captcha).
+                                created = await window.BookingAPI.createBooking(payload, { authenticated: true });
+                                if (created.status === 401) {
+                                    // Stale or revoked session: fall
+                                    // back to a guest booking rather
+                                    // than failing outright.
+                                    const captchaToken = await window.getBookingCaptchaToken();
+                                    created = await window.BookingAPI.createBooking(
+                                        Object.assign({}, payload, { captchaToken }),
+                                        { authenticated: false },
+                                    );
+                                }
+                            } else {
+                                const captchaToken = await window.getBookingCaptchaToken();
+                                created = await window.BookingAPI.createBooking(
+                                    Object.assign({}, payload, { captchaToken }),
+                                    { authenticated: false },
+                                );
+                            }
                             if (created.ok) {
                                 sessionStorage.setItem('cristabel_result', JSON.stringify(created.data));
                                 sessionStorage.removeItem('cristabel_idem');
