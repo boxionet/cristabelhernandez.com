@@ -6,6 +6,7 @@ import {
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
+  STATUS_LABELS_SHORT,
 } from "../lib/format";
 import { displayContact, displayName, type PanelAppointment } from "../lib/panel";
 import AppointmentActions from "./AppointmentActions";
@@ -87,9 +88,6 @@ export default function PanelAppointmentCard({
             {formatTime12h(appt.start_time)} · {appt.duration_minutes} min ·{" "}
             {appt.reference_code} · {appt.source}
           </p>
-          <span className={`appt2-status status-${appt.status}`}>
-            {STATUS_LABELS[appt.status]}
-          </span>
           {venceAt && (
             <p className="appt2-vence">
               El enlace de verificación vence el{" "}
@@ -101,7 +99,8 @@ export default function PanelAppointmentCard({
           )}
         </div>
         <span className={`pill status-${appt.status}`}>
-          {STATUS_LABELS[appt.status]}
+          <span className="pill-full">{STATUS_LABELS[appt.status]}</span>
+          <span className="pill-short">{STATUS_LABELS_SHORT[appt.status]}</span>
         </span>
       </div>
 

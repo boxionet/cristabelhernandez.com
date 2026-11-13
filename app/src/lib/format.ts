@@ -169,6 +169,14 @@ export const STATUS_LABELS: Record<string, string> = {
   no_show: "No asistió",
 };
 
+// Short labels for narrow screens, where the full "Esperando
+// verificación" pill squeezes the card headline. Only the long label
+// differs; the rest stay identical.
+export const STATUS_LABELS_SHORT: Record<string, string> = {
+  ...STATUS_LABELS,
+  por_confirmar: "Por verificar",
+};
+
 // Patient self-service window (settled: 24 hours before the start).
 export function canSelfManage(appt: { status: string; starts_at: string }): boolean {
   if (appt.status !== "pendiente" && appt.status !== "confirmada") return false;

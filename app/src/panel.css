@@ -455,9 +455,10 @@
   color: var(--muted);
   font-size: 0.85rem;
 }
-/* Mobile-only status line (see the 640px block): hidden on desktop,
-   where the pill in the headline does the job. */
-.appt2-status {
+/* Pills with a short label (appointment card headline): the short
+   label shows only on narrow screens, where the full one squeezes
+   the headline. */
+.pill-short {
   display: none;
 }
 .appt2-items {
@@ -592,41 +593,13 @@
   .appt2-head {
     gap: 0.75rem;
   }
-  /* Status becomes a dot + text line inside the info stack (the
-     Fresha/Calendly pattern) instead of a pill squeezing the name:
-     the headline pill hides, the status line shows. */
-  .appt2-head .pill {
+  /* The headline pill keeps its place but shows the short label
+     ("Por verificar"), so it stops squeezing the patient name. */
+  .appt2-head .pill-full {
     display: none;
   }
-  .appt2-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.3rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-  }
-  .appt2-status::before {
-    content: "";
-    width: 8px;
-    height: 8px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .appt2-status.status-por_confirmar,
-  .appt2-status.status-pendiente {
-    color: #b45309;
-  }
-  .appt2-status.status-cancelada,
-  .appt2-status.status-no_show {
-    color: var(--danger);
-  }
-  .appt2-status.status-completada {
-    color: #555;
-  }
-  .appt2-status.status-confirmada {
-    color: var(--sage-deep);
+  .appt2-head .pill-short {
+    display: inline;
   }
   .datechip {
     width: 56px;
