@@ -19,10 +19,16 @@ function holdExpiry(dateISO, startHHMM) {
   let expiry = new Date(
     Math.min(now.getTime() + 24 * 60 * 60 * 1000, start.getTime() - 3 * 60 * 60 * 1000),
   );
-  const floor = new Date(
-    Math.max(start.getTime() - 15 * 60 * 1000, now.getTime() + 15 * 60 * 1000),
-  );
-  if (expiry < floor) expiry = floor;
+  // The 15-minute floor applies ONLY when the computed expiry leaves
+  // less than a workable window (same-day bookings) — the same rule
+  // as create_booking in SQL. Applying it unconditionally made every
+  // hold last until 15 minutes before the appointment, so the 24h cap
+  // never took effect.
+  if (expiry.getTime() < now.getTime() + 15 * 60 * 1000) {
+    expiry = new Date(
+      Math.max(start.getTime() - 15 * 60 * 1000, now.getTime() + 15 * 60 * 1000),
+    );
+  }
   return expiry.toISOString();
 }
 
