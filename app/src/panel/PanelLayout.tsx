@@ -8,6 +8,7 @@ import {
   FiClock,
   FiGrid,
   FiLogOut,
+  FiPercent,
   FiTag,
   FiUsers,
 } from "react-icons/fi";
@@ -26,6 +27,7 @@ const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
   { to: "/panel/por-confirmar", label: "Por confirmar", icon: FiBell, end: false },
   { to: "/panel/pacientes", label: "Pacientes", icon: FiUsers, end: false },
   { to: "/panel/servicios", label: "Tratamientos", icon: FiTag, end: false },
+  { to: "/panel/promociones", label: "Promociones", icon: FiPercent, end: false },
   { to: "/panel/horario", label: "Horario", icon: FiClock, end: false },
   { to: "/panel/reportes", label: "Reportes", icon: FiBarChart2, end: false },
 ];

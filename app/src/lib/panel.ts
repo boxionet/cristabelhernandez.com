@@ -38,6 +38,21 @@ export interface ServiceRow {
   sort_order: number;
 }
 
+// Promo code (migration 008). Codes are stored normalized (UPPERCASE,
+// no spaces); valid_from/valid_until bound the APPOINTMENT date;
+// max_uses caps redemptions (null = unlimited). Usage is derived from
+// appointments carrying the code, never stored here.
+export interface PromotionRow {
+  id: string;
+  code: string;
+  discount_percent: number;
+  active: boolean;
+  valid_from: string | null; // YYYY-MM-DD
+  valid_until: string | null; // YYYY-MM-DD
+  max_uses: number | null;
+  created_at: string;
+}
+
 export interface ScheduleRow {
   weekday: number; // 0 = Sunday
   is_open: boolean;
@@ -184,6 +199,9 @@ export interface ManualBookingInput {
   startTime: string; // 'HH:MM'
   source: "telefono" | "whatsapp" | "presencial";
   note?: string;
+  // Promo already validated by the caller (NuevaCita re-checks at
+  // submit); the snapshot is stored exactly like create_booking's.
+  promo?: { code: string; discountPercent: number } | null;
 }
 
 // Replace an existing appointment's treatments (staff edit). Totals,
@@ -203,12 +221,23 @@ export async function updateAppointmentServices(
     duration += service.duration_minutes * quantity;
     estimate = estimate || service.price_from || service.price_note !== null;
   }
+  // A promo applied to the appointment keeps its discount when the
+  // treatments change: the stored percent re-applies to the new
+  // subtotal, so the snapshot stays consistent with the services.
+  const subtotal = total;
+  let discount = 0;
+  if (appt.promo_code && appt.discount_percent) {
+    discount = Math.round((total * appt.discount_percent) / 100);
+    total -= discount;
+  }
   const { error: upErr } = await supabase
     .from("appointments")
     .update({
       total_price: total,
       total_is_estimate: estimate,
       duration_minutes: duration,
+      subtotal_price: subtotal,
+      discount_amount: appt.promo_code ? discount : null,
     })
     .eq("id", appt.id);
   if (upErr) throw upErr;
@@ -254,6 +283,14 @@ export async function createManualBooking(
     duration += service.duration_minutes * quantity;
     estimate = estimate || service.price_from || service.price_note !== null;
   }
+  // Promo snapshot, same math as create_booking: percent off the
+  // catalog subtotal, rounded to the nearest peso.
+  const subtotal = total;
+  const promo = input.promo ?? null;
+  const discount = promo
+    ? Math.round((total * promo.discountPercent) / 100)
+    : 0;
+  if (promo) total -= discount;
 
   let patientId = input.patientId ?? null;
   const email = (input.email || "").trim().toLowerCase();
@@ -291,6 +328,10 @@ export async function createManualBooking(
     duration_minutes: duration,
     total_price: total,
     total_is_estimate: estimate,
+    promo_code: promo ? promo.code : null,
+    discount_percent: promo ? promo.discountPercent : null,
+    discount_amount: promo ? discount : null,
+    subtotal_price: subtotal,
     status: needsConfirmation ? "por_confirmar" : "confirmada",
     payment_status: "pendiente",
     source: input.source,

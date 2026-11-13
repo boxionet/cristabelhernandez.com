@@ -39,6 +39,11 @@ export default function Reportes() {
     const reservado = inMonth
       .filter((a) => a.status !== "cancelada" && a.status !== "no_show")
       .reduce((s, a) => s + a.total_price, 0);
+    // Discounts given away with promo codes (migration 008 snapshot).
+    // Cancelled citas free their use and give nothing away.
+    const descuentos = inMonth
+      .filter((a) => a.status !== "cancelada" && a.discount_amount != null)
+      .reduce((s, a) => s + (a.discount_amount ?? 0), 0);
     const byStatus = Object.keys(STATUS_LABELS).map((status) => ({
       status,
       count: inMonth.filter((a) => a.status === status).length,
@@ -58,6 +63,7 @@ export default function Reportes() {
       cobrado,
       porCobrar,
       reservado,
+      descuentos,
       byStatus,
       byService: [...byService.entries()].sort((x, y) => y[1].revenue - x[1].revenue),
     };
@@ -103,7 +109,7 @@ export default function Reportes() {
         </div>
       </div>
 
-      <section className="kpis">
+      <section className="kpis four">
         <div className="card kpi">
           <span className="kpi-value">{formatPrice(data.cobrado)}</span>
           <span className="kpi-label">Efectivo cobrado</span>
@@ -115,6 +121,10 @@ export default function Reportes() {
         <div className="card kpi">
           <span className="kpi-value">{formatPrice(data.reservado)}</span>
           <span className="kpi-label">Total reservado del mes</span>
+        </div>
+        <div className="card kpi">
+          <span className="kpi-value">−{formatPrice(data.descuentos)}</span>
+          <span className="kpi-label">Descuentos aplicados</span>
         </div>
       </section>
 

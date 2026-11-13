@@ -1623,3 +1623,86 @@
     gap: 0.75rem;
   }
 }
+
+/* Promociones (2026-11-13): same self-saving catalog pattern as
+   Tratamientos. The code is display-only (never editable); the
+   percent, validity dates and use limit save on blur. */
+.promo-code {
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.pct-suffix {
+  color: var(--muted);
+  margin-left: 0.3rem;
+  font-weight: 600;
+}
+.promo-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.date-input {
+  width: 148px;
+  padding: 0.55rem 0.6rem;
+  font-size: 0.9rem;
+}
+.date-sep {
+  color: var(--muted);
+}
+.uses-count {
+  font-weight: 600;
+}
+.uses-of {
+  color: var(--muted);
+  margin: 0 0.3rem;
+}
+.uses-input {
+  width: 122px;
+}
+.add-field.date {
+  flex: 0 1 165px;
+}
+@media (max-width: 640px) {
+  .add-field.date {
+    flex: 1 1 140px;
+  }
+}
+
+/* Promo breakdown on the Panel appointment card (2026-11-13): the
+   subtotal and the code chip sit above the existing total row,
+   which keeps showing the final amount. */
+.appt2-promo {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.appt2-promo .promo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.appt2-promo .promo-amount {
+  font-weight: 600;
+  color: var(--sage-deep);
+  white-space: nowrap;
+}
+.promo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--sage-tint);
+  color: var(--sage-deep);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.promo-chip svg {
+  flex-shrink: 0;
+}

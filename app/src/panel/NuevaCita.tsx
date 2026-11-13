@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAvailability } from "../lib/queries/availability";
-import { requestConfirmation } from "../lib/api";
+import { requestConfirmation, validatePromo } from "../lib/api";
 import { formatPrice, formatTime12h } from "../lib/format";
 import {
   clinicToday,
@@ -25,6 +25,16 @@ export default function NuevaCita() {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  // Promo code for the manual booking (migration 008): validated
+  // against the picked date on apply, and re-checked at submit so a
+  // date change after applying cannot slip a dead code through.
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{
+    code: string;
+    discountPercent: number;
+  } | null>(null);
+  const [promoChecking, setPromoChecking] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
   const [done, setDone] = useState<{
     referenceCode: string;
     emailState: "sent" | "failed" | "none";
@@ -44,6 +54,36 @@ export default function NuevaCita() {
     0,
   );
   const total = items.reduce((sum, i) => sum + i.service.price * i.quantity, 0);
+  const discount = promo ? Math.round((total * promo.discountPercent) / 100) : 0;
+  const finalTotal = total - discount;
+
+  async function applyPromo() {
+    const code = promoInput.trim().toUpperCase();
+    if (!code || promoChecking) return;
+    setPromoChecking(true);
+    setPromoError(null);
+    try {
+      const res = await validatePromo(code, date);
+      if (res === null) {
+        setPromoError("No pudimos verificar el código. Inténtalo de nuevo.");
+        return;
+      }
+      if (!res.valid) {
+        setPromoError(
+          res.reason === "expired"
+            ? "Ese código no aplica para la fecha elegida."
+            : res.reason === "exhausted"
+              ? "Ese código ya llegó a su límite de usos."
+              : "Ese código no es válido. Revisa el código e inténtalo de nuevo.",
+        );
+        return;
+      }
+      setPromo({ code, discountPercent: res.discountPercent ?? 0 });
+      setPromoInput("");
+    } finally {
+      setPromoChecking(false);
+    }
+  }
 
   // Availability is server state: TanStack Query keyed by date+duration.
   const availability = useAvailability(date, duration, duration > 0);
@@ -74,6 +114,29 @@ export default function NuevaCita() {
     }
     setBusy(true);
     try {
+      // Re-check the promo against the final date: the date may have
+      // changed after the code was applied.
+      let effectivePromo = promo;
+      if (promo) {
+        const res = await validatePromo(promo.code, date);
+        if (res === null) {
+          setFormError("No pudimos verificar el código promocional. Inténtalo de nuevo.");
+          setBusy(false);
+          return;
+        }
+        if (!res.valid) {
+          setPromo(null);
+          setFormError(
+            "El código promocional ya no es válido para esta cita. Lo quitamos; puedes crear la cita sin descuento o aplicar otro código.",
+          );
+          setBusy(false);
+          return;
+        }
+        effectivePromo = {
+          code: promo.code,
+          discountPercent: res.discountPercent ?? promo.discountPercent,
+        };
+      }
       const effectiveEmail = existing ? existing.email : email.trim();
       const { referenceCode, appointmentId, needsConfirmation } =
         await createManualBooking({
@@ -86,6 +149,7 @@ export default function NuevaCita() {
           startTime,
           source,
           note,
+          promo: effectivePromo,
         });
       // Refresh the Panel cache now, so Citas/Agenda show the new
       // cita immediately instead of serving the 30s-stale list.
@@ -123,7 +187,7 @@ export default function NuevaCita() {
       <section className="card empty">
         <h2 className="section-title">Cita creada</h2>
         <p>
-          Referencia <strong>{done.referenceCode}</strong> · {formatPrice(total)}
+          Referencia <strong>{done.referenceCode}</strong> · {formatPrice(finalTotal)}
           {done.emailState === "sent" &&
             ` · enviamos un correo a ${done.email} para que la paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
           {done.emailState === "failed" &&
@@ -270,9 +334,54 @@ export default function NuevaCita() {
           <input value={note} onChange={(e) => setNote(e.target.value)} />
         </label>
 
+        <div>
+          <label>
+            Código promocional (opcional)
+            {promo ? (
+              <span className="promo-chip">
+                {promo.code} · −{promo.discountPercent}%
+                <button
+                  type="button"
+                  className="booking-promo-remove"
+                  aria-label="Quitar código promocional"
+                  onClick={() => setPromo(null)}
+                >
+                  ×
+                </button>
+              </span>
+            ) : (
+              <span className="booking-promo-row">
+                <input
+                  className="booking-promo-input"
+                  value={promoInput}
+                  onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                  placeholder="Código promocional"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <button
+                  className="booking-promo-apply-btn"
+                  type="button"
+                  disabled={!promoInput.trim() || promoChecking}
+                  onClick={() => void applyPromo()}
+                >
+                  {promoChecking ? "Verificando…" : "Aplicar"}
+                </button>
+              </span>
+            )}
+          </label>
+          {promoError && <p className="error">{promoError}</p>}
+        </div>
+
         {items.length > 0 && (
           <p className="muted">
-            Duración total {duration} min · Total {formatPrice(total)}
+            Duración total {duration} min · Subtotal {formatPrice(total)}
+            {promo && (
+              <>
+                {" "}· Descuento ({promo.code}) −{formatPrice(discount)}
+              </>
+            )}{" "}
+            · Total {formatPrice(finalTotal)}
           </p>
         )}
         {formError && <p className="error">{formError}</p>}

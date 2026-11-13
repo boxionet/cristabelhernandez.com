@@ -1438,3 +1438,28 @@ input:disabled {
     font-size: 16px;
   }
 }
+
+/* Promo breakdown on the patient appointment card (2026-11-13):
+   mirrors the Panel card — subtotal and code chip above the total
+   row, which keeps showing the final amount. */
+.pcard-promo {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.pcard-promo .promo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.pcard-promo .promo-amount {
+  font-weight: 600;
+  color: var(--sage-deep);
+  white-space: nowrap;
+}

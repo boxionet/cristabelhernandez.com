@@ -4,6 +4,7 @@ import {
   type ExceptionRow,
   type PanelAppointment,
   type PatientRow,
+  type PromotionRow,
   type ScheduleRow,
   type ServiceRow,
 } from "../panel";
@@ -58,6 +59,15 @@ async function fetchPanelExceptions(): Promise<ExceptionRow[]> {
   return (data ?? []) as ExceptionRow[];
 }
 
+async function fetchPanelPromotions(): Promise<PromotionRow[]> {
+  const { data, error } = await supabase
+    .from("promotions")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw new Error(PANEL_ERROR);
+  return (data ?? []) as PromotionRow[];
+}
+
 // ---------- Hooks ----------
 
 export function usePanelAppointments() {
@@ -92,6 +102,13 @@ export function usePanelExceptions() {
   return useQuery({
     queryKey: panelKeys.exceptions,
     queryFn: fetchPanelExceptions,
+  });
+}
+
+export function usePanelPromotions() {
+  return useQuery({
+    queryKey: panelKeys.promotions,
+    queryFn: fetchPanelPromotions,
   });
 }
 
