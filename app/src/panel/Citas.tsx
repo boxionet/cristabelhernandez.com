@@ -42,6 +42,8 @@ export default function Citas() {
       const haystack = [
         displayName(a),
         displayContact(a),
+        a.patients?.phone ?? "",
+        a.guest_phone ?? "",
         a.reference_code,
         a.guest_email ?? "",
       ]

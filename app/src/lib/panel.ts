@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { formatPhoneNumber } from "./format";
 import type { Appointment } from "./types";
 
 // ---------- Panel data shapes (admin reads via RLS) ----------
@@ -92,7 +93,10 @@ export function servicesSummary(a: PanelAppointment): string {
 }
 
 export function displayContact(a: PanelAppointment): string {
-  return a.patients?.phone || a.patients?.email || a.guest_phone || a.guest_email || "";
+  if (a.patients?.phone) return formatPhoneNumber(a.patients.phone);
+  if (a.patients?.email) return a.patients.email;
+  if (a.guest_phone) return formatPhoneNumber(a.guest_phone);
+  return a.guest_email || "";
 }
 
 // A patient is "Nuevo" while they have at most one real booking.

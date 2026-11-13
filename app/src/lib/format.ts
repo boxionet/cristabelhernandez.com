@@ -62,6 +62,40 @@ export function formatDateShortEs(dateISO: string): string {
   return `${d} ${MONTHS_SHORT[m - 1]} ${y}`;
 }
 
+// Phone display, shared everywhere a phone number is shown: NANP
+// (+1) numbers only, formatted as "+1 (829) 316-3313" or
+// "(829) 316-3313". Safe on any stored value — digits are re-derived,
+// so an already-formatted number comes back unchanged.
+export function formatPhoneNumber(value: string): string {
+  const cleaned = value.replace(/[^\d+]/g, "");
+  if (cleaned.startsWith("+")) {
+    const digits = cleaned.slice(1).replace(/\D/g, "");
+    if (digits.length <= 1) return "+" + digits;
+    if (digits.length <= 4) return "+" + digits.slice(0, 1) + " (" + digits.slice(1);
+    if (digits.length <= 7) {
+      return "+" + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " + digits.slice(4);
+    }
+    return (
+      "+" + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " +
+      digits.slice(4, 7) + "-" + digits.slice(7, 11)
+    );
+  }
+  const digits = cleaned.replace(/\D/g, "");
+  if (digits.startsWith("1") && digits.length > 1) {
+    const countryCode = digits.slice(0, 1);
+    const areaCode = digits.slice(1, 4);
+    const exchange = digits.slice(4, 7);
+    const line = digits.slice(7, 11);
+    if (digits.length <= 1) return "+" + countryCode;
+    if (digits.length <= 4) return "+" + countryCode + " (" + areaCode;
+    if (digits.length <= 7) return "+" + countryCode + " (" + areaCode + ") " + exchange;
+    return "+" + countryCode + " (" + areaCode + ") " + exchange + "-" + line;
+  }
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return "(" + digits.slice(0, 3) + ") " + digits.slice(3);
+  return "(" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6, 10);
+}
+
 export function capitalizeFirst(s: string): string {
   return s.replace(/^./, (c) => c.toUpperCase());
 }
