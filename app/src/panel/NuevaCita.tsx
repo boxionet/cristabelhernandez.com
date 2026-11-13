@@ -10,6 +10,7 @@ import {
 } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonForm } from "../components/Skeleton";
+import DatePicker from "../components/DatePicker";
 
 export default function NuevaCita() {
   const { patients, services, error, reload } = usePanelData();
@@ -103,6 +104,21 @@ export default function NuevaCita() {
     if (!existing && fullName.trim().length < 2) {
       setFormError("Escribe el nombre de la paciente.");
       return;
+    }
+    // The email is required for a new patient: it is how she signs in
+    // to her account, and the confirmation email goes to it.
+    if (!existing) {
+      const em = email.trim();
+      if (!em) {
+        setFormError(
+          "Escribe el correo de la paciente: lo necesita para entrar a su cuenta y confirmar su cita.",
+        );
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(em)) {
+        setFormError("Revisa el correo: no parece una dirección válida.");
+        return;
+      }
     }
     if (items.length === 0) {
       setFormError("Elige al menos un tratamiento.");
@@ -202,10 +218,8 @@ export default function NuevaCita() {
     );
   }
 
-  const selectedExisting = patients?.find((p) => p.id === patientId);
-  const willRequestConfirmation = selectedExisting
-    ? true
-    : email.trim() !== "";
+  // The email is required, so every manual booking sends the
+  // confirmation email: the button always says so.
 
   return (
     <>
@@ -234,12 +248,12 @@ export default function NuevaCita() {
               <input value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
             <label>
-              Correo (opcional)
+              Correo *
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Si lo da, la paciente recibe un correo para confirmar su cita"
+                placeholder="La paciente usa este correo para entrar a su cuenta"
               />
             </label>
           </div>
@@ -287,12 +301,7 @@ export default function NuevaCita() {
         <div className="form-grid">
           <label>
             Fecha
-            <input
-              type="date"
-              value={date}
-              min={clinicToday()}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <DatePicker value={date} onChange={setDate} min={clinicToday()} />
           </label>
           <label>
             Fuente
@@ -395,10 +404,8 @@ export default function NuevaCita() {
             <>
               <span className="spinner" aria-hidden /> Creando…
             </>
-          ) : willRequestConfirmation ? (
-            "Crear cita y enviar confirmación"
           ) : (
-            "Crear cita confirmada"
+            "Crear cita y enviar confirmación"
           )}
         </button>
       </section>
