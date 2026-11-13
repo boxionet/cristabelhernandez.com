@@ -1479,6 +1479,19 @@
 .add-row .btn {
   flex-shrink: 0;
 }
+/* Add forms (Servicios, Promociones): every control in the row shares
+   the input metrics, so labels, boxes and button line up exactly —
+   the date trigger fills its field and matches input height. */
+.add-field .datepicker-btn {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  font-size: 1rem;
+}
+.add-row .btn {
+  padding: 0.65rem 1.1rem;
+  font-size: 1rem;
+  border-radius: 10px;
+}
 /* Servicios: description textareas — same treatment as the other
    Panel inputs. The editor one lives inside the existing name cell
    so the catalog table keeps its columns. */
