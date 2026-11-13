@@ -175,20 +175,22 @@ function PromotionEditor({
         )}
       </td>
       <td>
-        <input
-          type="number"
-          min={1}
-          max={100}
-          step={1}
-          value={percent}
-          onChange={(e) => {
-            setPercent(Number(e.target.value) || 0);
-          }}
-          onBlur={savePercent}
-          className="num-input"
-          aria-label={`Descuento de ${promotion.code} en por ciento`}
-        />
-        <span className="pct-suffix">%</span>
+        <span className="pct-wrap">
+          <input
+            type="number"
+            min={1}
+            max={100}
+            step={1}
+            value={percent}
+            onChange={(e) => {
+              setPercent(Number(e.target.value) || 0);
+            }}
+            onBlur={savePercent}
+            className="num-input"
+            aria-label={`Descuento de ${promotion.code} en por ciento`}
+          />
+          <span className="pct-suffix">%</span>
+        </span>
       </td>
       <td>
         <div className="promo-dates">
@@ -224,19 +226,21 @@ function PromotionEditor({
         </div>
       </td>
       <td>
-        <span className="uses-count">{usesCount}</span>
-        <span className="uses-of">de</span>
-        <input
-          type="number"
-          min={1}
-          step={1}
-          value={maxUses}
-          onChange={(e) => setMaxUses(e.target.value)}
-          onBlur={saveMaxUses}
-          placeholder="Sin límite"
-          className="uses-input"
-          aria-label={`Límite de usos de ${promotion.code}`}
-        />
+        <span className="uses-wrap">
+          <span className="uses-count">{usesCount}</span>
+          <span className="uses-of">de</span>
+          <input
+            type="number"
+            min={1}
+            step={1}
+            value={maxUses}
+            onChange={(e) => setMaxUses(e.target.value)}
+            onBlur={saveMaxUses}
+            placeholder="Sin límite"
+            className="uses-input"
+            aria-label={`Límite de usos de ${promotion.code}`}
+          />
+        </span>
       </td>
       <td>
         <div className="switch-cell">
@@ -453,7 +457,7 @@ export default function Promociones() {
       </div>
       <section className="card">
         <div className="table-scroll">
-          <table className="table services-table">
+          <table className="table services-table promo-table">
             <thead>
               <tr>
                 <th>Código</th>
@@ -487,13 +491,6 @@ export default function Promociones() {
             </tbody>
           </table>
         </div>
-        <p className="muted">
-          Un código activo descuenta su porcentaje del total de la cita.
-          La vigencia se compara con la fecha de la cita: una promoción
-          de diciembre cubre las citas de diciembre, sin importar cuándo
-          se reserven. Desactivar un código no cambia las citas ya
-          hechas, que conservan el descuento con el que se reservaron.
-        </p>
       </section>
     </>
   );

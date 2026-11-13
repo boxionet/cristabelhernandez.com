@@ -951,13 +951,7 @@
   .kpis.four .kpi {
     padding: 0.9rem;
   }
-  /* Dashboard: tighter agenda rows and bar chart on phones. */
-  .agenda-row {
-    gap: 0.6rem;
-  }
-  .agenda-time {
-    width: 56px;
-  }
+  /* Dashboard: tighter bar chart on phones. */
   .bars {
     gap: 0.35rem;
   }
@@ -1648,11 +1642,54 @@
   .spec-row {
     gap: 0.75rem;
   }
+  /* Dashboard agenda rows: the amount + status pill drop to their
+     own right-aligned line instead of crushing the patient name,
+     and the chevron hides. Card headers wrap the same way. */
+  .agenda-row {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .agenda-main {
+    flex: 1 1 170px;
+  }
+  .agenda-right {
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+  }
+  .agenda-right .pill {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+  }
+  .agenda-chevron {
+    display: none;
+  }
+  .chart-head {
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+  }
 }
 
 /* Promociones (2026-11-13): same self-saving catalog pattern as
    Tratamientos. The code is display-only (never editable); the
    percent, validity dates and use limit save on blur. */
+.promo-table td {
+  vertical-align: middle;
+}
+.promo-table .switch-cell {
+  padding-top: 0;
+}
+/* Percent and uses cells keep their parts on one centered line:
+   the % never drops below its box, and "1 de" centers on the box. */
+.pct-wrap,
+.uses-wrap {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.pct-wrap .num-input {
+  width: 72px;
+}
 .promo-code {
   font-weight: 800;
   letter-spacing: 0.03em;
