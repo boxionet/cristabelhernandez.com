@@ -4,6 +4,7 @@ import { errorText, rescheduleAppointment } from "../lib/api";
 import { useAvailability } from "../lib/queries/availability";
 import { formatTime12h } from "../lib/format";
 import { useToast } from "./Toast";
+import DatePicker from "./DatePicker";
 import type { Appointment } from "../lib/types";
 
 function todayISO(): string {
@@ -83,12 +84,7 @@ export default function ReschedulePanel({
       <div className="reschedule-row">
         <label>
           Nueva fecha
-          <input
-            type="date"
-            value={date}
-            min={todayISO()}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <DatePicker value={date} onChange={setDate} min={todayISO()} />
         </label>
       </div>
       {slots === null && <p className="muted">Buscando horarios…</p>}

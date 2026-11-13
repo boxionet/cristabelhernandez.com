@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiCalendar, FiChevronRight, FiMail, FiPhone, FiSearch } from "react-icons/fi";
-import { formatDateLongEs, formatPrice } from "../lib/format";
+import { formatDateLongEs, formatPhoneNumber, formatPrice } from "../lib/format";
 import { clinicToday, isNuevo } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonCards } from "../components/Skeleton";
@@ -86,7 +86,7 @@ export default function Clientes() {
                     {p.phone && (
                       <>
                         {" · "}
-                        <FiPhone aria-hidden /> {p.phone}
+                        <FiPhone aria-hidden /> {formatPhoneNumber(p.phone)}
                       </>
                     )}
                   </p>

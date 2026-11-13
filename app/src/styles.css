@@ -310,6 +310,19 @@ input:disabled {
   font-weight: 700;
   color: var(--heading);
 }
+/* Icon logo at the top-left of the topbar. Hidden on desktop, where
+   the sidebar brand already shows the logo; shown when the sidebar
+   hides (see the 900px block below). */
+.topbar-logo {
+  display: none;
+  height: 34px;
+  width: auto;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
 .topbar-user {
   color: var(--muted);
   font-weight: 500;
@@ -1108,11 +1121,15 @@ input:disabled {
   .sidebar {
     display: none;
   }
+  .topbar-logo {
+    display: block;
+    height: 3.3rem;
+  }
   .content {
     padding: 1rem 1rem 6rem;
   }
   .topbar {
-    padding: 1rem 1rem 0;
+    padding: 1rem;
   }
   .kpis {
     grid-template-columns: 1fr 1fr;
@@ -1260,6 +1277,15 @@ input:disabled {
   color: #fff;
   font-weight: 700;
 }
+.cal-day:disabled {
+  cursor: default;
+}
+.cal-day:disabled:hover {
+  background: none;
+}
+.cal-day:disabled .cal-num {
+  color: #d3d7dc;
+}
 
 /* ---------- month grid picker (DatePicker month mode) ---------- */
 .monthgrid .mg-head {
@@ -1372,6 +1398,9 @@ input:disabled {
 .datepicker-btn.placeholder {
   color: var(--muted);
 }
+.datepicker-btn span {
+  white-space: nowrap;
+}
 .datepicker-backdrop {
   position: fixed;
   inset: 0;
@@ -1391,6 +1420,29 @@ input:disabled {
 }
 .datepicker-btn .dp-chevron {
   color: #9ca3af;
+}
+/* Footer inside the popover: the clear action for optional date
+   fields lives here, not as a button next to the field. */
+.datepicker-pop-foot {
+  margin-top: 0.95rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f0f1ec;
+}
+.datepicker-pop-foot button {
+  width: 100%;
+  border: 1px solid #e2e6df;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.5rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+.datepicker-pop-foot button:hover {
+  border-color: var(--sage);
+  color: var(--ink);
 }
 
 /* ---------- Responsive: small tablets & phones (shared + patient) ---------- */
@@ -1437,4 +1489,29 @@ input:disabled {
   .login-card input {
     font-size: 16px;
   }
+}
+
+/* Promo breakdown on the patient appointment card (2026-11-13):
+   mirrors the Panel card — subtotal and code chip above the total
+   row, which keeps showing the final amount. */
+.pcard-promo {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.pcard-promo .promo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.pcard-promo .promo-amount {
+  font-weight: 600;
+  color: var(--sage-deep);
+  white-space: nowrap;
 }

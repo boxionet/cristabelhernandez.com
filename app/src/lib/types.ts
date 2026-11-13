@@ -16,6 +16,12 @@ export interface Appointment {
   duration_minutes: number;
   total_price: number;
   total_is_estimate: boolean;
+  // Promo snapshot, frozen at booking time (migration 008). Null when
+  // no code was applied; subtotal_price is the pre-discount total.
+  promo_code: string | null;
+  discount_percent: number | null;
+  discount_amount: number | null;
+  subtotal_price: number | null;
   status:
     | "por_confirmar"
     | "pendiente"

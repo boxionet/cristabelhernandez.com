@@ -17,6 +17,7 @@ import Horario from "./panel/Horario";
 import NuevaCita from "./panel/NuevaCita";
 import PanelLayout from "./panel/PanelLayout";
 import PorConfirmar from "./panel/PorConfirmar";
+import Promociones from "./panel/Promociones";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
 import BookingLayout from "./booking/BookingLayout";
@@ -164,6 +165,7 @@ export default function App() {
           <Route path="clientes/:id" element={<ClienteRedirect />} />
           <Route path="nueva-cita" element={<NuevaCita />} />
           <Route path="servicios" element={<ServiciosPanel />} />
+          <Route path="promociones" element={<Promociones />} />
           <Route path="horario" element={<Horario />} />
           <Route path="reportes" element={<Reportes />} />
         </Route>

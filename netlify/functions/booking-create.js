@@ -26,6 +26,10 @@ function validate(body) {
   }
   const today = clinicNow().dateISO;
   if (body.date < today) return "date_in_past";
+  if (body.promoCode != null) {
+    const code = String(body.promoCode).trim();
+    if (code.length === 0 || code.length > 32) return "bad_promo";
+  }
   return null;
 }
 
@@ -78,6 +82,10 @@ exports.handler = async (event) => {
       p_auth_user_id: verified ? user.id : null,
       p_idempotency_key: body.idempotencyKey || randomUUID(),
       p_source: "web",
+      // Normalized here; the RPC validates the code (active, window,
+      // use cap) under a row lock and computes the discount.
+      p_promo_code:
+        body.promoCode != null ? String(body.promoCode).trim().toUpperCase() : null,
     });
 
     if (error) {
@@ -86,6 +94,10 @@ exports.handler = async (event) => {
         return json(400, { error: "unknown_service" });
       if (error.message && error.message.includes("invalid_items"))
         return json(400, { error: "bad_items" });
+      if (error.message && error.message.includes("invalid_promo"))
+        return json(400, { error: "invalid_promo" });
+      if (error.message && error.message.includes("promo_exhausted"))
+        return json(400, { error: "promo_exhausted" });
       console.error("create_booking failed", error);
       return json(500, { error: "create_failed" });
     }

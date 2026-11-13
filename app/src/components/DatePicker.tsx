@@ -27,6 +27,9 @@ export default function DatePicker({
   displayFormat,
   mode = "day",
   anchorRef,
+  min,
+  clearable = false,
+  ariaLabel,
 }: {
   value: string;
   onChange: (iso: string) => void;
@@ -36,6 +39,12 @@ export default function DatePicker({
   mode?: "day" | "month";
   /** Optional wider element the popover anchors to (e.g. a segmented control). */
   anchorRef?: RefObject<HTMLElement | null>;
+  /** Day-mode only: days before this ISO date cannot be picked. */
+  min?: string;
+  /** Show a "Quitar fecha" action inside the popover (for optional date fields). */
+  clearable?: boolean;
+  /** Accessible label for the trigger button. */
+  ariaLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
@@ -98,6 +107,7 @@ export default function DatePicker({
         ref={btnRef}
         type="button"
         className={`datepicker-btn${value ? "" : " placeholder"}`}
+        aria-label={ariaLabel}
         onClick={() => setOpen((o) => !o)}
       >
         <FiCalendar aria-hidden />
@@ -129,11 +139,25 @@ export default function DatePicker({
             ) : (
               <MonthCalendar
                 value={value}
+                min={min}
                 onPick={(iso) => {
                   onChange(iso);
                   setOpen(false);
                 }}
               />
+            )}
+            {clearable && value !== "" && (
+              <div className="datepicker-pop-foot">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange("");
+                    setOpen(false);
+                  }}
+                >
+                  Quitar fecha
+                </button>
+              </div>
             )}
           </div>
         </>
