@@ -85,12 +85,24 @@ export default function DatePicker({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
+    // Close on any press outside the popover and its trigger. A
+    // document-level pointerdown is what makes this work on iOS:
+    // taps on the transparent backdrop div never produce a click
+    // event there, so the backdrop's onClick alone left the
+    // calendar stuck open on phones.
+    const onPointerDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (popRef.current?.contains(t) || btnRef.current?.contains(t)) return;
+      setOpen(false);
+    };
     const onMove = () => place();
     window.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("resize", onMove);
     window.addEventListener("scroll", onMove, true);
     return () => {
       window.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", onMove);
       window.removeEventListener("scroll", onMove, true);
     };
