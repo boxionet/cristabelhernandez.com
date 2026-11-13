@@ -49,6 +49,14 @@ create policy promotions_admin_all on public.promotions
   using (public.is_admin())
   with check (public.is_admin());
 
+-- Table-level grants: a new table gets none of the API roles' grants
+-- by default, so without these the PostgREST API cannot read the
+-- table at all (booking-promo-validate 500'd until this grant was
+-- added live). anon gets NOTHING: the code list must never be
+-- publicly readable. RLS (the policy above) still limits
+-- authenticated to admins.
+grant all on public.promotions to authenticated, service_role;
+
 -- Promo snapshot on appointments. subtotal_price is backfilled to the
 -- current total for the rows that predate promos (they had no code).
 alter table public.appointments
