@@ -310,6 +310,19 @@ input:disabled {
   font-weight: 700;
   color: var(--heading);
 }
+/* Icon logo at the top-left of the topbar. Hidden on desktop, where
+   the sidebar brand already shows the logo; shown when the sidebar
+   hides (see the 900px block below). */
+.topbar-logo {
+  display: none;
+  height: 34px;
+  width: auto;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
 .topbar-user {
   color: var(--muted);
   font-weight: 500;
@@ -1108,6 +1121,9 @@ input:disabled {
   .sidebar {
     display: none;
   }
+  .topbar-logo {
+    display: block;
+  }
   .content {
     padding: 1rem 1rem 6rem;
   }
@@ -1260,6 +1276,15 @@ input:disabled {
   color: #fff;
   font-weight: 700;
 }
+.cal-day:disabled {
+  cursor: default;
+}
+.cal-day:disabled:hover {
+  background: none;
+}
+.cal-day:disabled .cal-num {
+  color: #d3d7dc;
+}
 
 /* ---------- month grid picker (DatePicker month mode) ---------- */
 .monthgrid .mg-head {
@@ -1372,6 +1397,9 @@ input:disabled {
 .datepicker-btn.placeholder {
   color: var(--muted);
 }
+.datepicker-btn span {
+  white-space: nowrap;
+}
 .datepicker-backdrop {
   position: fixed;
   inset: 0;
@@ -1391,6 +1419,27 @@ input:disabled {
 }
 .datepicker-btn .dp-chevron {
   color: #9ca3af;
+}
+.datepicker.has-clear {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 6px;
+}
+.datepicker-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0 0.55rem;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+}
+.datepicker-clear:hover {
+  border-color: var(--sage);
+  color: var(--ink);
 }
 
 /* ---------- Responsive: small tablets & phones (shared + patient) ---------- */

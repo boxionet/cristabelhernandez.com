@@ -7,6 +7,7 @@ import {
 } from "../lib/queries/panelQueries";
 import { SkeletonTable } from "../components/Skeleton";
 import AsyncButton from "../components/AsyncButton";
+import DatePicker from "../components/DatePicker";
 import { FiPlus } from "react-icons/fi";
 import { useToast } from "../components/Toast";
 
@@ -190,32 +191,32 @@ function PromotionEditor({
       </td>
       <td>
         <div className="promo-dates">
-          <input
-            type="date"
+          <DatePicker
             value={validFrom}
-            onChange={(e) => setValidFrom(e.target.value)}
-            onBlur={() =>
-              saveDate("valid_from", validFrom, {
-                from: validFrom,
+            placeholder="Sin fecha"
+            clearable
+            ariaLabel={`Válido desde de ${promotion.code}`}
+            onChange={(iso) => {
+              setValidFrom(iso);
+              saveDate("valid_from", iso, {
+                from: iso,
                 until: validUntil,
-              })
-            }
-            className="date-input"
-            aria-label={`Válido desde de ${promotion.code}`}
+              });
+            }}
           />
           <span className="date-sep">–</span>
-          <input
-            type="date"
+          <DatePicker
             value={validUntil}
-            onChange={(e) => setValidUntil(e.target.value)}
-            onBlur={() =>
-              saveDate("valid_until", validUntil, {
+            placeholder="Sin fecha"
+            clearable
+            ariaLabel={`Válido hasta de ${promotion.code}`}
+            onChange={(iso) => {
+              setValidUntil(iso);
+              saveDate("valid_until", iso, {
                 from: validFrom,
-                until: validUntil,
-              })
-            }
-            className="date-input"
-            aria-label={`Válido hasta de ${promotion.code}`}
+                until: iso,
+              });
+            }}
           />
         </div>
       </td>
@@ -375,18 +376,20 @@ export default function Promociones() {
           </label>
           <label className="add-field date">
             Válido desde
-            <input
-              type="date"
+            <DatePicker
               value={validFrom}
-              onChange={(e) => setValidFrom(e.target.value)}
+              placeholder="Sin fecha"
+              clearable
+              onChange={setValidFrom}
             />
           </label>
           <label className="add-field date">
             Válido hasta
-            <input
-              type="date"
+            <DatePicker
               value={validUntil}
-              onChange={(e) => setValidUntil(e.target.value)}
+              placeholder="Sin fecha"
+              clearable
+              onChange={setValidUntil}
             />
           </label>
           <label className="add-field num">

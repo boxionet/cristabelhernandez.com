@@ -33,6 +33,7 @@ const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
 ];
 
 const LOGO_URL = "/assets/svgs/cristabel_logo_horizontal.svg";
+const ICON_URL = "/assets/svgs/cristabel-hernandez-logo-icono.svg";
 
 export default function PanelLayout() {
   const { user, signOut } = useAuth();
@@ -92,6 +93,7 @@ export default function PanelLayout() {
 
       <div className="main">
         <header className="topbar">
+          <img className="topbar-logo" src={ICON_URL} alt="Centro Estético Dra. Cristabel Hernández" />
           <span className="topbar-spacer" />
           <NotificationBell
             count={pendingCount}

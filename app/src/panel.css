@@ -384,6 +384,14 @@
 .inline-reschedule input {
   padding: 0.4rem 0.5rem;
 }
+/* The date picker trigger packs to its label inside tight rows
+   (inline reschedule, promo date cells, add-form date fields)
+   instead of forcing its 210px desktop minimum. */
+.inline-reschedule .datepicker-btn,
+.promo-dates .datepicker-btn,
+.add-field.date .datepicker-btn {
+  min-width: 0;
+}
 
 /* ---------- Panel appointment card (shared: Citas / Agenda / Historial) ---------- */
 .appt2-head {
@@ -1434,12 +1442,14 @@
   color: var(--heading);
 }
 
-/* Servicios: compact add row (button sized to its label) */
+/* Servicios: compact add row (button sized to its label). Wraps by
+   default so the add forms never overflow their card on tablets:
+   on wide screens the fields still sit on one line. */
 .add-row {
   display: flex;
   gap: 0.9rem;
   align-items: flex-end;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .add-field {
   display: flex;
@@ -1660,7 +1670,7 @@
   width: 122px;
 }
 .add-field.date {
-  flex: 0 1 165px;
+  flex: 1 1 190px;
 }
 @media (max-width: 640px) {
   .add-field.date {

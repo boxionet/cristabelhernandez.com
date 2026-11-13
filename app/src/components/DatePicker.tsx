@@ -6,7 +6,7 @@ import {
   useState,
   type RefObject,
 } from "react";
-import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { FiCalendar, FiChevronDown, FiX } from "react-icons/fi";
 import MonthCalendar, { monthTitleOf } from "./MonthCalendar";
 import MonthGrid from "./MonthGrid";
 import { formatDateEs } from "../lib/format";
@@ -27,6 +27,9 @@ export default function DatePicker({
   displayFormat,
   mode = "day",
   anchorRef,
+  min,
+  clearable = false,
+  ariaLabel,
 }: {
   value: string;
   onChange: (iso: string) => void;
@@ -36,6 +39,12 @@ export default function DatePicker({
   mode?: "day" | "month";
   /** Optional wider element the popover anchors to (e.g. a segmented control). */
   anchorRef?: RefObject<HTMLElement | null>;
+  /** Day-mode only: days before this ISO date cannot be picked. */
+  min?: string;
+  /** Show a × that clears the value (for optional date fields). */
+  clearable?: boolean;
+  /** Accessible label for the trigger button. */
+  ariaLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
@@ -93,11 +102,12 @@ export default function DatePicker({
     : placeholder;
 
   return (
-    <div className="datepicker">
+    <div className={`datepicker${clearable && value !== "" ? " has-clear" : ""}`}>
       <button
         ref={btnRef}
         type="button"
         className={`datepicker-btn${value ? "" : " placeholder"}`}
+        aria-label={ariaLabel}
         onClick={() => setOpen((o) => !o)}
       >
         <FiCalendar aria-hidden />
@@ -106,6 +116,16 @@ export default function DatePicker({
           <FiChevronDown className="dp-chevron" aria-hidden />
         )}
       </button>
+      {clearable && value !== "" && (
+        <button
+          type="button"
+          className="datepicker-clear"
+          aria-label="Quitar fecha"
+          onClick={() => onChange("")}
+        >
+          <FiX aria-hidden />
+        </button>
+      )}
       {open && (
         <>
           <div className="datepicker-backdrop" onClick={() => setOpen(false)} />
@@ -129,6 +149,7 @@ export default function DatePicker({
             ) : (
               <MonthCalendar
                 value={value}
+                min={min}
                 onPick={(iso) => {
                   onChange(iso);
                   setOpen(false);
