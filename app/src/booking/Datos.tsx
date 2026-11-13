@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   clearIdempotencyKey,
+  clearPromo,
   setBookingResult,
   setCustomer,
   setIdempotencyKey,
@@ -141,6 +142,10 @@ export default function Datos() {
     Boolean(customer.lastName.trim()) &&
     Boolean(customer.email.trim()) &&
     isValidPhoneNumber(customer.phone.trim());
+  // A promo code that stopped being usable (the cart re-validates it
+  // against the picked date) blocks submit until the patient removes
+  // it from the cart.
+  const promoBlocked = Boolean(booking.promo && booking.promoError);
 
   function update(field: keyof typeof customer, value: string) {
     dispatch(setCustomer({ [field]: value }));
@@ -149,6 +154,13 @@ export default function Datos() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (submitting || !valid) return;
+    if (promoBlocked) {
+      setSubmitError(
+        booking.promoError ??
+          "El código promocional ya no es válido. Quítalo del resumen para continuar.",
+      );
+      return;
+    }
     if (!booking.date || !booking.time) {
       navigate("/reservar/fecha-hora");
       return;
@@ -170,6 +182,7 @@ export default function Datos() {
         date: booking.date,
         startTime: booking.time,
         idempotencyKey: idemKey,
+        promoCode: booking.promo?.code ?? null,
       };
 
       let created;
@@ -219,6 +232,21 @@ export default function Datos() {
       if (created.status === 403) {
         setSubmitError(
           "No pudimos verificar que eres humano. Por favor intenta de nuevo.",
+        );
+        return;
+      }
+      if (
+        created.data.error === "invalid_promo" ||
+        created.data.error === "promo_exhausted"
+      ) {
+        // The code died between the cart check and the submit (the
+        // server is authoritative). Drop it so the patient retries
+        // cleanly, without losing the rest of the form.
+        dispatch(clearPromo());
+        setSubmitError(
+          created.data.error === "promo_exhausted"
+            ? "Ese código promocional ya llegó a su límite de usos. Lo quitamos del resumen; puedes reservar sin descuento."
+            : "Ese código promocional ya no es válido. Lo quitamos del resumen; puedes reservar sin descuento.",
         );
         return;
       }
@@ -368,7 +396,7 @@ export default function Datos() {
                 type="submit"
                 className="confirmation-btn"
                 id="confirm-btn"
-                disabled={!valid || submitting}
+                disabled={!valid || submitting || promoBlocked}
               >
                 {submitting ? "Reservando…" : "Reservar Cita"}
               </button>
@@ -382,7 +410,7 @@ export default function Datos() {
             catalog={catalog}
             onContinue={() => formRef.current?.requestSubmit()}
             continueLabel="Reservar Cita"
-            continueDisabled={!valid || submitting}
+            continueDisabled={!valid || submitting || promoBlocked}
             showDesktopContinue={false}
           />
         )}

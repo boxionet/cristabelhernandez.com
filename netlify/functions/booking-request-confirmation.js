@@ -69,7 +69,9 @@ exports.handler = async (event) => {
 
     const origin = siteOrigin(event);
     const sent = await sendConfirmationRequestEmail({
-      appointment,
+      // The row was read before the hold expiry was minted; carry the
+      // fresh expiry so the email can state the actual deadline.
+      appointment: { ...appointment, confirmation_expires_at: expiresAt },
       items: items || [],
       confirmUrl: `${origin}/.netlify/functions/booking-confirm?token=${token}`,
       portalUrl: `${origin}/mi-cuenta/`,

@@ -26,6 +26,14 @@ export interface BookingResult {
   confirmationExpiresAt: string | null;
 }
 
+// A promo code applied in the cart (migration 008). The percent is
+// advisory — the server re-validates the code and computes the
+// discount at submit time.
+export interface AppliedPromo {
+  code: string;
+  discountPercent: number;
+}
+
 export interface BookingState {
   customerType: CustomerType | null;
   /** slug -> quantity. The UI toggles services (quantity is always 1). */
@@ -36,6 +44,12 @@ export interface BookingState {
   idempotencyKey: string | null;
   /** Set on a successful submit; drives the confirmation step. */
   result: BookingResult | null;
+  promo: AppliedPromo | null;
+  /** Set when a re-validation finds the applied code unusable for
+   * the current date (e.g. outside its window). The code stays
+   * visible so the patient can remove it; the discount stops
+   * applying and submit is blocked until it is removed. */
+  promoError: string | null;
 }
 
 const emptyCustomer: BookingCustomer = {
@@ -54,6 +68,8 @@ export const initialBookingState: BookingState = {
   customer: emptyCustomer,
   idempotencyKey: null,
   result: null,
+  promo: null,
+  promoError: null,
 };
 
 const bookingSlice = createSlice({
@@ -99,6 +115,17 @@ const bookingSlice = createSlice({
     setBookingResult(state, action: PayloadAction<BookingResult>) {
       state.result = action.payload;
     },
+    setPromo(state, action: PayloadAction<AppliedPromo>) {
+      state.promo = action.payload;
+      state.promoError = null;
+    },
+    clearPromo(state) {
+      state.promo = null;
+      state.promoError = null;
+    },
+    setPromoError(state, action: PayloadAction<string | null>) {
+      state.promoError = action.payload;
+    },
     /**
      * A successful submit lands on the confirmation page: the draft
      * is consumed (services/date/time/customer cleared) so pressing
@@ -129,6 +156,9 @@ export const {
   setIdempotencyKey,
   clearIdempotencyKey,
   setBookingResult,
+  setPromo,
+  clearPromo,
+  setPromoError,
   consumeDraft,
   resetBooking,
 } = bookingSlice.actions;

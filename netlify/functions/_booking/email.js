@@ -92,6 +92,33 @@ function formatPrice(amount) {
   return `RD$ ${Math.round(amount).toLocaleString("en-US")}`;
 }
 
+// The verification/confirmation deadline in Dominican long form
+// ("13 de noviembre a las 5:30 p. m."), always clinic time. Used by
+// the verification and confirmation-request emails so the patient
+// sees the actual deadline, not just "antes de que expire el plazo".
+function formatExpiryEs(instantISO) {
+  return new Date(instantISO).toLocaleString("es-DO", {
+    timeZone: "America/Santo_Domingo",
+    day: "numeric",
+    month: "long",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+// Plain-text promo breakdown lines (subtotal + discount) for the
+// text part of every email that shows totals. Empty when the
+// appointment carries no promo snapshot.
+function promoTextLines(appointment) {
+  if (!appointment.promo_code || appointment.discount_amount == null) {
+    return [];
+  }
+  return [
+    `Subtotal: ${formatPrice(appointment.subtotal_price ?? appointment.total_price)}`,
+    `Descuento (${appointment.promo_code} · −${appointment.discount_percent}%): −${formatPrice(appointment.discount_amount)}`,
+  ];
+}
+
 function formatServicePrice(item) {
   let text = formatPrice(item.unit_price);
   if (item.price_from) text = `Desde ${text}`;
@@ -164,10 +191,29 @@ function resendClient() {
 }
 
 function appointmentDetailsRows({ appointment, items, when, totalLabel, extra }) {
+  // Promo snapshot rows (migration 008): the subtotal and the
+  // discount sit above the final total, exactly as the cart and the
+  // Panel card show them. Absent when no code was applied.
+  const promoRows =
+    appointment.promo_code && appointment.discount_amount != null
+      ? [
+          [
+            "Subtotal",
+            formatPrice(
+              appointment.subtotal_price ?? appointment.total_price,
+            ),
+          ],
+          [
+            `Descuento (${escapeHtml(appointment.promo_code)} · −${appointment.discount_percent}%)`,
+            `−${formatPrice(appointment.discount_amount)}`,
+          ],
+        ]
+      : [];
   return [
     ["Referencia", escapeHtml(appointment.reference_code)],
     ["Fecha", when],
     ["Servicios", itemsListCell(items)],
+    ...promoRows,
     [totalLabel, formatPrice(appointment.total_price)],
     ["A pagar en el centro", `${formatPrice(appointment.total_price)} (efectivo)`],
     ...(extra || []),
@@ -208,6 +254,7 @@ async function sendOwnerBookingAlert({ appointment, items, panelUrl, patientName
       `Fecha: ${when}`,
       `Servicios:`,
       itemsListText(items),
+      ...promoTextLines(appointment),
       `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
       ``,
       `Paciente: ${patientName || "(ver en el Panel)"}`,
@@ -249,7 +296,12 @@ async function sendPatientVerificationEmail({ appointment, items, confirmUrl, po
     const resend = resendClient();
     const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
     const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
-    const verifyBlock = `\nIMPORTANTE: verifica tu correo aquí antes de que expire el plazo para que tu cita pase a confirmación por el centro: ${confirmUrl}\nSi no lo verificas, el espacio se libera automáticamente.\n`;
+    const deadline = appointment.confirmation_expires_at
+      ? formatExpiryEs(appointment.confirmation_expires_at)
+      : null;
+    const verifyBlock = deadline
+      ? `\nIMPORTANTE: verifica tu correo aquí antes del ${deadline} para que tu cita pase a confirmación por el centro: ${confirmUrl}\nSi no lo verificas, el espacio se libera automáticamente.\n`
+      : `\nIMPORTANTE: verifica tu correo aquí antes de que expire el plazo para que tu cita pase a confirmación por el centro: ${confirmUrl}\nSi no lo verificas, el espacio se libera automáticamente.\n`;
     const patientText = [
       `Hola,`,
       ``,
@@ -259,6 +311,7 @@ async function sendPatientVerificationEmail({ appointment, items, confirmUrl, po
       `Fecha: ${when}`,
       `Servicios:`,
       itemsListText(items),
+      ...promoTextLines(appointment),
       `${totalLabel}: ${formatPrice(appointment.total_price)}`,
       `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
       verifyBlock,
@@ -277,7 +330,10 @@ async function sendPatientVerificationEmail({ appointment, items, confirmUrl, po
           emailParagraph("Hola,") +
           emailParagraph(`Recibimos tu solicitud de cita en el ${CLINIC_NAME}.`) +
           emailParagraph(
-            "<strong>Tu cita está apartada.</strong> Verifica tu correo antes de que expire el plazo para que tu cita pase a confirmación por el centro; si no lo verificas, el espacio se libera automáticamente.",
+            "<strong>Tu cita está apartada.</strong> Verifica tu correo antes de que expire el plazo para que tu cita pase a confirmación por el centro; si no lo verificas, el espacio se libera automáticamente." +
+              (deadline
+                ? ` Tienes hasta el <strong>${escapeHtml(deadline)}</strong> para verificarlo.`
+                : ""),
           ) +
           emailButton("Verificar mi correo", confirmUrl) +
           emailDetails(appointmentDetailsRows({ appointment, items, when, totalLabel })) +
@@ -331,6 +387,7 @@ async function sendApprovalEmail({ appointment, items, portalUrl, to }) {
         `Fecha: ${when}`,
         `Servicios:`,
         itemsListText(items),
+        ...promoTextLines(appointment),
         `${totalLabel}: ${formatPrice(appointment.total_price)}`,
         `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
         ``,
@@ -409,6 +466,9 @@ async function sendConfirmationRequestEmail({ appointment, items, confirmUrl, po
     const resend = resendClient();
     const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
     const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const deadline = appointment.confirmation_expires_at
+      ? formatExpiryEs(appointment.confirmation_expires_at)
+      : null;
     await resend.emails.send({
       from: FROM,
       to,
@@ -420,7 +480,10 @@ async function sendConfirmationRequestEmail({ appointment, items, confirmUrl, po
         body:
           emailParagraph("Hola,") +
           emailParagraph(
-            `El ${CLINIC_NAME} registró una cita para ti. Por favor confírmala antes de que expire el plazo.`,
+            `El ${CLINIC_NAME} registró una cita para ti. Por favor confírmala antes de que expire el plazo.` +
+              (deadline
+                ? ` Tienes hasta el <strong>${escapeHtml(deadline)}</strong> para confirmarla.`
+                : ""),
           ) +
           emailParagraph("Si no la confirmas, el espacio se libera automáticamente.") +
           emailButton("Confirmar mi cita", confirmUrl) +
@@ -432,7 +495,8 @@ async function sendConfirmationRequestEmail({ appointment, items, confirmUrl, po
       text: [
         `Hola,`,
         ``,
-        `${CLINIC_NAME} registró una cita para ti. Por favor confírmala en este enlace antes de que expire el plazo:`,
+        `${CLINIC_NAME} registró una cita para ti. Por favor confírmala en este enlace antes de que expire el plazo:` +
+          (deadline ? ` Tienes hasta el ${deadline}.` : ""),
         `${confirmUrl}`,
         `Si no la confirmas, el espacio se libera automáticamente.`,
         ``,
@@ -440,6 +504,7 @@ async function sendConfirmationRequestEmail({ appointment, items, confirmUrl, po
         `Fecha: ${when}`,
         `Servicios:`,
         itemsListText(items),
+        ...promoTextLines(appointment),
         `${totalLabel}: ${formatPrice(appointment.total_price)}`,
         `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
         ``,
@@ -486,6 +551,7 @@ async function sendReminderEmail({ appointment, items, portalUrl, to }) {
         `Fecha: ${when}`,
         `Servicios:`,
         itemsListText(items),
+        ...promoTextLines(appointment),
         `${totalLabel}: ${formatPrice(appointment.total_price)}`,
         `A pagar en el centro: ${formatPrice(appointment.total_price)} (efectivo)`,
         ``,
