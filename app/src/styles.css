@@ -1123,12 +1123,13 @@ input:disabled {
   }
   .topbar-logo {
     display: block;
+    height: 4rem;
   }
   .content {
     padding: 1rem 1rem 6rem;
   }
   .topbar {
-    padding: 1rem 1rem 0;
+    padding: 1rem;
   }
   .kpis {
     grid-template-columns: 1fr 1fr;
@@ -1420,24 +1421,26 @@ input:disabled {
 .datepicker-btn .dp-chevron {
   color: #9ca3af;
 }
-.datepicker.has-clear {
-  display: inline-flex;
-  align-items: stretch;
-  gap: 6px;
+/* Footer inside the popover: the clear action for optional date
+   fields lives here, not as a button next to the field. */
+.datepicker-pop-foot {
+  margin-top: 0.95rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f0f1ec;
 }
-.datepicker-clear {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.datepicker-pop-foot button {
+  width: 100%;
+  border: 1px solid #e2e6df;
   background: #fff;
-  border: 1px solid #d1d5db;
   border-radius: 10px;
-  padding: 0 0.55rem;
+  padding: 0.5rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
   color: var(--muted);
   cursor: pointer;
-  font-size: 1rem;
 }
-.datepicker-clear:hover {
+.datepicker-pop-foot button:hover {
   border-color: var(--sage);
   color: var(--ink);
 }

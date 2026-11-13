@@ -708,6 +708,11 @@
   .kpis.four {
     grid-template-columns: 1fr 1fr;
   }
+  /* Four KPIs stay a 2x2 grid: the shared rule that stretches the
+     last KPI full-width is for 3-KPI grids only. */
+  .kpis.four .kpi:last-child {
+    grid-column: auto;
+  }
   .dash-grid {
     grid-template-columns: 1fr;
   }
@@ -946,6 +951,16 @@
   .kpis.four .kpi {
     padding: 0.9rem;
   }
+  /* Dashboard: tighter agenda rows and bar chart on phones. */
+  .agenda-row {
+    gap: 0.6rem;
+  }
+  .agenda-time {
+    width: 56px;
+  }
+  .bars {
+    gap: 0.35rem;
+  }
 }
 
 /* ---------- Design pass: Horario spec rows, Dashboard, Clientes, Servicios ---------- */
@@ -1161,7 +1176,8 @@
   padding-top: 0.8rem;
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
   font-size: 0.88rem;
   color: var(--muted);
 }

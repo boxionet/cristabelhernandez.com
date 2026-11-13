@@ -8,6 +8,7 @@ import {
 import { SkeletonTable } from "../components/Skeleton";
 import AsyncButton from "../components/AsyncButton";
 import DatePicker from "../components/DatePicker";
+import { formatDateShortEs } from "../lib/format";
 import { FiPlus } from "react-icons/fi";
 import { useToast } from "../components/Toast";
 
@@ -195,6 +196,7 @@ function PromotionEditor({
             value={validFrom}
             placeholder="Sin fecha"
             clearable
+            displayFormat={formatDateShortEs}
             ariaLabel={`Válido desde de ${promotion.code}`}
             onChange={(iso) => {
               setValidFrom(iso);
@@ -209,6 +211,7 @@ function PromotionEditor({
             value={validUntil}
             placeholder="Sin fecha"
             clearable
+            displayFormat={formatDateShortEs}
             ariaLabel={`Válido hasta de ${promotion.code}`}
             onChange={(iso) => {
               setValidUntil(iso);
@@ -380,6 +383,7 @@ export default function Promociones() {
               value={validFrom}
               placeholder="Sin fecha"
               clearable
+              displayFormat={formatDateShortEs}
               onChange={setValidFrom}
             />
           </label>
@@ -389,6 +393,7 @@ export default function Promociones() {
               value={validUntil}
               placeholder="Sin fecha"
               clearable
+              displayFormat={formatDateShortEs}
               onChange={setValidUntil}
             />
           </label>

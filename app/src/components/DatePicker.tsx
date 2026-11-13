@@ -6,7 +6,7 @@ import {
   useState,
   type RefObject,
 } from "react";
-import { FiCalendar, FiChevronDown, FiX } from "react-icons/fi";
+import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import MonthCalendar, { monthTitleOf } from "./MonthCalendar";
 import MonthGrid from "./MonthGrid";
 import { formatDateEs } from "../lib/format";
@@ -41,7 +41,7 @@ export default function DatePicker({
   anchorRef?: RefObject<HTMLElement | null>;
   /** Day-mode only: days before this ISO date cannot be picked. */
   min?: string;
-  /** Show a × that clears the value (for optional date fields). */
+  /** Show a "Quitar fecha" action inside the popover (for optional date fields). */
   clearable?: boolean;
   /** Accessible label for the trigger button. */
   ariaLabel?: string;
@@ -102,7 +102,7 @@ export default function DatePicker({
     : placeholder;
 
   return (
-    <div className={`datepicker${clearable && value !== "" ? " has-clear" : ""}`}>
+    <div className="datepicker">
       <button
         ref={btnRef}
         type="button"
@@ -116,16 +116,6 @@ export default function DatePicker({
           <FiChevronDown className="dp-chevron" aria-hidden />
         )}
       </button>
-      {clearable && value !== "" && (
-        <button
-          type="button"
-          className="datepicker-clear"
-          aria-label="Quitar fecha"
-          onClick={() => onChange("")}
-        >
-          <FiX aria-hidden />
-        </button>
-      )}
       {open && (
         <>
           <div className="datepicker-backdrop" onClick={() => setOpen(false)} />
@@ -155,6 +145,19 @@ export default function DatePicker({
                   setOpen(false);
                 }}
               />
+            )}
+            {clearable && value !== "" && (
+              <div className="datepicker-pop-foot">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange("");
+                    setOpen(false);
+                  }}
+                >
+                  Quitar fecha
+                </button>
+              </div>
             )}
           </div>
         </>
