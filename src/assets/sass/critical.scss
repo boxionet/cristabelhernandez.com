@@ -66,12 +66,30 @@
         }
 
         /* Outline button on the dark hero photo: white ring + text (base style is black),
-           same corner radius + overflow clip as the solid button */
+           same corner radius + overflow clip as the solid button, and the
+           SAME box metrics (explicit height + padding) so both buttons
+           render pixel-identical in size at every width. */
         .cs-button-outline {
             border-color: #fff;
             color: #fff;
             border-radius: calc(4/16 * 1rem);
             overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: clamp(2.875rem, 5.5vw, 3.5rem);
+            box-sizing: border-box;
+            padding: 0 calc(28/16 * 1rem);
+            font-size: calc(16/16 * 1rem);
+            font-weight: 700;
+            line-height: 1;
+            transition: color 0.3s, border-color 0.3s;
+
+            /* On hover the brown fill covers the button, so the ring
+               turns the same brown and the white border disappears. */
+            &:hover {
+                border-color: #705d3f;
+            }
         }
 
         .cs-overlay {
@@ -271,12 +289,14 @@
 
         /* Stacked on tablet: the side-by-side picture overlapped the text
            and buttons at every tablet width, so the picture flows below
-           the content here; the absolute side-by-side returns at desktop. */
+           the content here, aligned right like on desktop; the absolute
+           side-by-side returns at desktop. */
         .cs-picture {
             position: relative;
             width: 100%;
             bottom: auto;
             right: auto;
+            align-self: flex-end;
         }
 
         .cs-background {
