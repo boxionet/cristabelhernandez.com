@@ -23,9 +23,28 @@
     });
     var gender = 'mujer';
 
+    /* The hombre photo loads once the page is idle (or on first switch),
+       so it never competes with the initial page load. */
+    var hombreLoaded = false;
+    function loadHombre() {
+        if (hombreLoaded) return;
+        hombreLoaded = true;
+        Array.prototype.slice.call(photoHombre.querySelectorAll('source[data-srcset]')).forEach(function (s) {
+            s.setAttribute('srcset', s.getAttribute('data-srcset'));
+        });
+        var img = photoHombre.querySelector('img');
+        if (img && img.getAttribute('data-src')) img.src = img.getAttribute('data-src');
+    }
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { loadHombre(); }, { timeout: 2500 });
+    } else {
+        window.addEventListener('load', function () { setTimeout(loadHombre, 800); });
+    }
+
     function setGender(g) {
         if (!COORDS[g] || g === gender) return;
         gender = g;
+        if (g === 'hombre') loadHombre();
         if (current) select(null);
         fig.classList.toggle('show-hombre', g === 'hombre');
         photoMujer.setAttribute('aria-hidden', g === 'hombre' ? 'true' : 'false');
