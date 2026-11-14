@@ -23,8 +23,11 @@
     });
     var gender = 'mujer';
 
-    /* The hombre photo loads once the page is idle (or on first switch),
-       so it never competes with the initial page load. */
+    /* The hombre photo loads only after the page's own load event, then
+       when the browser is idle (or on first switch), so it can never
+       compete with the hero image or the first paint on slow networks:
+       on a throttled connection the main thread idles while resources
+       trickle in, and an un-gated idle callback would fire mid-load. */
     var hombreLoaded = false;
     function loadHombre() {
         if (hombreLoaded) return;
@@ -35,10 +38,17 @@
         var img = photoHombre.querySelector('img');
         if (img && img.getAttribute('data-src')) img.src = img.getAttribute('data-src');
     }
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(function () { loadHombre(); }, { timeout: 2500 });
+    function scheduleHombreLoad() {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(function () { loadHombre(); }, { timeout: 2500 });
+        } else {
+            setTimeout(loadHombre, 800);
+        }
+    }
+    if (document.readyState === 'complete') {
+        scheduleHombreLoad();
     } else {
-        window.addEventListener('load', function () { setTimeout(loadHombre, 800); });
+        window.addEventListener('load', scheduleHombreLoad);
     }
 
     function setGender(g) {
