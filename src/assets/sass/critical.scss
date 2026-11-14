@@ -51,15 +51,27 @@
 
         .cs-button-box {
             display: flex;
-            flex-wrap: wrap;
-            column-gap: calc(24/16 * 1rem);
+            flex-direction: column;
             row-gap: calc(16/16 * 1rem);
+            width: 100%;
         }
 
-        /* Outline button on the dark hero photo: white ring + text (base style is black) */
+        .cs-button-box .cs-button-solid,
+        .cs-button-box .cs-button-outline {
+            width: 100%;
+        }
+
+        .cs-button-box .cs-button-solid {
+            justify-content: center;
+        }
+
+        /* Outline button on the dark hero photo: white ring + text (base style is black),
+           same corner radius + overflow clip as the solid button */
         .cs-button-outline {
             border-color: #fff;
             color: #fff;
+            border-radius: calc(4/16 * 1rem);
+            overflow: hidden;
         }
 
         .cs-overlay {
@@ -213,7 +225,7 @@
 
         .cs-container {
             justify-content: flex-start;
-            flex-direction: row;
+            flex-direction: column;
         }
 
         .cs-content {
@@ -225,6 +237,23 @@
             align-items: flex-start;
         }
 
+        /* Buttons side by side again from tablet up (full-width stacked on mobile) */
+        .cs-button-box {
+            flex-direction: row;
+            flex-wrap: wrap;
+            column-gap: calc(24/16 * 1rem);
+            width: auto;
+        }
+
+        .cs-button-box .cs-button-solid,
+        .cs-button-box .cs-button-outline {
+            width: auto;
+        }
+
+        .cs-button-box .cs-button-solid {
+            justify-content: space-between;
+        }
+
         .cs-overlay {
             width: 100vw;
             border-radius: 0 calc(300/16 * 1rem) calc(300/16 * 1rem) 0;
@@ -233,18 +262,21 @@
         }
 
         .cs-title {
-            width: 55%;
+            width: 100%;
         }
 
         .cs-text {
-            width: 50%;
+            width: 100%;
         }
 
+        /* Stacked on tablet: the side-by-side picture overlapped the text
+           and buttons at every tablet width, so the picture flows below
+           the content here; the absolute side-by-side returns at desktop. */
         .cs-picture {
-            width: 56%;
-            position: absolute;
-            bottom: calc(var(--paddingBottom)*-1 - 3rem);
-            right: calc(-10/16 * 1rem);
+            position: relative;
+            width: 100%;
+            bottom: auto;
+            right: auto;
         }
 
         .cs-background {
@@ -260,10 +292,23 @@
 @media only screen and (min-width: 64rem) {
     #hero-2335 {
         padding-left: calc(32/16 * 1rem);
+        .cs-container {
+            justify-content: flex-start;
+            flex-direction: row;
+        }
+
         .cs-content {
             width: 80%;
             max-width: calc(1000/16 * 1rem);
             padding-left: 0;
+        }
+
+        .cs-title {
+            width: 55%;
+        }
+
+        .cs-text {
+            width: 50%;
         }
 
         .cs-graphic {
@@ -272,6 +317,8 @@
 
         .cs-picture {
             width: 50vw;
+            position: absolute;
+            bottom: calc(var(--paddingBottom)*-1 - 3rem);
             /* 32px - 80px */
             right: calc(16/16 * 1rem);
         }

@@ -1579,6 +1579,25 @@
             height: auto;
         }
 
+        /* Both model photos are stacked; the switch crossfades between
+           them on the same timing as the sliding pill and the dots. */
+        .face img.photo {
+            transition: opacity .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .face img.photo-hombre {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+        }
+
+        .face.show-hombre img.photo-hombre {
+            opacity: 1;
+        }
+
         .hotspot {
             position: absolute;
             z-index: 3;
@@ -1592,6 +1611,7 @@
             box-shadow: 0 1px 8px rgba(0, 0, 0, .35);
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
+            transition: left .35s cubic-bezier(.4, 0, .2, 1), top .35s cubic-bezier(.4, 0, .2, 1);
         }
 
         .hotspot::before {
@@ -1787,6 +1807,14 @@
 @media (prefers-reduced-motion: reduce) {
     #face-explorer {
         .gender-thumb {
+            transition: none;
+        }
+
+        .hotspot {
+            transition: none;
+        }
+
+        .face img.photo {
             transition: none;
         }
 

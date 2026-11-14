@@ -10,7 +10,8 @@
     var pop = document.getElementById('pop');
     var wires = document.getElementById('wires');
     var buttons = Array.prototype.slice.call(document.querySelectorAll('.hotspot'));
-    var faceImg = document.querySelector('#face img');
+    var photoMujer = fig.querySelector('.photo-mujer');
+    var photoHombre = fig.querySelector('.photo-hombre');
 
     var DATA = {};
     var COORDS = { mujer: {}, hombre: {} };
@@ -20,16 +21,15 @@
         COORDS.mujer[zone] = [parseFloat(b.getAttribute('data-x-mujer')), parseFloat(b.getAttribute('data-y-mujer'))];
         COORDS.hombre[zone] = [parseFloat(b.getAttribute('data-x-hombre')), parseFloat(b.getAttribute('data-y-hombre'))];
     });
-    var PHOTOS = { mujer: faceImg.src, hombre: faceImg.getAttribute('data-photo-hombre') };
-    var ALT = { mujer: faceImg.alt, hombre: faceImg.getAttribute('data-alt-hombre') };
     var gender = 'mujer';
 
     function setGender(g) {
         if (!COORDS[g] || g === gender) return;
         gender = g;
         if (current) select(null);
-        faceImg.src = PHOTOS[g];
-        faceImg.alt = ALT[g];
+        fig.classList.toggle('show-hombre', g === 'hombre');
+        photoMujer.setAttribute('aria-hidden', g === 'hombre' ? 'true' : 'false');
+        photoHombre.setAttribute('aria-hidden', g === 'hombre' ? 'false' : 'true');
         buttons.forEach(function (b) {
             var c = COORDS[g][b.getAttribute('data-zone')];
             b.style.left = c[0] + '%';
