@@ -674,10 +674,17 @@
   font-weight: 500;
   color: var(--ink);
   cursor: pointer;
+  /* Only the checkbox + its text is clickable. Labels are block
+     level by default, so without this the box spans the full row
+     width and a tap on empty space at the right still toggles the
+     checkbox (Horario "Cerrado todo el día", 2026-11-15). */
+  width: fit-content;
+  max-width: 100%;
 }
 .check-label input {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
   accent-color: var(--heading);
 }
 .qty-input {
@@ -1333,6 +1340,12 @@
   margin-top: 0.6rem;
   padding-top: 1.05rem;
   border-top: 1px solid #eef0ea;
+}
+/* Breathing room between the form rows: the "Cerrado todo el día"
+   checkbox used to sit flush against the "Agregar día especial"
+   button, so a tap meant for the checkbox could hit the button. */
+.spec-form > * + * {
+  margin-top: 1rem;
 }
 
 /* Clientes: search bar + client cards */
