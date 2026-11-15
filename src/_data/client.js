@@ -5,7 +5,7 @@ module.exports = {
   phoneFormatted: "(829) 316-3313",
   address: {
     lineOne: "Calle Beller No. 129",
-    lineTwo: "Plaza Metropolis 2ndo Nivel",
+    lineTwo: "Plaza Metropolis 2do Nivel",
     city: "Puerto Plata",
     state: "Puerto Plata",
     zip: "57000",

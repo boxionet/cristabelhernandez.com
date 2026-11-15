@@ -20,7 +20,7 @@ import { formatServicePrice } from "./constants";
 
 const CLINIC_NAME = "Dra. Cristabel Hernandez";
 const CLINIC_ADDRESS =
-  "Calle Beller No. 129, Plaza Metropolis 2ndo Nivel, Puerto Plata 57000, DO";
+  "Calle Beller No. 129, Plaza Metropolis 2do Nivel, Puerto Plata 57000, DO";
 const CLINIC_PHONE = "(829) 316-3313";
 // Puerto Plata is UTC-4 all year (no DST).
 const CLINIC_UTC_OFFSET_MINUTES = 240;
