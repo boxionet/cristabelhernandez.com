@@ -412,7 +412,7 @@ export default function Servicios() {
           </table>
         </div>
         <p className="muted">
-          Los cambios se reflejan enseguida en la página de servicios y en el
+          Los cambios se reflejan enseguida en la página de tratamientos y en el
           portal. Desactivar un tratamiento lo oculta de la web sin borrar su
           historial. Precios de referencia: la Toxina Frontal está en{" "}
           {formatPrice(13000)}.

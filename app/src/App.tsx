@@ -168,7 +168,12 @@ export default function App() {
           />
           <Route path="clientes/:id" element={<ClienteRedirect />} />
           <Route path="nueva-cita" element={<NuevaCita />} />
-          <Route path="servicios" element={<ServiciosPanel />} />
+          <Route path="tratamientos" element={<ServiciosPanel />} />
+          {/* Old catalog URL: keep it working for anyone holding it. */}
+          <Route
+            path="servicios"
+            element={<Navigate to="/panel/tratamientos" replace />}
+          />
           <Route path="promociones" element={<Promociones />} />
           <Route path="horario" element={<Horario />} />
           <Route path="reportes" element={<Reportes />} />
