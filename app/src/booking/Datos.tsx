@@ -10,6 +10,10 @@ import { formatPhoneNumber, isValidPhoneNumber } from "../lib/format";
 import { useBookingCatalog } from "../lib/queries/bookingQueries";
 import CartSummary from "./components/CartSummary";
 
+// How many times Datos re-tries a failed patient link before giving
+// up and showing the form unskipped (initial attempt + retries).
+const MAX_LINK_RETRIES = 2;
+
 // Step 4 — customer details. Form only: the submit lives on the
 // revision step. Signed-in patients see their email prefilled and
 // locked, with name/phone prefilled from the patient record; guests
@@ -80,22 +84,49 @@ export default function Datos() {
   // removes it from the cart.
   const promoBlocked = Boolean(booking.promo && booking.promoError);
 
+  // Bounded retry for the patient link: one failed portal-link call
+  // (cold start, network blip) must not strand a verified patient on
+  // an empty form. The budget is scoped to the signed-in user, so a
+  // later sign-in gets a fresh one. Declared before the skip effect
+  // so the retry count is current when the skip decision reads it.
+  const linkRetryCount = useRef(0);
+  const linkRetryFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (!session || patient || linkStatus !== "error") return;
+    if (linkRetryFor.current !== session.user.id) {
+      linkRetryFor.current = session.user.id;
+      linkRetryCount.current = 0;
+    }
+    if (linkRetryCount.current >= MAX_LINK_RETRIES) return;
+    linkRetryCount.current += 1;
+    ensureLinked();
+  }, [session, patient, linkStatus, ensureLinked]);
+
   // Auto-skip, once: a verified patient arriving fresh from the
   // verification step with complete info goes straight to revision.
-  // The decision waits for the patient link AND both prefills to
-  // settle (declared after the prefill effects, so the refs are set
-  // before this runs in the same commit), then clears the fresh flag
-  // whatever the outcome — later visits always show the form.
+  // The decision waits for the patient link to SUCCEED (or for the
+  // retries above to run out) and both prefills to settle — a bare
+  // link error no longer consumes the fresh flag, so a transient
+  // failure can't kill the skip for the whole visit. The flag is
+  // consumed ONLY when navigating: on the commit where a prefill
+  // lands, `valid` still holds the pre-prefill customer (the
+  // prefill's re-render hasn't happened yet), so consuming here
+  // would kill the skip on exactly the commit that enables it.
+  // The flag is cleared instead by the first user keystroke (see
+  // update()), so a patient who starts typing keeps the form.
   useEffect(() => {
     if (!booking.identityFresh) return;
+    const linkExhausted =
+      linkStatus === "error" &&
+      linkRetryCount.current >= MAX_LINK_RETRIES;
     const linkDone =
-      !session || linkedFor === session.user.id || linkStatus === "error";
+      !session || linkedFor === session.user.id || linkExhausted;
     const prefillDone =
       !session ||
       (emailPrefilled.current && (!patient || patientPrefilled.current));
     if (!linkDone || !prefillDone) return;
-    dispatch(clearIdentityFresh());
     if (session && valid) {
+      dispatch(clearIdentityFresh());
       navigate("/reservar/revision", { replace: true });
     }
   }, [
@@ -110,6 +141,11 @@ export default function Datos() {
   ]);
 
   function update(field: keyof typeof customer, value: string) {
+    // A keystroke means the patient took control of the form: the
+    // fresh-arrival auto-skip must never yank them to revision
+    // mid-typing. Prefill effects dispatch setCustomer directly and
+    // leave the flag alone.
+    dispatch(clearIdentityFresh());
     dispatch(setCustomer({ [field]: value }));
   }
 
