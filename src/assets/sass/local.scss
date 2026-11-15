@@ -1641,14 +1641,6 @@
             pointer-events: none;
         }
 
-        /* The pulse runs only once the section scrolls into view: five
-           infinite animations running during initial load cost ~3s of
-           LCP on throttled phones (PSI bisect, Nov 14 2026). The JS adds
-           .in-view via IntersectionObserver. */
-        &.in-view .hotspot::after {
-            animation: pulse 2.2s ease-out infinite;
-        }
-
         .hotspot:hover::before {
             transform: scale(1.15);
         }
@@ -1798,12 +1790,6 @@
     }
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: .95; }
-    70% { transform: scale(1.75); opacity: 0; }
-    100% { transform: scale(1.75); opacity: 0; }
-}
-
 @keyframes wireDraw {
     from { stroke-dashoffset: var(--len); }
     to { stroke-dashoffset: 0; }
@@ -1833,8 +1819,7 @@
             transition: none;
         }
 
-        .hotspot::after,
-        &.in-view .hotspot::after {
+        .hotspot::after {
             animation: none;
         }
 
