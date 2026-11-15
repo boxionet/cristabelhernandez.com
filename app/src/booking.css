@@ -453,6 +453,16 @@
    guest button is its outline counterpart (same shape and type),
    and headings/labels/inputs keep the flow's sizes. Scoped to
    #booking-flow-verificar only; datos and revision are untouched. */
+#booking-flow-verificar {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+#booking-flow-verificar .booking-confirmation-wrapper {
+  flex: 1;
+  min-height: 0;
+}
 #booking-flow-verificar .booking-confirmation-content {
   display: flex;
   flex-direction: column;
