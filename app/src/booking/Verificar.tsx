@@ -218,6 +218,13 @@ export default function Verificar() {
                   <button
                     type="button"
                     className="booking-guest-btn"
+                    onClick={continueAsGuest}
+                  >
+                    Continuar como invitado
+                  </button>
+                  <button
+                    type="button"
+                    className="booking-text-link"
                     onClick={() => void resendCode()}
                     disabled={busy}
                   >
@@ -225,7 +232,7 @@ export default function Verificar() {
                   </button>
                   <button
                     type="button"
-                    className="booking-guest-btn"
+                    className="booking-text-link"
                     onClick={() => {
                       setStep("email");
                       setCode("");
@@ -234,13 +241,6 @@ export default function Verificar() {
                     }}
                   >
                     Usar otro correo
-                  </button>
-                  <button
-                    type="button"
-                    className="booking-guest-btn"
-                    onClick={continueAsGuest}
-                  >
-                    Continuar como invitado
                   </button>
                 </>
               )}

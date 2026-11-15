@@ -445,3 +445,107 @@
 #booking-flow-revision .booking-review-edit:hover {
   text-decoration: underline;
 }
+
+/* Verification screen, Peachy-style restyle (2026-11-15): mirrors
+   Peachy's phone/code steps — content vertically centered, plain
+   subtext (no box), large underline input, tall pill buttons, small
+   footer links. Scoped to #booking-flow-verificar only; datos and
+   revision are untouched. These rules come after the shared block,
+   so they win every equal-specificity tie. */
+#booking-flow-verificar .booking-confirmation-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#booking-flow-verificar .booking-confirmation-header h1 {
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+#booking-flow-verificar .booking-confirmation-body {
+  gap: 0;
+}
+#booking-flow-verificar .booking-account-note {
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: #404040;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  margin: 0 0 2.5rem;
+  padding: 0;
+}
+#booking-flow-verificar .booking-account-note strong {
+  color: #1a1a1a;
+}
+#booking-flow-verificar .form-label {
+  color: #1a1a1a;
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+#booking-flow-verificar .form-input {
+  border-bottom-width: 1.5px;
+  font-size: 1.375rem;
+  padding: 0.25rem 0 0.75rem;
+}
+#booking-flow-verificar .form-input:focus {
+  border-bottom: 2px solid var(--booking-primary-button);
+}
+#booking-flow-verificar #verify-code {
+  letter-spacing: 0.3em;
+}
+#booking-flow-verificar .confirmation-btn {
+  border-radius: 999px;
+  font-size: 1.0625rem;
+  margin-top: 1.25rem;
+  padding: 1.1rem 1.5rem;
+}
+#booking-flow-verificar .booking-guest-btn {
+  background-color: transparent;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 999px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  padding: 1.1rem 1.5rem;
+}
+#booking-flow-verificar .booking-guest-btn:hover:not(:disabled) {
+  background-color: #f5efe6;
+}
+#booking-flow-verificar .booking-text-link {
+  background: none;
+  border: none;
+  color: #767676;
+  cursor: pointer;
+  font-family: Gordita, Arial, sans-serif;
+  font-size: 0.9375rem;
+  margin: 1.75rem auto 0;
+  padding: 0.25rem 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  width: fit-content;
+}
+#booking-flow-verificar .booking-text-link + .booking-text-link {
+  margin-top: 0.5rem;
+}
+#booking-flow-verificar .booking-text-link:hover:not(:disabled) {
+  color: #1a1a1a;
+}
+#booking-flow-verificar .booking-text-link:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+#booking-flow-verificar .booking-back-link {
+  display: none;
+}
+@media only screen and (min-width: 64rem) {
+  #booking-flow-verificar .booking-confirmation-container {
+    align-items: stretch;
+    padding: 2.5rem;
+  }
+  #booking-flow-verificar .booking-confirmation-content {
+    margin: 0 auto;
+  }
+  #booking-flow-verificar .booking-confirmation-header h1 {
+    font-size: 2.25rem;
+  }
+}
