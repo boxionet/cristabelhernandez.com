@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useRef,
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
@@ -52,33 +51,23 @@ export interface AuthContextValue {
 export function useAuth(): AuthContextValue {
   const dispatch = useAppDispatch();
   const auth = useAppSelector((s) => s.auth);
-  const linkingFor = useRef<string | null>(null);
 
   const ensureLinked = useCallback(() => {
     const sess = auth.session;
     if (!sess) return;
-    // The thunk also guards, but skip dispatching while a link for
-    // this user is already in flight or done.
+    // The thunk's condition is the single-flight guard: it reads the
+    // store synchronously at dispatch time. A promise-settled ref
+    // guard used to live here, but it went stale — React re-ran the
+    // retry effect before the rejection's .catch microtask reset
+    // the ref, so a failed link could never be retried.
     if (auth.patient && auth.linkedFor === sess.user.id) return;
-    if (linkingFor.current === sess.user.id) return;
-    linkingFor.current = sess.user.id;
-    void dispatch(linkPatientThunk(sess.access_token))
-      .unwrap()
-      .catch(() => {
-        linkingFor.current = null;
-      });
+    void dispatch(linkPatientThunk(sess.access_token));
   }, [auth.session, auth.patient, auth.linkedFor, dispatch]);
 
   const retryLink = useCallback(() => {
-    linkingFor.current = null;
     dispatch(linkReset());
     if (auth.session) {
-      linkingFor.current = auth.session.user.id;
-      void dispatch(linkPatientThunk(auth.session.access_token))
-        .unwrap()
-        .catch(() => {
-          linkingFor.current = null;
-        });
+      void dispatch(linkPatientThunk(auth.session.access_token));
     }
   }, [auth.session, dispatch]);
 

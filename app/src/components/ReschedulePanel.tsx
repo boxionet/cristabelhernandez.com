@@ -4,6 +4,7 @@ import { errorText, rescheduleAppointment } from "../lib/api";
 import { useAvailability } from "../lib/queries/availability";
 import { formatTime12h } from "../lib/format";
 import { useToast } from "./Toast";
+import DatePicker from "./DatePicker";
 import type { Appointment } from "../lib/types";
 
 function todayISO(): string {
@@ -63,7 +64,14 @@ export default function ReschedulePanel({
     setError(null);
     try {
       await rescheduleAppointment(session.access_token, appointment.id, date, picked);
-      toast.success("Cita reprogramada");
+      // Confirmation model: moving a confirmed cita voids the
+      // confirmation, so the patient must hear that it now waits for
+      // the Dra again.
+      toast.success(
+        appointment.status === "confirmada"
+          ? "Cita reprogramada — queda pendiente de confirmación por el centro"
+          : "Cita reprogramada",
+      );
       onDone();
     } catch (e) {
       setError(errorText(e));
@@ -76,12 +84,7 @@ export default function ReschedulePanel({
       <div className="reschedule-row">
         <label>
           Nueva fecha
-          <input
-            type="date"
-            value={date}
-            min={todayISO()}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <DatePicker value={date} onChange={setDate} min={todayISO()} />
         </label>
       </div>
       {slots === null && <p className="muted">Buscando horarios…</p>}

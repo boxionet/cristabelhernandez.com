@@ -1,14 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
+import bookingReducer from "./slices/bookingSlice";
 import uiReducer from "./slices/uiSlice";
 
 // The store holds CLIENT state only (auth session, cross-screen UI
-// state). Server state is TanStack Query's job (lib/queryClient.ts).
-// Add future slices here — one file per feature under slices/.
+// state, the booking draft). Server state is TanStack Query's job
+// (lib/queryClient.ts). Add future slices here — one file per feature
+// under slices/.
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     ui: uiReducer,
+    booking: bookingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

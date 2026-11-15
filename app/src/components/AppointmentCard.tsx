@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FiCheckCircle, FiDollarSign, FiPhoneCall } from "react-icons/fi";
+import { FiCheckCircle, FiDollarSign, FiPhoneCall, FiTag } from "react-icons/fi";
 import { useAuth } from "../auth";
 import { cancelAppointment, errorText } from "../lib/api";
 import {
@@ -145,6 +145,30 @@ export default function AppointmentCard({
           </li>
         ))}
       </ul>
+
+      {appointment.promo_code && (
+        <div className="pcard-promo">
+          <div className="promo-row">
+            <span>Subtotal</span>
+            <span>
+              {formatPrice(
+                appointment.subtotal_price ?? appointment.total_price,
+              )}
+            </span>
+          </div>
+          <div className="promo-row">
+            <span className="promo-chip">
+              <FiTag aria-hidden />
+              {appointment.promo_code}
+              {appointment.discount_percent !== null &&
+                ` · −${appointment.discount_percent}%`}
+            </span>
+            <span className="promo-amount">
+              −{formatPrice(appointment.discount_amount ?? 0)}
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="pcard-money">
         <span className="pcard-total-label">

@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { formatPhoneNumber } from "./format";
 import type { Appointment } from "./types";
 
 // ---------- Panel data shapes (admin reads via RLS) ----------
@@ -28,6 +29,7 @@ export interface ServiceRow {
   id: string;
   slug: string;
   name: string;
+  description: string | null;
   category: string;
   price: number;
   price_from: boolean;
@@ -35,6 +37,21 @@ export interface ServiceRow {
   duration_minutes: number;
   active: boolean;
   sort_order: number;
+}
+
+// Promo code (migration 008). Codes are stored normalized (UPPERCASE,
+// no spaces); valid_from/valid_until bound the APPOINTMENT date;
+// max_uses caps redemptions (null = unlimited). Usage is derived from
+// appointments carrying the code, never stored here.
+export interface PromotionRow {
+  id: string;
+  code: string;
+  discount_percent: number;
+  active: boolean;
+  valid_from: string | null; // YYYY-MM-DD
+  valid_until: string | null; // YYYY-MM-DD
+  max_uses: number | null;
+  created_at: string;
 }
 
 export interface ScheduleRow {
@@ -55,6 +72,17 @@ export interface ExceptionRow {
   label: string | null;
 }
 
+/** ISO dates of full-day closures, for disabling days in Panel
+ * calendars. Short-hours exceptions stay enabled: the clinic is open
+ * those days, just on different hours. */
+export function closedDateSet(
+  exceptions: readonly ExceptionRow[],
+): ReadonlySet<string> {
+  return new Set(
+    exceptions.filter((e) => e.is_closed).map((e) => e.date),
+  );
+}
+
 export function clinicToday(): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Santo_Domingo",
@@ -70,8 +98,16 @@ export function displayName(a: PanelAppointment): string {
   return a.patients?.full_name || a.guest_name || "—";
 }
 
+/** Comma-joined service names for one-line summaries (dashboard rows). */
+export function servicesSummary(a: PanelAppointment): string {
+  return a.appointment_services.map((i) => i.service_name).join(", ");
+}
+
 export function displayContact(a: PanelAppointment): string {
-  return a.patients?.phone || a.patients?.email || a.guest_phone || a.guest_email || "";
+  if (a.patients?.phone) return formatPhoneNumber(a.patients.phone);
+  if (a.patients?.email) return a.patients.email;
+  if (a.guest_phone) return formatPhoneNumber(a.guest_phone);
+  return a.guest_email || "";
 }
 
 // A patient is "Nuevo" while they have at most one real booking.
@@ -112,8 +148,9 @@ export async function markNoShow(appt: PanelAppointment): Promise<void> {
   }
 }
 
-// Staff confirms a guest hold by phone: same result as the patient
-// clicking "Confirmar mi cita" (patient find-or-create by email).
+// Staff confirms a hold (e.g. the patient confirmed by phone):
+// patient find-or-create by email, and the cita lands in 'confirmada'
+// — a staff decision IS the confirmation, so no second Confirmar step.
 export async function confirmHold(appt: PanelAppointment): Promise<void> {
   let patientId = appt.patient_id;
   if (!patientId && appt.guest_email) {
@@ -142,7 +179,7 @@ export async function confirmHold(appt: PanelAppointment): Promise<void> {
     .from("appointments")
     .update({
       patient_id: patientId,
-      status: "pendiente",
+      status: "confirmada",
       confirmation_token: null,
       confirmation_expires_at: null,
       guest_name: null,
@@ -177,6 +214,9 @@ export interface ManualBookingInput {
   startTime: string; // 'HH:MM'
   source: "telefono" | "whatsapp" | "presencial";
   note?: string;
+  // Promo already validated by the caller (NuevaCita re-checks at
+  // submit); the snapshot is stored exactly like create_booking's.
+  promo?: { code: string; discountPercent: number } | null;
 }
 
 // Replace an existing appointment's treatments (staff edit). Totals,
@@ -196,12 +236,23 @@ export async function updateAppointmentServices(
     duration += service.duration_minutes * quantity;
     estimate = estimate || service.price_from || service.price_note !== null;
   }
+  // A promo applied to the appointment keeps its discount when the
+  // treatments change: the stored percent re-applies to the new
+  // subtotal, so the snapshot stays consistent with the services.
+  const subtotal = total;
+  let discount = 0;
+  if (appt.promo_code && appt.discount_percent) {
+    discount = Math.round((total * appt.discount_percent) / 100);
+    total -= discount;
+  }
   const { error: upErr } = await supabase
     .from("appointments")
     .update({
       total_price: total,
       total_is_estimate: estimate,
       duration_minutes: duration,
+      subtotal_price: subtotal,
+      discount_amount: appt.promo_code ? discount : null,
     })
     .eq("id", appt.id);
   if (upErr) throw upErr;
@@ -225,12 +276,20 @@ export async function updateAppointmentServices(
 }
 
 // Mirrors create_booking's math (totals/duration/estimate always from
-// the catalog) but writes directly with admin RLS rights, so manual
-// bookings are confirmed immediately (status pendiente) and email is
-// optional (phone-only patients stay as guest data on the appointment).
+// the catalog) but writes directly with admin RLS rights. Approval
+// model: with an email the booking is created as a 'por_confirmar'
+// hold and the caller asks the patient to confirm through the
+// confirmation-request email (clicking resolves it to 'confirmada');
+// without an email there is no channel to confirm through, so the
+// booking is 'confirmada' at once — the Dra spoke to the patient
+// directly. Phone-only patients stay as guest data on the appointment.
 export async function createManualBooking(
   input: ManualBookingInput,
-): Promise<{ referenceCode: string }> {
+): Promise<{
+  referenceCode: string;
+  appointmentId: string;
+  needsConfirmation: boolean;
+}> {
   let total = 0;
   let duration = 0;
   let estimate = false;
@@ -239,6 +298,14 @@ export async function createManualBooking(
     duration += service.duration_minutes * quantity;
     estimate = estimate || service.price_from || service.price_note !== null;
   }
+  // Promo snapshot, same math as create_booking: percent off the
+  // catalog subtotal, rounded to the nearest peso.
+  const subtotal = total;
+  const promo = input.promo ?? null;
+  const discount = promo
+    ? Math.round((total * promo.discountPercent) / 100)
+    : 0;
+  if (promo) total -= discount;
 
   let patientId = input.patientId ?? null;
   const email = (input.email || "").trim().toLowerCase();
@@ -265,6 +332,7 @@ export async function createManualBooking(
     }
   }
 
+  const needsConfirmation = Boolean(email);
   const base = {
     patient_id: patientId,
     guest_name: patientId ? null : input.fullName.trim(),
@@ -275,7 +343,11 @@ export async function createManualBooking(
     duration_minutes: duration,
     total_price: total,
     total_is_estimate: estimate,
-    status: "pendiente",
+    promo_code: promo ? promo.code : null,
+    discount_percent: promo ? promo.discountPercent : null,
+    discount_amount: promo ? discount : null,
+    subtotal_price: subtotal,
+    status: needsConfirmation ? "por_confirmar" : "confirmada",
     payment_status: "pendiente",
     source: input.source,
     internal_notes: input.note?.trim() || null,
@@ -306,7 +378,7 @@ export async function createManualBooking(
         await supabase.from("appointments").delete().eq("id", appt.id);
         throw new Error("items_failed");
       }
-      return { referenceCode: reference };
+      return { referenceCode: reference, appointmentId: appt.id, needsConfirmation };
     }
     lastError = error;
     if (error && (error as { code?: string }).code === "23P01") {

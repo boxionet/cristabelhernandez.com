@@ -32,21 +32,40 @@ export const linkPatientThunk = createAsyncThunk<
   Patient,
   string, // access token
   { state: { auth: AuthState }; rejectValue: string }
->("auth/linkPatient", async (accessToken, { getState, rejectWithValue }) => {
-  const { auth } = getState();
-  const userId = auth.session?.user.id;
-  if (userId && auth.linkedFor === userId && auth.patient) {
-    return auth.patient;
-  }
-  try {
-    const { patient } = await linkPatient(accessToken);
-    return patient;
-  } catch (e) {
-    return rejectWithValue(
-      e instanceof Error ? e.message : "link_failed",
-    );
-  }
-});
+>(
+  "auth/linkPatient",
+  async (accessToken, { getState, rejectWithValue }) => {
+    const { auth } = getState();
+    const userId = auth.session?.user.id;
+    if (userId && auth.linkedFor === userId && auth.patient) {
+      return auth.patient;
+    }
+    try {
+      const { patient } = await linkPatient(accessToken);
+      return patient;
+    } catch (e) {
+      return rejectWithValue(
+        e instanceof Error ? e.message : "link_failed",
+      );
+    }
+  },
+  {
+    // One link call per user, globally. App and Datos both call
+    // ensureLinked(), and each useAuth() instance carries its own
+    // in-flight guard, so without this two portal-link requests
+    // race on every fresh sign-in. A skipped dispatch resolves to
+    // a condition-aborted rejection, which ensureLinked() already
+    // tolerates (its .catch resets its own guard).
+    condition: (_accessToken, { getState }) => {
+      const { auth } = getState();
+      if (auth.linkStatus === "pending") return false;
+      if (auth.patient && auth.linkedFor === auth.session?.user.id) {
+        return false;
+      }
+      return true;
+    },
+  },
+);
 
 const authSlice = createSlice({
   name: "auth",

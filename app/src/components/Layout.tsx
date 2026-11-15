@@ -12,6 +12,7 @@ const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
 ];
 
 const LOGO_URL = "/assets/svgs/cristabel_logo_horizontal.svg";
+const ICON_URL = "/assets/svgs/cristabel-hernandez-logo-icono.svg";
 
 export default function Layout() {
   const { patient, signOut } = useAuth();
@@ -44,7 +45,10 @@ export default function Layout() {
 
       <div className="main">
         <header className="topbar">
-          <span className="topbar-title">Mi Cuenta</span>
+          <span className="topbar-left">
+            <img className="topbar-logo" src={ICON_URL} alt="Centro Estético Dra. Cristabel Hernández" />
+            <span className="topbar-title">Mi Cuenta</span>
+          </span>
           <UserMenu
             mode="patient"
             fullName={patient?.fullName ?? ""}

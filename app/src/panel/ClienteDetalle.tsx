@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   formatDateEs,
   formatDateLongEs,
+  formatPhoneNumber,
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
@@ -75,7 +76,7 @@ export default function ClienteDetalle() {
         </div>
         <p className="muted">
           {patient.email}
-          {patient.phone ? ` · ${patient.phone}` : ""}
+          {patient.phone ? ` · ${formatPhoneNumber(patient.phone)}` : ""}
         </p>
         <p className="muted">
           Paciente desde {formatDateLongEs(toClinicDateISO(patient.created_at))} · {own.length} citas ·{" "}
@@ -117,17 +118,21 @@ export default function ClienteDetalle() {
           <p>Este paciente aún no tiene citas.</p>
         </section>
       )}
-      {own
-        .slice()
-        .reverse()
-        .map((a) => (
-          <PanelAppointmentCard
-            key={a.id}
-            appt={a}
-            onChanged={() => void reload()}
-            showPatientName={false}
-          />
-        ))}
+      {own.length > 0 && (
+        <div className="appt-list">
+          {own
+            .slice()
+            .reverse()
+            .map((a) => (
+              <PanelAppointmentCard
+                key={a.id}
+                appt={a}
+                onChanged={() => void reload()}
+                showPatientName={false}
+              />
+            ))}
+        </div>
+      )}
     </>
   );
 }

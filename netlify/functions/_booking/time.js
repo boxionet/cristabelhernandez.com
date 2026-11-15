@@ -3,7 +3,10 @@
 // slot math can be unit-tested outside the functions.
 
 const CLINIC_TZ = "America/Santo_Domingo";
-const SLOT_STEP_MINUTES = 15;
+// Appointments start on the hour only (clinic policy, user decision
+// 2026-11-12). The booking UI's static grid (STATIC_SLOT_TIMES_24H)
+// matches this step, so the engine and the page offer the same set.
+const SLOT_STEP_MINUTES = 60;
 
 function timeToMinutes(hhmm) {
   const [h, m] = String(hhmm).split(":").map((n) => parseInt(n, 10));

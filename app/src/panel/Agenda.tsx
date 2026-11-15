@@ -7,7 +7,7 @@ import {
   formatTime12h,
   STATUS_LABELS,
 } from "../lib/format";
-import { displayName } from "../lib/panel";
+import { displayName, closedDateSet } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setAgendaDate } from "../store/slices/uiSlice";
@@ -16,7 +16,7 @@ import MonthCalendar from "../components/MonthCalendar";
 import { SkeletonCards } from "../components/Skeleton";
 
 export default function Agenda() {
-  const { appointments, error, reload } = usePanelData();
+  const { appointments, exceptions, error, reload } = usePanelData();
   // The selected day lives in Redux so it survives navigation.
   const date = useAppSelector((s) => s.ui.agendaDate);
   const dispatch = useAppDispatch();
@@ -31,6 +31,12 @@ export default function Agenda() {
     return map;
   }, [appointments]);
 
+  // Full-day closures render greyed out and cannot be picked.
+  const closedDates = useMemo(
+    () => closedDateSet(exceptions ?? []),
+    [exceptions],
+  );
+
   if (error) return <p className="error">{error}</p>;
   if (!appointments) return <SkeletonCards count={2} />;
 
@@ -41,7 +47,12 @@ export default function Agenda() {
       <h2 className="section-title">Agenda</h2>
       <div className="agenda-layout">
         <section className="card cal-card">
-          <MonthCalendar value={date} onPick={setDate} counts={counts} />
+          <MonthCalendar
+            value={date}
+            onPick={setDate}
+            counts={counts}
+            disabledDates={closedDates}
+          />
         </section>
 
         <div className="agenda-day">

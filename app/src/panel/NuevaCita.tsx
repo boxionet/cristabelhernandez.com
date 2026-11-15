@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAvailability } from "../lib/queries/availability";
+import { requestConfirmation, validatePromo } from "../lib/api";
 import { formatPrice, formatTime12h } from "../lib/format";
 import {
   clinicToday,
@@ -9,9 +10,10 @@ import {
 } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonForm } from "../components/Skeleton";
+import DatePicker from "../components/DatePicker";
 
 export default function NuevaCita() {
-  const { patients, services, error } = usePanelData();
+  const { patients, services, error, reload } = usePanelData();
   const [params] = useSearchParams();
   const [patientId, setPatientId] = useState<string>(params.get("paciente") ?? "nuevo");
   const [fullName, setFullName] = useState("");
@@ -24,7 +26,21 @@ export default function NuevaCita() {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [done, setDone] = useState<string | null>(null);
+  // Promo code for the manual booking (migration 008): validated
+  // against the picked date on apply, and re-checked at submit so a
+  // date change after applying cannot slip a dead code through.
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{
+    code: string;
+    discountPercent: number;
+  } | null>(null);
+  const [promoChecking, setPromoChecking] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [done, setDone] = useState<{
+    referenceCode: string;
+    emailState: "sent" | "failed" | "none";
+    email: string;
+  } | null>(null);
 
   const activeServices = (services ?? []).filter((s) => s.active);
   const items = useMemo(
@@ -39,6 +55,36 @@ export default function NuevaCita() {
     0,
   );
   const total = items.reduce((sum, i) => sum + i.service.price * i.quantity, 0);
+  const discount = promo ? Math.round((total * promo.discountPercent) / 100) : 0;
+  const finalTotal = total - discount;
+
+  async function applyPromo() {
+    const code = promoInput.trim().toUpperCase();
+    if (!code || promoChecking) return;
+    setPromoChecking(true);
+    setPromoError(null);
+    try {
+      const res = await validatePromo(code, date);
+      if (res === null) {
+        setPromoError("No pudimos verificar el código. Inténtalo de nuevo.");
+        return;
+      }
+      if (!res.valid) {
+        setPromoError(
+          res.reason === "expired"
+            ? "Ese código no aplica para la fecha elegida."
+            : res.reason === "exhausted"
+              ? "Ese código ya llegó a su límite de usos."
+              : "Ese código no es válido. Revisa el código e inténtalo de nuevo.",
+        );
+        return;
+      }
+      setPromo({ code, discountPercent: res.discountPercent ?? 0 });
+      setPromoInput("");
+    } finally {
+      setPromoChecking(false);
+    }
+  }
 
   // Availability is server state: TanStack Query keyed by date+duration.
   const availability = useAvailability(date, duration, duration > 0);
@@ -59,6 +105,21 @@ export default function NuevaCita() {
       setFormError("Escribe el nombre de la paciente.");
       return;
     }
+    // The email is required for a new patient: it is how she signs in
+    // to her account, and the confirmation email goes to it.
+    if (!existing) {
+      const em = email.trim();
+      if (!em) {
+        setFormError(
+          "Escribe el correo de la paciente: lo necesita para entrar a su cuenta y confirmar su cita.",
+        );
+        return;
+      }
+      if (!/^\S+@\S+\.\S+$/.test(em)) {
+        setFormError("Revisa el correo: no parece una dirección válida.");
+        return;
+      }
+    }
     if (items.length === 0) {
       setFormError("Elige al menos un tratamiento.");
       return;
@@ -69,18 +130,60 @@ export default function NuevaCita() {
     }
     setBusy(true);
     try {
-      const { referenceCode } = await createManualBooking({
-        patientId: existing ? existing.id : null,
-        fullName: existing ? existing.full_name : fullName,
-        email: existing ? existing.email : email,
-        phone: existing ? (existing.phone ?? "") : phone,
-        items,
-        date,
-        startTime,
-        source,
-        note,
-      });
-      setDone(referenceCode);
+      // Re-check the promo against the final date: the date may have
+      // changed after the code was applied.
+      let effectivePromo = promo;
+      if (promo) {
+        const res = await validatePromo(promo.code, date);
+        if (res === null) {
+          setFormError("No pudimos verificar el código promocional. Inténtalo de nuevo.");
+          setBusy(false);
+          return;
+        }
+        if (!res.valid) {
+          setPromo(null);
+          setFormError(
+            "El código promocional ya no es válido para esta cita. Lo quitamos; puedes crear la cita sin descuento o aplicar otro código.",
+          );
+          setBusy(false);
+          return;
+        }
+        effectivePromo = {
+          code: promo.code,
+          discountPercent: res.discountPercent ?? promo.discountPercent,
+        };
+      }
+      const effectiveEmail = existing ? existing.email : email.trim();
+      const { referenceCode, appointmentId, needsConfirmation } =
+        await createManualBooking({
+          patientId: existing ? existing.id : null,
+          fullName: existing ? existing.full_name : fullName,
+          email: existing ? existing.email : email,
+          phone: existing ? (existing.phone ?? "") : phone,
+          items,
+          date,
+          startTime,
+          source,
+          note,
+          promo: effectivePromo,
+        });
+      // Refresh the Panel cache now, so Citas/Agenda show the new
+      // cita immediately instead of serving the 30s-stale list.
+      reload();
+      // With an email the booking is a hold until the patient clicks
+      // the confirmation link; without one it is already confirmed.
+      // A failed email send must not fail the booking — the Dra can
+      // still confirm it from Citas, and the success screen says so.
+      let emailState: "sent" | "failed" | "none" = "none";
+      if (needsConfirmation) {
+        try {
+          const r = await requestConfirmation(appointmentId);
+          emailState = r.sent ? "sent" : "failed";
+        } catch {
+          emailState = "failed";
+        }
+      }
+      setDone({ referenceCode, emailState, email: effectiveEmail });
     } catch (e) {
       const key = e instanceof Error ? e.message : "";
       setFormError(
@@ -100,8 +203,13 @@ export default function NuevaCita() {
       <section className="card empty">
         <h2 className="section-title">Cita creada</h2>
         <p>
-          Referencia <strong>{done}</strong> · {formatPrice(total)} · queda
-          confirmada de inmediato (sin paso de confirmación por correo).
+          Referencia <strong>{done.referenceCode}</strong> · {formatPrice(finalTotal)}
+          {done.emailState === "sent" &&
+            ` · enviamos un correo a ${done.email} para que la paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
+          {done.emailState === "failed" &&
+            " · no pudimos enviar el correo de confirmación. Puedes confirmar la cita desde Citas."}
+          {done.emailState === "none" &&
+            " · queda confirmada de inmediato (sin correo para confirmar)."}
         </p>
         <Link className="btn primary" to="/panel/agenda">
           Ver la agenda
@@ -109,6 +217,9 @@ export default function NuevaCita() {
       </section>
     );
   }
+
+  // The email is required, so every manual booking sends the
+  // confirmation email: the button always says so.
 
   return (
     <>
@@ -137,12 +248,12 @@ export default function NuevaCita() {
               <input value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
             <label>
-              Correo (opcional)
+              Correo *
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Si lo da, su cuenta queda enlazada"
+                placeholder="La paciente usa este correo para entrar a su cuenta"
               />
             </label>
           </div>
@@ -190,12 +301,7 @@ export default function NuevaCita() {
         <div className="form-grid">
           <label>
             Fecha
-            <input
-              type="date"
-              value={date}
-              min={clinicToday()}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <DatePicker value={date} onChange={setDate} min={clinicToday()} />
           </label>
           <label>
             Fuente
@@ -237,9 +343,54 @@ export default function NuevaCita() {
           <input value={note} onChange={(e) => setNote(e.target.value)} />
         </label>
 
+        <div>
+          <label>
+            Código promocional (opcional)
+            {promo ? (
+              <span className="promo-chip">
+                {promo.code} · −{promo.discountPercent}%
+                <button
+                  type="button"
+                  className="booking-promo-remove"
+                  aria-label="Quitar código promocional"
+                  onClick={() => setPromo(null)}
+                >
+                  ×
+                </button>
+              </span>
+            ) : (
+              <span className="booking-promo-row">
+                <input
+                  className="booking-promo-input"
+                  value={promoInput}
+                  onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                  placeholder="Código promocional"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <button
+                  className="booking-promo-apply-btn"
+                  type="button"
+                  disabled={!promoInput.trim() || promoChecking}
+                  onClick={() => void applyPromo()}
+                >
+                  {promoChecking ? "Verificando…" : "Aplicar"}
+                </button>
+              </span>
+            )}
+          </label>
+          {promoError && <p className="error">{promoError}</p>}
+        </div>
+
         {items.length > 0 && (
           <p className="muted">
-            Duración total {duration} min · Total {formatPrice(total)}
+            Duración total {duration} min · Subtotal {formatPrice(total)}
+            {promo && (
+              <>
+                {" "}· Descuento ({promo.code}) −{formatPrice(discount)}
+              </>
+            )}{" "}
+            · Total {formatPrice(finalTotal)}
           </p>
         )}
         {formError && <p className="error">{formError}</p>}
@@ -254,7 +405,7 @@ export default function NuevaCita() {
               <span className="spinner" aria-hidden /> Creando…
             </>
           ) : (
-            "Crear cita confirmada"
+            "Crear cita y enviar confirmación"
           )}
         </button>
       </section>

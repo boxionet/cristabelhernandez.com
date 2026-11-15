@@ -15,10 +15,13 @@ exports.handler = async (event) => {
     const from = new Date(now + 23 * 60 * 60 * 1000).toISOString();
     const to = new Date(now + 25 * 60 * 60 * 1000).toISOString();
 
+    // Approval model: only Dra-approved ('confirmada') citas are
+    // reminded. A 'pendiente' request is not a booking yet — reminding
+    // it would tell the patient something the Dra never approved.
     const { data: rows, error } = await supabase
       .from("appointments")
       .select("*, appointment_services(*), patients(email)")
-      .in("status", ["pendiente", "confirmada"])
+      .eq("status", "confirmada")
       .is("reminder_sent_at", null)
       .gte("starts_at", from)
       .lte("starts_at", to);

@@ -17,14 +17,33 @@ import {
   clinicToday,
   displayName,
   isNuevo,
+  servicesSummary,
   type PanelAppointment,
 } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonCards, SkeletonKpis } from "../components/Skeleton";
-import PanelAppointmentCard from "./PanelAppointmentCard";
+import AgendaTodayRow from "./AgendaTodayRow";
 
-function servicesSummary(a: PanelAppointment): string {
-  return a.appointment_services.map((i) => i.service_name).join(", ");
+/** " · 3 confirmadas · 2 pendientes" — counts per status, skipping zeros. */
+function statusCountsSummary(list: PanelAppointment[]): string {
+  const counts = new Map<string, number>();
+  for (const a of list) {
+    counts.set(a.status, (counts.get(a.status) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([status, n]) => {
+      const label = STATUS_LABELS[status].toLowerCase();
+      const plural =
+        n > 1
+          ? label === "no asistió"
+            ? "no asistieron"
+            : label.includes(" ")
+              ? label
+              : `${label}s`
+          : label;
+      return ` · ${n} ${plural}`;
+    })
+    .join("");
 }
 
 const CHIP_DOW = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
@@ -267,9 +286,14 @@ export default function Dashboard() {
 
       <section className="dash-grid wide">
         <div className="card">
-          <div className="chart-head">
-            <h3>Agenda de hoy</h3>
-            <span className="muted">{todayLong}</span>
+          <div className="chart-head agenda-head">
+            <div>
+              <h3>Agenda de hoy</h3>
+              <div className="muted agenda-date">{todayLong}</div>
+            </div>
+            <Link className="agenda-link" to="/panel/agenda">
+              Ver agenda →
+            </Link>
           </div>
           {citasHoy.length === 0 ? (
             <>
@@ -301,15 +325,32 @@ export default function Dashboard() {
               )}
             </>
           ) : (
-            <div className="appt-list">
-              {citasHoy.map((a) => (
-                <PanelAppointmentCard
-                  key={a.id}
-                  appt={a}
-                  onChanged={() => void reload()}
-                />
-              ))}
-            </div>
+            <>
+              <ul className="agenda-rows">
+                {[...citasHoy]
+                  .sort((a, b) => a.start_time.localeCompare(b.start_time))
+                  .map((a) => (
+                    <AgendaTodayRow key={a.id} appt={a} />
+                  ))}
+              </ul>
+              <div className="agenda-foot">
+                <span>
+                  <strong>
+                    {citasHoy.length}{" "}
+                    {citasHoy.length === 1 ? "cita" : "citas"}
+                  </strong>
+                  {statusCountsSummary(citasHoy)}
+                </span>
+                <span>
+                  Total del día{" "}
+                  <strong>
+                    {formatPrice(
+                      citasHoy.reduce((s, a) => s + a.total_price, 0),
+                    )}
+                  </strong>
+                </span>
+              </div>
+            </>
           )}
         </div>
 

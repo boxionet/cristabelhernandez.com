@@ -1,11 +1,11 @@
 import {
   FiArrowRight,
   FiCalendar,
+  FiCheckCircle,
   FiClock,
-  FiCreditCard,
   FiTag,
 } from "react-icons/fi";
-import { formatDateShortEs, formatPrice } from "../lib/format";
+import { formatDateShortEs } from "../lib/format";
 import {
   useAppointments,
   useServicesCatalog,
@@ -16,7 +16,6 @@ interface Aggregate {
   name: string;
   times: number;
   lastDate: string;
-  spent: number;
   duration: number | null;
 }
 
@@ -39,21 +38,19 @@ export default function Tratamientos() {
         name: item.service_name,
         times: 0,
         lastDate: appt.date,
-        spent: 0,
         duration: item.service_id
           ? (durationById.get(item.service_id) ?? null)
           : null,
       };
       agg.times += item.quantity;
       if (appt.date > agg.lastDate) agg.lastDate = appt.date;
-      agg.spent += item.unit_price * item.quantity;
       byService.set(item.service_name, agg);
     }
   }
   const list = [...byService.values()].sort((a, b) =>
     b.lastDate.localeCompare(a.lastDate),
   );
-  const totalSpent = list.reduce((s, t) => s + t.spent, 0);
+  const totalSessions = list.reduce((s, t) => s + t.times, 0);
 
   return (
     <>
@@ -73,11 +70,11 @@ export default function Tratamientos() {
         <section className="treat-summary">
           <div className="card kpi kpi-flex">
             <span className="kpi-ic">
-              <FiCreditCard aria-hidden />
+              <FiCheckCircle aria-hidden />
             </span>
             <span>
-              <span className="kpi-value">{formatPrice(totalSpent)}</span>
-              <span className="kpi-label">Invertido en tus tratamientos</span>
+              <span className="kpi-value">{totalSessions}</span>
+              <span className="kpi-label">Sesiones en total</span>
             </span>
           </div>
           <div className="card kpi kpi-flex">
@@ -116,10 +113,6 @@ export default function Tratamientos() {
               )}
             </div>
             <div className="treat2-foot">
-              <span className="treat2-spent">
-                <span className="treat2-spent-l">Total invertido</span>
-                <span className="treat2-spent-v">{formatPrice(t.spent)}</span>
-              </span>
               <a className="btn ghost" href="/reservar/">
                 Reservar de nuevo <FiArrowRight aria-hidden />
               </a>

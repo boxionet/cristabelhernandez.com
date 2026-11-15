@@ -251,10 +251,15 @@
   gap: 1.1rem;
   align-items: start;
 }
+.agenda-day {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .agenda-day .day-title {
   color: var(--heading);
   font-size: 1.05rem;
-  margin-bottom: 0.7rem;
+  margin-bottom: 0;
 }
 
 
@@ -379,6 +384,14 @@
 .inline-reschedule input {
   padding: 0.4rem 0.5rem;
 }
+/* The date picker trigger packs to its label inside tight rows
+   (inline reschedule, promo date cells, add-form date fields)
+   instead of forcing its 210px desktop minimum. */
+.inline-reschedule .datepicker-btn,
+.promo-dates .datepicker-btn,
+.add-field.date .datepicker-btn {
+  min-width: 0;
+}
 
 /* ---------- Panel appointment card (shared: Citas / Agenda / Historial) ---------- */
 .appt2-head {
@@ -436,6 +449,17 @@
   margin-top: 0.15rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+.appt2-vence {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+/* Pills with a short label (appointment card headline): the short
+   label shows only on narrow screens, where the full one squeezes
+   the headline. */
+.pill-short {
+  display: none;
 }
 .appt2-items {
   list-style: none;
@@ -569,6 +593,14 @@
   .appt2-head {
     gap: 0.75rem;
   }
+  /* The headline pill keeps its place but shows the short label
+     ("Por verificar"), so it stops squeezing the patient name. */
+  .appt2-head .pill-full {
+    display: none;
+  }
+  .appt2-head .pill-short {
+    display: inline;
+  }
   .datechip {
     width: 56px;
     border-radius: 12px;
@@ -642,11 +674,20 @@
   font-weight: 500;
   color: var(--ink);
   cursor: pointer;
+  /* Only the checkbox + its text is clickable. Labels are block
+     level by default, so without this the box spans the full row
+     width and a tap on empty space at the right still toggles the
+     checkbox (Horario "Cerrado todo el día", 2026-11-15). */
+  width: fit-content;
+  max-width: 100%;
 }
 .check-label input {
   width: 1.05rem;
   height: 1.05rem;
-  accent-color: var(--heading);
+  flex-shrink: 0;
+  /* Sage green when checked, matching the Panel's primary buttons
+     (was var(--heading), near-black). */
+  accent-color: var(--sage);
 }
 .qty-input {
   width: 70px;
@@ -689,6 +730,11 @@
 @media (max-width: 900px) {
   .kpis.four {
     grid-template-columns: 1fr 1fr;
+  }
+  /* Four KPIs stay a 2x2 grid: the shared rule that stretches the
+     last KPI full-width is for 3-KPI grids only. */
+  .kpis.four .kpi:last-child {
+    grid-column: auto;
   }
   .dash-grid {
     grid-template-columns: 1fr;
@@ -818,6 +864,45 @@
   display: none; /* desktop uses the sidebar's sign-out */
 }
 
+/* Notification bell (Panel topbar, left of the identity chip). */
+.notification-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 0.6rem;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.notification-bell:hover {
+  color: var(--ink);
+  border-color: #9ca3af;
+}
+.notification-bell svg {
+  width: 19px;
+  height: 19px;
+}
+.notification-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+}
+
 @media (max-width: 1150px) {
   .agenda-layout {
     grid-template-columns: 1fr;
@@ -888,6 +973,10 @@
   }
   .kpis.four .kpi {
     padding: 0.9rem;
+  }
+  /* Dashboard: tighter bar chart on phones. */
+  .bars {
+    gap: 0.35rem;
   }
 }
 
@@ -975,6 +1064,142 @@
 .agenda-empty svg {
   color: var(--sage);
   font-size: 1.1rem;
+}
+
+/* Agenda de hoy: compact timeline rows (user feedback 2026-11-12).
+   One row per appointment instead of the full card, so a day with
+   5–10 citas stays glanceable. The full card is untouched in Citas,
+   Agenda and Historial. */
+.agenda-head {
+  align-items: flex-start;
+}
+.agenda-date {
+  font-size: 0.88rem;
+  margin-top: 0.15rem;
+}
+.agenda-link {
+  color: var(--sage-deep);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-top: 0.2rem;
+}
+.agenda-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.agenda-rows > li {
+  border-bottom: 1px solid #f2f3ec;
+}
+.agenda-rows > li:last-child {
+  border-bottom: none;
+}
+.agenda-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.9rem;
+  padding: 0.7rem 0.2rem;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;
+}
+.agenda-row:hover {
+  background: #fafaf7;
+}
+.agenda-time {
+  width: 64px;
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}
+.agenda-time .start {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--heading);
+  white-space: nowrap;
+}
+.agenda-time .end {
+  font-size: 0.76rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.agenda-bar {
+  width: 3px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: #d1d5db;
+}
+.agenda-bar.confirmada {
+  background: var(--sage);
+}
+.agenda-bar.pendiente,
+.agenda-bar.por_confirmar {
+  background: #f59e0b;
+}
+.agenda-bar.cancelada,
+.agenda-bar.no_show {
+  background: var(--danger);
+}
+.agenda-main {
+  flex: 1;
+  min-width: 0;
+}
+.agenda-name {
+  font-weight: 700;
+  color: var(--heading);
+  font-size: 0.95rem;
+}
+.agenda-name .ref {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-left: 0.35rem;
+}
+.agenda-services {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agenda-services .vence {
+  color: #b45309;
+  font-weight: 600;
+}
+.agenda-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+.agenda-amount {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--heading);
+  white-space: nowrap;
+}
+.agenda-chevron {
+  color: #c3c8bd;
+  font-size: 1.1rem;
+  align-self: center;
+  flex-shrink: 0;
+}
+.agenda-foot {
+  border-top: 1px solid #eceee6;
+  margin-top: 0.6rem;
+  padding-top: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.agenda-foot strong {
+  color: var(--heading);
 }
 .appt-list {
   display: flex;
@@ -1118,6 +1343,12 @@
   padding-top: 1.05rem;
   border-top: 1px solid #eef0ea;
 }
+/* Breathing room between the form rows: the "Cerrado todo el día"
+   checkbox used to sit flush against the "Agregar día especial"
+   button, so a tap meant for the checkbox could hit the button. */
+.spec-form > * + * {
+  margin-top: 1rem;
+}
 
 /* Clientes: search bar + client cards */
 .search-bar {
@@ -1250,12 +1481,14 @@
   color: var(--heading);
 }
 
-/* Servicios: compact add row (button sized to its label) */
+/* Servicios: compact add row (button sized to its label). Wraps by
+   default so the add forms never overflow their card on tablets:
+   on wide screens the fields still sit on one line. */
 .add-row {
   display: flex;
   gap: 0.9rem;
   align-items: flex-end;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .add-field {
   display: flex;
@@ -1275,6 +1508,167 @@
 .add-row .btn {
   flex-shrink: 0;
 }
+/* Add forms (Servicios, Promociones): every control in the row shares
+   the input metrics, so labels, boxes and button line up exactly —
+   the date trigger fills its field and matches input height. */
+.add-field .datepicker-btn {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  font-size: 1rem;
+}
+.add-row .btn {
+  padding: 0.65rem 1.1rem;
+  font-size: 1rem;
+  border-radius: 10px;
+}
+/* Servicios: description textareas — same treatment as the other
+   Panel inputs. The editor one lives inside the existing name cell
+   so the catalog table keeps its columns. */
+.add-field textarea,
+.desc-input {
+  border: 1px solid #d7dccd;
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  width: 100%;
+}
+.desc-input {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  min-width: 220px;
+}
+
+/* Servicios: status filter + instant switch (user feedback 2026-11-12).
+   Top-aligned cells so the price, Desde, minutes, switch and row top
+   all share one baseline instead of floating mid-row against the tall
+   description box. */
+/* Servicios: the catalog table is wider than the card on narrow
+   desktop windows (fixed-width inputs + the switch column), so it
+   scrolls inside the card instead of spilling past its edge. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.services-table td {
+  vertical-align: top;
+}
+.service-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.8rem 0;
+}
+.filter-chip {
+  border: 1px solid #d7dccd;
+  background: #fff;
+  color: #4b5563;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filter-chip.active {
+  background: var(--sage-deep);
+  border-color: var(--sage-deep);
+  color: #fff;
+}
+.filter-chip .n {
+  opacity: 0.7;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+.catsep {
+  color: var(--muted);
+  font-weight: 400;
+}
+.etiqueta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.etiqueta-row .note-input {
+  margin-top: 0;
+}
+.tag-inactive {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #e8e8e8;
+  color: #555;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.switch-cell {
+  display: flex;
+  align-items: center;
+  padding-top: 0.55rem;
+}
+.switch {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.switch .track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #d1d5db;
+  transition: background 0.2s;
+}
+.switch .knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: left 0.2s;
+}
+.switch.on .track {
+  background: var(--sage);
+}
+.switch.on .knob {
+  left: 23px;
+}
+.switch:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+.switch:focus-visible {
+  outline: 2px solid var(--sage-deep);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+.state-word {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-left: 0.6rem;
+  white-space: nowrap;
+}
+.save-caption {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+.save-caption.error {
+  color: var(--danger);
+}
+.add-row + .add-row {
+  margin-top: 0.9rem;
+}
 @media (max-width: 640px) {
   .add-row {
     flex-wrap: wrap;
@@ -1290,4 +1684,130 @@
   .spec-row {
     gap: 0.75rem;
   }
+  /* Dashboard agenda rows: the amount + status pill drop to their
+     own right-aligned line instead of crushing the patient name,
+     and the chevron hides. Card headers wrap the same way. */
+  .agenda-row {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .agenda-main {
+    flex: 1 1 170px;
+  }
+  .agenda-right {
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+  }
+  .agenda-right .pill {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+  }
+  .agenda-chevron {
+    display: none;
+  }
+  .chart-head {
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+  }
+}
+
+/* Promociones (2026-11-13): same self-saving catalog pattern as
+   Tratamientos. The code is display-only (never editable); the
+   percent, validity dates and use limit save on blur. */
+.promo-table td {
+  vertical-align: middle;
+}
+.promo-table .switch-cell {
+  padding-top: 0;
+}
+/* Percent and uses cells keep their parts on one centered line:
+   the % never drops below its box, and "1 de" centers on the box. */
+.pct-wrap,
+.uses-wrap {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.pct-wrap .num-input {
+  width: 72px;
+}
+.promo-code {
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.pct-suffix {
+  color: var(--muted);
+  margin-left: 0.3rem;
+  font-weight: 600;
+}
+.promo-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.date-input {
+  width: 148px;
+  padding: 0.55rem 0.6rem;
+  font-size: 0.9rem;
+}
+.date-sep {
+  color: var(--muted);
+}
+.uses-count {
+  font-weight: 600;
+}
+.uses-of {
+  color: var(--muted);
+  margin: 0 0.3rem;
+}
+.uses-input {
+  width: 122px;
+}
+.add-field.date {
+  flex: 1 1 190px;
+}
+@media (max-width: 640px) {
+  .add-field.date {
+    flex: 1 1 140px;
+  }
+}
+
+/* Promo breakdown on the Panel appointment card (2026-11-13): the
+   subtotal and the code chip sit above the existing total row,
+   which keeps showing the final amount. */
+.appt2-promo {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.appt2-promo .promo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.appt2-promo .promo-amount {
+  font-weight: 600;
+  color: var(--sage-deep);
+  white-space: nowrap;
+}
+.promo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--sage-tint);
+  color: var(--sage-deep);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.promo-chip svg {
+  flex-shrink: 0;
 }

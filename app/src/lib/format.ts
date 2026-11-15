@@ -62,6 +62,53 @@ export function formatDateShortEs(dateISO: string): string {
   return `${d} ${MONTHS_SHORT[m - 1]} ${y}`;
 }
 
+// Phone display, shared everywhere a phone number is shown: NANP
+// (+1) numbers only, formatted as "+1 (829) 316-3313" or
+// "(829) 316-3313". Safe on any stored value — digits are re-derived,
+// so an already-formatted number comes back unchanged.
+export function formatPhoneNumber(value: string): string {
+  const cleaned = value.replace(/[^\d+]/g, "");
+  if (cleaned.startsWith("+")) {
+    const digits = cleaned.slice(1).replace(/\D/g, "");
+    if (digits.length <= 1) return "+" + digits;
+    if (digits.length <= 4) return "+" + digits.slice(0, 1) + " (" + digits.slice(1);
+    if (digits.length <= 7) {
+      return "+" + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " + digits.slice(4);
+    }
+    return (
+      "+" + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " +
+      digits.slice(4, 7) + "-" + digits.slice(7, 11)
+    );
+  }
+  const digits = cleaned.replace(/\D/g, "");
+  if (digits.startsWith("1") && digits.length > 1) {
+    const countryCode = digits.slice(0, 1);
+    const areaCode = digits.slice(1, 4);
+    const exchange = digits.slice(4, 7);
+    const line = digits.slice(7, 11);
+    if (digits.length <= 1) return "+" + countryCode;
+    if (digits.length <= 4) return "+" + countryCode + " (" + areaCode;
+    if (digits.length <= 7) return "+" + countryCode + " (" + areaCode + ") " + exchange;
+    return "+" + countryCode + " (" + areaCode + ") " + exchange + "-" + line;
+  }
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return "(" + digits.slice(0, 3) + ") " + digits.slice(3);
+  return "(" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6, 10);
+}
+
+// Phone validation: NANP (+1) numbers only; valid means exactly 10
+// digits (after the country code when present). Shared by the datos
+// form, the revision submit, and the revision route guard.
+export function isValidPhoneNumber(value: string): boolean {
+  const cleaned = value.replace(/[^\d+]/g, "");
+  const allDigits = cleaned.replace(/\D/g, "");
+  if (cleaned.startsWith("+")) {
+    if (allDigits.startsWith("1")) return allDigits.slice(1).length === 10;
+    return false;
+  }
+  return allDigits.length === 10;
+}
+
 export function capitalizeFirst(s: string): string {
   return s.replace(/^./, (c) => c.toUpperCase());
 }
@@ -101,13 +148,46 @@ export function formatTime12h(hhmmss: string): string {
   return `${h}:${mRaw} ${suffix}`;
 }
 
+/** '2026-11-13T19:00:00+00:00' -> '13 nov 2026, 3:00 PM' (clinic timezone). */
+export function formatDateTimeShortEs(instantISO: string): string {
+  const date = formatDateShortEs(toClinicDateISO(instantISO));
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Santo_Domingo",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(new Date(instantISO));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${date}, ${get("hour")}:${get("minute")} ${get("dayPeriod")}`;
+}
+
+/** '2026-11-13T19:00:00+00:00' -> '3:00 PM' (clinic timezone). */
+export function formatTimeShortEs(instantISO: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Santo_Domingo",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(new Date(instantISO));
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+  return `${get("hour")}:${get("minute")} ${get("dayPeriod")}`;
+}
+
 export const STATUS_LABELS: Record<string, string> = {
-  por_confirmar: "Por confirmar",
+  por_confirmar: "Esperando verificación",
   pendiente: "Pendiente",
   confirmada: "Confirmada",
   completada: "Completada",
   cancelada: "Cancelada",
   no_show: "No asistió",
+};
+
+// Short labels for narrow screens, where the full "Esperando
+// verificación" pill squeezes the card headline. Only the long label
+// differs; the rest stay identical.
+export const STATUS_LABELS_SHORT: Record<string, string> = {
+  ...STATUS_LABELS,
+  por_confirmar: "Por verificar",
 };
 
 // Patient self-service window (settled: 24 hours before the start).

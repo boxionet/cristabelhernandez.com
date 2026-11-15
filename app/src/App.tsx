@@ -16,8 +16,26 @@ import Dashboard from "./panel/Dashboard";
 import Horario from "./panel/Horario";
 import NuevaCita from "./panel/NuevaCita";
 import PanelLayout from "./panel/PanelLayout";
+import PorConfirmar from "./panel/PorConfirmar";
+import Promociones from "./panel/Promociones";
 import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
+import BookingLayout from "./booking/BookingLayout";
+import ReservarStart from "./booking/ReservarStart";
+import TratamientosStep from "./booking/Tratamientos";
+import FechaHora from "./booking/FechaHora";
+import Verificar from "./booking/Verificar";
+import Datos from "./booking/Datos";
+import Revision from "./booking/Revision";
+import Confirmacion from "./booking/Confirmacion";
+import {
+  RequireBookingConfirmation,
+  RequireBookingCustomerType,
+  RequireBookingDateTime,
+  RequireBookingIdentity,
+  RequireBookingRevision,
+  RequireBookingServices,
+} from "./booking/guards";
 import { SkeletonShell } from "./components/Skeleton";
 import { profileComplete } from "./lib/profile";
 
@@ -141,6 +159,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="citas" element={<Citas />} />
+          <Route path="por-confirmar" element={<PorConfirmar />} />
           <Route path="pacientes" element={<Clientes />} />
           <Route path="pacientes/:id" element={<ClienteDetalle />} />
           <Route
@@ -149,9 +168,76 @@ export default function App() {
           />
           <Route path="clientes/:id" element={<ClienteRedirect />} />
           <Route path="nueva-cita" element={<NuevaCita />} />
-          <Route path="servicios" element={<ServiciosPanel />} />
+          <Route path="tratamientos" element={<ServiciosPanel />} />
+          {/* Old catalog URL: keep it working for anyone holding it. */}
+          <Route
+            path="servicios"
+            element={<Navigate to="/panel/tratamientos" replace />}
+          />
+          <Route path="promociones" element={<Promociones />} />
           <Route path="horario" element={<Horario />} />
           <Route path="reportes" element={<Reportes />} />
+        </Route>
+        {/* Public booking flow (Phase 3 React migration): same URLs
+            the static pages used, served by the Netlify redirect to
+            this app. No auth gate — guests book without an account. */}
+        <Route path="/reservar" element={<BookingLayout />}>
+          <Route index element={<ReservarStart />} />
+          <Route
+            path="tratamientos"
+            element={
+              <RequireBookingCustomerType>
+                <TratamientosStep />
+              </RequireBookingCustomerType>
+            }
+          />
+          {/* Old step URL: keep it working for anyone holding it. */}
+          <Route
+            path="servicios"
+            element={<Navigate to="/reservar/tratamientos" replace />}
+          />
+          <Route
+            path="fecha-hora"
+            element={
+              <RequireBookingServices>
+                <FechaHora />
+              </RequireBookingServices>
+            }
+          />
+          <Route
+            path="verificar"
+            element={
+              <RequireBookingDateTime>
+                <Verificar />
+              </RequireBookingDateTime>
+            }
+          />
+          <Route
+            path="datos"
+            element={
+              <RequireBookingDateTime>
+                <RequireBookingIdentity>
+                  <Datos />
+                </RequireBookingIdentity>
+              </RequireBookingDateTime>
+            }
+          />
+          <Route
+            path="revision"
+            element={
+              <RequireBookingRevision>
+                <Revision />
+              </RequireBookingRevision>
+            }
+          />
+          <Route
+            path="confirmacion"
+            element={
+              <RequireBookingConfirmation>
+                <Confirmacion />
+              </RequireBookingConfirmation>
+            }
+          />
         </Route>
         <Route path="*" element={<Navigate to="/mi-cuenta" replace />} />
       </Routes>

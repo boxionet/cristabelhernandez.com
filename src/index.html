@@ -28,6 +28,9 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 
     <!-- FAQ accordion (CodeStitch #1741) -->
     <script defer src="/assets/js/faq.js"></script>
+
+    <!-- Face explorer: hotspots por zona (Mujer/Hombre) -->
+    <script defer src="/assets/js/face-explorer.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -44,7 +47,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     <p class="cs-text">
                         En nuestro centro estético en Puerto Plata cuidamos tu piel y tu figura con tratamientos seguros, tecnología moderna y atención personalizada.
                     </p>
-                    <a href="/reservar/" class="cs-button-solid">Reserva tu cita</a>
+                    <div class="cs-button-box">
+                        <a href="/reservar/" class="cs-button-solid">Reserva tu cita</a>
+                        <a href="#services-2437" class="cs-button-outline">Ver tratamientos</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -147,6 +153,12 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
             <a href="/tratamientos/" class="cs-button-solid">Ver todos los tratamientos</a>
         </div>
     </section>
+
+    <!-- ============================================ -->
+    <!--               Face Explorer                  -->
+    <!-- ============================================ -->
+
+    {% include "sections/face-explorer.html" %}
 
     <!-- ============================================ -->
     <!--                Side By Side                  -->

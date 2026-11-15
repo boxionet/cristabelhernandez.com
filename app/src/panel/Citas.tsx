@@ -16,7 +16,7 @@ import { SkeletonCards } from "../components/Skeleton";
 
 const STATUS_FILTERS = [
   { key: "todas", label: "Todas" },
-  { key: "por_confirmar", label: "Por confirmar" },
+  { key: "por_confirmar", label: "Esperando verificación" },
   { key: "pendiente", label: "Pendientes" },
   { key: "confirmada", label: "Confirmadas" },
   { key: "completada", label: "Completadas" },
@@ -42,6 +42,8 @@ export default function Citas() {
       const haystack = [
         displayName(a),
         displayContact(a),
+        a.patients?.phone ?? "",
+        a.guest_phone ?? "",
         a.reference_code,
         a.guest_email ?? "",
       ]
@@ -108,14 +110,18 @@ export default function Citas() {
         </section>
       )}
 
-      {filtered.map((a) => (
-        <PanelAppointmentCard
-          key={a.id}
-          appt={a}
-          onChanged={() => void reload()}
-          showContact
-        />
-      ))}
+      {filtered.length > 0 && (
+        <div className="appt-list">
+          {filtered.map((a) => (
+            <PanelAppointmentCard
+              key={a.id}
+              appt={a}
+              onChanged={() => void reload()}
+              showContact
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 }

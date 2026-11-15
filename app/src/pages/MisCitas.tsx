@@ -1,6 +1,6 @@
-import { FiCalendar, FiCheckCircle, FiCreditCard } from "react-icons/fi";
+import { FiActivity, FiCalendar, FiCheckCircle } from "react-icons/fi";
 import AppointmentCard from "../components/AppointmentCard";
-import { formatPrice, isUpcoming } from "../lib/format";
+import { clinicTodayISO, isUpcoming } from "../lib/format";
 import { useAppointments } from "../lib/queries/patientQueries";
 import { SkeletonCards, SkeletonKpis } from "../components/Skeleton";
 
@@ -18,7 +18,12 @@ export default function MisCitas() {
 
   const upcoming = rows.filter(isUpcoming);
   const completed = rows.filter((r) => r.status === "completada");
-  const invested = completed.reduce((sum, r) => sum + r.total_price, 0);
+  // Progress, not money: the patient sees how much care she has kept
+  // up this year — never an accumulated total spent.
+  const thisYear = clinicTodayISO().slice(0, 4);
+  const sessionsThisYear = completed.filter((r) =>
+    r.date.startsWith(thisYear),
+  ).length;
   const next = upcoming[0];
   const rest = next ? upcoming.slice(1) : upcoming;
 
@@ -45,11 +50,11 @@ export default function MisCitas() {
         </div>
         <div className="card kpi kpi-flex">
           <span className="kpi-ic">
-            <FiCreditCard aria-hidden />
+            <FiActivity aria-hidden />
           </span>
           <span>
-            <span className="kpi-value">{formatPrice(invested)}</span>
-            <span className="kpi-label">Total invertido en ti</span>
+            <span className="kpi-value">{sessionsThisYear}</span>
+            <span className="kpi-label">Sesiones este año</span>
           </span>
         </div>
       </section>

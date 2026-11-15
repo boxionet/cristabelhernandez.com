@@ -4,8 +4,9 @@
 // This layer validates input, resolves the caller's identity, maps
 // database errors to API errors, and sends the emails.
 const { serviceClient, getAuthUser, isVerified, json, siteOrigin } = require("./_booking/supabase");
-const { sendNewBookingEmails } = require("./_booking/email");
+const { sendOwnerBookingAlert, sendPatientVerificationEmail } = require("./_booking/email");
 const { verifyRecaptcha } = require("./_booking/captcha");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 const { clinicNow } = require("./_booking/time");
 const { randomUUID } = require("crypto");
 
@@ -26,12 +27,18 @@ function validate(body) {
   }
   const today = clinicNow().dateISO;
   if (body.date < today) return "date_in_past";
+  if (body.promoCode != null) {
+    const code = String(body.promoCode).trim();
+    if (code.length === 0 || code.length > 32) return "bad_promo";
+  }
   return null;
 }
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "method_not_allowed" });
   try {
+    const throttle = await checkRateLimit(event, "booking-create", 10);
+    if (!throttle.allowed) return rateLimited(throttle.resetAfter);
     const body = JSON.parse(event.body || "{}");
     const invalid = validate(body);
     if (invalid) return json(400, { error: invalid });
@@ -78,6 +85,10 @@ exports.handler = async (event) => {
       p_auth_user_id: verified ? user.id : null,
       p_idempotency_key: body.idempotencyKey || randomUUID(),
       p_source: "web",
+      // Normalized here; the RPC validates the code (active, window,
+      // use cap) under a row lock and computes the discount.
+      p_promo_code:
+        body.promoCode != null ? String(body.promoCode).trim().toUpperCase() : null,
     });
 
     if (error) {
@@ -86,6 +97,10 @@ exports.handler = async (event) => {
         return json(400, { error: "unknown_service" });
       if (error.message && error.message.includes("invalid_items"))
         return json(400, { error: "bad_items" });
+      if (error.message && error.message.includes("invalid_promo"))
+        return json(400, { error: "invalid_promo" });
+      if (error.message && error.message.includes("promo_exhausted"))
+        return json(400, { error: "promo_exhausted" });
       console.error("create_booking failed", error);
       return json(500, { error: "create_failed" });
     }
@@ -125,12 +140,31 @@ exports.handler = async (event) => {
     const confirmUrl = appointment.confirmation_token
       ? `${origin}/.netlify/functions/booking-confirm?token=${appointment.confirmation_token}`
       : null;
-    const emailResults = await sendNewBookingEmails({
-      appointment,
-      items: items || [],
-      confirmUrl,
-      portalUrl: `${origin}/mi-cuenta/`,
-    });
+    // Verify-first: a guest hold sends ONLY the verification email to
+    // the patient — the clinic alert fires from booking-confirm once
+    // the email owner clicks the link. A verified booking skips
+    // verification, so its clinic alert fires now.
+    const emailResults = { owner: false, patient: false };
+    if (verified) {
+      emailResults.owner = await sendOwnerBookingAlert({
+        appointment,
+        items: items || [],
+        panelUrl: `${origin}/panel/`,
+        patientName: String(body.name).trim(),
+        patientEmail: email,
+        patientPhone: body.phone ? String(body.phone).trim() : null,
+        intro:
+          "Nueva cita desde la web (paciente verificada — pendiente de confirmación en el Panel).",
+      });
+    } else if (confirmUrl) {
+      emailResults.patient = await sendPatientVerificationEmail({
+        appointment,
+        items: items || [],
+        confirmUrl,
+        portalUrl: `${origin}/mi-cuenta/`,
+        to: email,
+      });
+    }
 
     return json(201, {
       referenceCode: appointment.reference_code,
