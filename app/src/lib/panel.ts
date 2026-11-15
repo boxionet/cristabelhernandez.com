@@ -72,6 +72,17 @@ export interface ExceptionRow {
   label: string | null;
 }
 
+/** ISO dates of full-day closures, for disabling days in Panel
+ * calendars. Short-hours exceptions stay enabled: the clinic is open
+ * those days, just on different hours. */
+export function closedDateSet(
+  exceptions: readonly ExceptionRow[],
+): ReadonlySet<string> {
+  return new Set(
+    exceptions.filter((e) => e.is_closed).map((e) => e.date),
+  );
+}
+
 export function clinicToday(): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Santo_Domingo",

@@ -28,6 +28,7 @@ export default function DatePicker({
   mode = "day",
   anchorRef,
   min,
+  disabledDates,
   clearable = false,
   ariaLabel,
 }: {
@@ -41,6 +42,9 @@ export default function DatePicker({
   anchorRef?: RefObject<HTMLElement | null>;
   /** Day-mode only: days before this ISO date cannot be picked. */
   min?: string;
+  /** Day-mode only: days in this set render greyed out and cannot be
+   * picked. */
+  disabledDates?: ReadonlySet<string>;
   /** Show a "Quitar fecha" action inside the popover (for optional date fields). */
   clearable?: boolean;
   /** Accessible label for the trigger button. */
@@ -152,6 +156,7 @@ export default function DatePicker({
               <MonthCalendar
                 value={value}
                 min={min}
+                disabledDates={disabledDates}
                 onPick={(iso) => {
                   onChange(iso);
                   setOpen(false);

@@ -43,16 +43,22 @@ export default function MonthCalendar({
   onPick,
   counts,
   min,
+  disabledDates,
 }: {
   value: string;
   onPick: (iso: string) => void;
   counts?: Record<string, number>;
   /** Days before this ISO date render dimmed and cannot be picked. */
   min?: string;
+  /** Days in this set (e.g. full-day closures) render greyed out and
+   * cannot be picked. */
+  disabledDates?: ReadonlySet<string>;
 }) {
   const today = clinicToday();
   const [month, setMonth] = useState((value || today).slice(0, 7));
   const cells = useMemo(() => monthCells(month), [month]);
+  const todayDisabled =
+    (min !== undefined && today < min) || (disabledDates?.has(today) ?? false);
 
   const pick = (d: string) => {
     onPick(d);
@@ -69,7 +75,7 @@ export default function MonthCalendar({
           <button
             type="button"
             className="btn ghost small"
-            disabled={min !== undefined && today < min}
+            disabled={todayDisabled}
             onClick={() => {
               setMonth(today.slice(0, 7));
               onPick(today);
@@ -104,7 +110,9 @@ export default function MonthCalendar({
         {cells.map((d) => {
           const n = counts?.[d] ?? 0;
           const inMonth = d.slice(0, 7) === month;
-          const disabled = min !== undefined && d < min;
+          const disabled =
+            (min !== undefined && d < min) ||
+            (disabledDates?.has(d) ?? false);
           return (
             <button
               key={d}

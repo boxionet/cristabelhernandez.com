@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { type ScheduleRow } from "../lib/panel";
+import { type ScheduleRow, closedDateSet } from "../lib/panel";
 import { formatDateLongEs, formatTime12h } from "../lib/format";
 import { usePanelData } from "../lib/queries/panelQueries";
 import DatePicker from "../components/DatePicker";
@@ -112,6 +112,13 @@ export default function Horario() {
   const [close, setClose] = useState("18:00");
   const [reason, setReason] = useState("");
 
+  // Dates already closed all day render greyed out in the picker and
+  // cannot be picked again; short-hours dates stay enabled.
+  const closedDates = useMemo(
+    () => closedDateSet(exceptions ?? []),
+    [exceptions],
+  );
+
   if (error) return <p className="error">{error}</p>;
   if (!schedule || !exceptions) return <SkeletonTable rows={7} />;
 
@@ -207,6 +214,7 @@ export default function Horario() {
               value={date}
               onChange={setDate}
               placeholder="Elige la fecha"
+              disabledDates={closedDates}
             />
           </div>
           <label>

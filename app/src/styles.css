@@ -1286,6 +1286,13 @@ input:disabled {
 .cal-day:disabled .cal-num {
   color: #d3d7dc;
 }
+/* A disabled day that is also the selected one keeps its circle shape
+   but greyed out, so it reads as "this day, closed" instead of a
+   sage circle with unreadable text. */
+.cal-day:disabled .cal-num.selected {
+  background: #e5e7eb;
+  color: #9aa1a9;
+}
 
 /* ---------- month grid picker (DatePicker month mode) ---------- */
 .monthgrid .mg-head {
