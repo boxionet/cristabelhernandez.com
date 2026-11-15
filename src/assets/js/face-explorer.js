@@ -23,21 +23,35 @@
     });
     var gender = 'mujer';
 
-    /* The hotspot pulse starts only once the section scrolls into view:
-       five infinite animations running during initial load cost ~3s of
-       LCP on throttled phones (PSI bisect, Nov 14 2026). */
+    /* The hotspot pulse starts only once the section is actually on
+       screen. Five infinite animations running during initial load cost
+       ~3s of mobile LCP (PSI bisect, Nov 14 2026). An IntersectionObserver
+       gate FAILED here: during a throttled load its first callback can
+       fire while the page is still in a transient pre-stylesheet layout,
+       adding the class permanently (preview-5 scored 78 with the observer
+       gate, 97 with no pulse rule at all). This scroll + settled-layout
+       check cannot fire spuriously: PageSpeed never scrolls, and real
+       users scroll to reach this below-fold section. The post-load check
+       covers hash/deep links, which jump straight to the section. */
     var section = document.getElementById('face-explorer');
-    if (section) {
-        if ('IntersectionObserver' in window) {
-            var io = new IntersectionObserver(function (entries) {
-                if (entries[0].isIntersecting) {
-                    section.classList.add('in-view');
-                    io.disconnect();
-                }
-            }, { threshold: 0.2 });
-            io.observe(section);
-        } else {
+    function sectionInView() {
+        if (!section) return false;
+        var r = section.getBoundingClientRect();
+        return r.top < window.innerHeight && r.bottom > 0;
+    }
+    function startPulse() {
+        if (!section || section.classList.contains('in-view')) return;
+        if (sectionInView()) {
             section.classList.add('in-view');
+            window.removeEventListener('scroll', startPulse);
+        }
+    }
+    if (section) {
+        window.addEventListener('scroll', startPulse);
+        if (document.readyState === 'complete') {
+            setTimeout(startPulse, 500);
+        } else {
+            window.addEventListener('load', function () { setTimeout(startPulse, 500); });
         }
     }
 
