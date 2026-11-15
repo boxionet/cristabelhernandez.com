@@ -1530,3 +1530,318 @@
     }
 }
 
+
+/*-- -------------------------- -->
+<---       Face Explorer        -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #face-explorer {
+        padding: var(--sectionPadding);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(1.5rem, 4vw, 2.25rem);
+        }
+
+        .cs-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: calc(640 / 16 * 1rem);
+        }
+
+        .face-stage {
+            width: 100%;
+            max-width: calc(560 / 16 * 1rem);
+        }
+
+        .face {
+            position: relative;
+            margin: 0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 18px 40px rgba(77, 63, 40, .12);
+            background: #d9b98f;
+        }
+
+        .face img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Both model photos are stacked <picture>s; the switch crossfades
+           between them on the same timing as the sliding pill and the dots. */
+        .face picture.photo {
+            transition: opacity .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .face picture.photo-mujer {
+            display: block;
+        }
+
+        .face picture.photo-hombre {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        .face picture.photo-hombre img {
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .face.show-hombre picture.photo-hombre {
+            opacity: 1;
+        }
+
+        .hotspot {
+            position: absolute;
+            z-index: 3;
+            width: 34px;
+            height: 34px;
+            margin: -17px 0 0 -17px;
+            padding: 0;
+            border: 2px solid rgba(255, 255, 255, .95);
+            border-radius: 50%;
+            background: transparent;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, .35);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: left .35s cubic-bezier(.4, 0, .2, 1), top .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .hotspot::before {
+            content: "";
+            position: absolute;
+            inset: 9px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+            transition: transform .25s ease, background .25s ease;
+        }
+
+        .hotspot::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, .95);
+            animation: pulse 2.2s ease-out infinite;
+            pointer-events: none;
+        }
+
+        .hotspot:hover::before {
+            transform: scale(1.15);
+        }
+
+        .hotspot:focus-visible {
+            outline: 3px solid var(--secondary);
+            outline-offset: 3px;
+        }
+
+        .hotspot[aria-expanded="true"] {
+            border-color: var(--secondary);
+        }
+
+        .hotspot[aria-expanded="true"]::before {
+            background: #3e4c35;
+            transform: scale(1.15);
+        }
+
+        .hotspot[aria-expanded="true"]::after {
+            animation: none;
+            opacity: 0;
+        }
+
+        .gender-switch {
+            position: absolute;
+            z-index: 4;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: rgba(255, 253, 249, .94);
+            border-radius: 999px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .22);
+        }
+
+        .gender-thumb {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            height: calc(100% - 8px);
+            width: 60px;
+            background: var(--primary);
+            border-radius: 999px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+            transition: transform .35s cubic-bezier(.4, 0, .2, 1), width .35s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .gender-switch button {
+            position: relative;
+            z-index: 1;
+            border: 0;
+            background: transparent;
+            color: var(--headerColor);
+            font: inherit;
+            font-size: .92rem;
+            font-weight: 700;
+            padding: .45rem 1.15rem;
+            border-radius: 999px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: color .25s ease;
+        }
+
+        .gender-switch button[aria-pressed="true"] {
+            color: #fff;
+        }
+
+        .gender-switch button:focus-visible {
+            outline: 3px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        .wires {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .35));
+        }
+
+        .wires line.draw {
+            animation: wireDraw .8s ease forwards;
+        }
+
+        .wires polygon.tip {
+            animation: tipIn .25s ease .7s both;
+        }
+
+        .pop {
+            position: absolute;
+            z-index: 6;
+            display: none;
+            width: 230px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 18px 44px rgba(0, 0, 0, .28);
+            padding: 1rem 1.15rem 1.05rem;
+        }
+
+        .pop.open {
+            animation: popIn .35s ease .65s both;
+        }
+
+        .pop h3 {
+            margin: 0 0 .4rem;
+            color: var(--headerColor);
+            font-size: 1.12rem;
+            line-height: 1.25;
+        }
+
+        .pop .desc {
+            margin: 0 0 .9rem;
+            font-size: .9rem;
+            line-height: 1.5;
+        }
+
+        .pop .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: .9rem;
+            padding: .55rem 1.1rem;
+            border-radius: 10px;
+            transition: background .2s ease;
+        }
+
+        .pop .btn:hover {
+            background: #3e4c35;
+        }
+
+        .more {
+            text-align: center;
+            margin: 0;
+        }
+
+        .more a {
+            color: #3e4c35;
+            font-weight: 600;
+            font-size: .98rem;
+        }
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: .95; }
+    70% { transform: scale(1.75); opacity: 0; }
+    100% { transform: scale(1.75); opacity: 0; }
+}
+
+@keyframes wireDraw {
+    from { stroke-dashoffset: var(--len); }
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes tipIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(.96) translateY(4px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #face-explorer {
+        .gender-thumb {
+            transition: none;
+        }
+
+        .hotspot {
+            transition: none;
+        }
+
+        .face picture.photo {
+            transition: none;
+        }
+
+        .hotspot::after {
+            animation: none;
+        }
+
+        .pop.open {
+            animation: none;
+        }
+
+        .wires line.draw,
+        .wires polygon.tip {
+            animation: none;
+        }
+
+        .hotspot::before,
+        .pop .btn {
+            transition: none;
+        }
+    }
+}
