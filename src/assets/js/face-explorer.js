@@ -30,6 +30,7 @@
        trickle in, and an un-gated idle callback would fire mid-load. */
     var hombreLoaded = false;
     function loadHombre() {
+        return; /* BISECT: hombre load disabled */
         if (hombreLoaded) return;
         hombreLoaded = true;
         Array.prototype.slice.call(photoHombre.querySelectorAll('source[data-srcset]')).forEach(function (s) {
