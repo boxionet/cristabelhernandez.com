@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
-import { FiEdit3 } from "react-icons/fi";
+import { FiEdit3, FiTag } from "react-icons/fi";
 import {
   formatDateLongEs,
   formatDateTimeShortEs,
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
+  STATUS_LABELS_SHORT,
 } from "../lib/format";
 import { displayContact, displayName, type PanelAppointment } from "../lib/panel";
 import AppointmentActions from "./AppointmentActions";
@@ -98,7 +99,8 @@ export default function PanelAppointmentCard({
           )}
         </div>
         <span className={`pill status-${appt.status}`}>
-          {STATUS_LABELS[appt.status]}
+          <span className="pill-full">{STATUS_LABELS[appt.status]}</span>
+          <span className="pill-short">{STATUS_LABELS_SHORT[appt.status]}</span>
         </span>
       </div>
 
@@ -115,6 +117,25 @@ export default function PanelAppointmentCard({
           </li>
         ))}
       </ul>
+
+      {appt.promo_code && (
+        <div className="appt2-promo">
+          <div className="promo-row">
+            <span>Subtotal</span>
+            <span>{formatPrice(appt.subtotal_price ?? appt.total_price)}</span>
+          </div>
+          <div className="promo-row">
+            <span className="promo-chip">
+              <FiTag aria-hidden />
+              {appt.promo_code}
+              {appt.discount_percent !== null && ` · −${appt.discount_percent}%`}
+            </span>
+            <span className="promo-amount">
+              −{formatPrice(appt.discount_amount ?? 0)}
+            </span>
+          </div>
+        </div>
+      )}
 
       <div className="appt2-money">
         <span className="appt2-total-label">

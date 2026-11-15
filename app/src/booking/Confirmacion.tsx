@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { consumeDraft } from "../store/slices/bookingSlice";
@@ -75,8 +75,10 @@ function formatExpiry(instantISO: string): string {
 interface CopyState {
   badge: string;
   title: string;
-  sub1: string;
-  sub2: string;
+  // Nodes, not strings: the reference code renders bold inside the
+  // copy so it is impossible to miss (user feedback 2026-11-13).
+  sub1: ReactNode;
+  sub2: ReactNode;
   showCard: boolean;
 }
 
@@ -101,12 +103,17 @@ export default function Confirmacion() {
   // Copy: the ?estado= link landing wins; then the fresh-submit
   // result; then the fetched status (a refresh after submitting).
   const copy: CopyState = useMemo(() => {
-    const refSuffix = ref ? ` (referencia ${ref})` : "";
+    const refBold = ref ? <strong>{ref}</strong> : null;
     if (estado === "confirmada") {
       return {
         badge: "Cita confirmada",
         title: "¡Tu cita está confirmada!",
-        sub1: `Tu cita quedó confirmada${refSuffix}. Te esperamos en el centro.`,
+        sub1: (
+          <>
+            Tu cita quedó confirmada{ref && <> (referencia {refBold})</>}. Te
+            esperamos en el centro.
+          </>
+        ),
         sub2: "Si necesitas cambiar o cancelar, entra a Mi Cuenta o responde al correo de tu cita.",
         showCard: true,
       };
@@ -115,7 +122,13 @@ export default function Confirmacion() {
       return {
         badge: "Pendiente de confirmación",
         title: "¡Gracias por verificar tu correo!",
-        sub1: `Tu cita${refSuffix} quedó registrada y pendiente de confirmación por el centro. Te enviaremos un correo cuando la doctora la confirme.`,
+        sub1: (
+          <>
+            Tu cita{ref && <> (referencia {refBold})</>} quedó registrada y
+            pendiente de confirmación por el centro. Te enviaremos un correo
+            cuando la doctora la confirme.
+          </>
+        ),
         sub2: "Si necesitas cambiar o cancelar, entra a Mi Cuenta o contáctanos.",
         showCard: true,
       };
@@ -140,16 +153,18 @@ export default function Confirmacion() {
     }
     const status = result?.status ?? summary?.status ?? null;
     if (status === "por_confirmar") {
-      const expiresAt =
-        result?.confirmationExpiresAt ?? summary?.confirmationExpiresAt ?? null;
-      const expiryText = expiresAt
-        ? ` Tienes hasta el ${formatExpiry(expiresAt)} para confirmarla.`
-        : "";
       return {
         badge: "Falta confirmar tu cita",
         title: "¡Tu cita está apartada!",
-        sub1: `Te enviamos un correo con el botón «Verificar mi correo». Tu espacio queda apartado solo hasta que verifiques tu correo.${expiryText}`,
-        sub2: `Referencia de tu cita: ${ref ?? result?.referenceCode ?? ""}. Si no verificas tu correo a tiempo, el espacio se libera automáticamente.`,
+        sub1: "Te enviamos un correo con el botón «Verificar mi correo». Tu espacio queda apartado solo hasta que verifiques tu correo.",
+        sub2: (
+          <>
+            Referencia de tu cita:{" "}
+            <strong>{ref ?? result?.referenceCode ?? ""}</strong>. Si no
+            verificas tu correo a tiempo, el espacio se libera
+            automáticamente.
+          </>
+        ),
         showCard: true,
       };
     }
@@ -157,7 +172,17 @@ export default function Confirmacion() {
       badge: "Pendiente de confirmación",
       title: "¡Tu cita fue recibida!",
       sub1: "Hemos recibido tu solicitud de cita. En breve nos pondremos en contacto contigo para confirmar la fecha y hora seleccionadas.",
-      sub2: `Hemos enviado un resumen de tu cita a tu correo electrónico.${ref ? ` Referencia de tu cita: ${ref}.` : ""}`,
+      sub2: (
+        <>
+          Hemos enviado un resumen de tu cita a tu correo electrónico.
+          {ref && (
+            <>
+              {" "}
+              Referencia de tu cita: <strong>{ref}</strong>.
+            </>
+          )}
+        </>
+      ),
       showCard: true,
     };
   }, [estado, ref, result, summary]);
@@ -166,6 +191,18 @@ export default function Confirmacion() {
   const cardLoading = showCard && lookup.isLoading;
   const cardFailed =
     showCard && !lookup.isLoading && (lookup.isError || summary === null);
+
+  // The verification deadline gets its own notice (user feedback
+  // 2026-11-13): it used to hide inside a paragraph. It shows only
+  // for an unverified hold — a ?estado= landing already resolved the
+  // verification one way or the other. The result carries the expiry
+  // on a fresh submit; the lookup carries it on a refresh.
+  const expiryAt =
+    result?.confirmationExpiresAt ?? summary?.confirmationExpiresAt ?? null;
+  const showExpiryNotice =
+    !estado &&
+    (result?.status ?? summary?.status) === "por_confirmar" &&
+    expiryAt !== null;
 
   const datetimeText = summary
     ? `${capitalizeFirst(formatDateEs(summary.date))} · ${formatTime12h(`${summary.startTime}:00`)}`
@@ -204,6 +241,15 @@ export default function Confirmacion() {
             <p className="confirmacion-subtitle">{copy.sub2}</p>
           </div>
 
+          {showExpiryNotice && expiryAt && (
+            <p className="confirmacion-expiry-notice" role="alert">
+              Tienes hasta el{" "}
+              <strong>{formatExpiry(expiryAt)}</strong> para verificar tu
+              correo. Si no lo haces a tiempo, el espacio se libera
+              automáticamente.
+            </p>
+          )}
+
           {showCard && cardLoading && (
             <p className="booking-cart-empty">Cargando el resumen de tu cita…</p>
           )}
@@ -228,6 +274,21 @@ export default function Confirmacion() {
                 <h2 className="confirmacion-summary-title">Resumen de tu cita</h2>
               </div>
               <div className="confirmacion-summary-body">
+                <div className="confirmacion-summary-row">
+                  <div className="confirmacion-summary-icon-col" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <line x1="7" y1="7" x2="7.01" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                  <div className="confirmacion-summary-info">
+                    <span className="confirmacion-summary-label">Referencia</span>
+                    <span className="confirmacion-summary-value confirmacion-summary-value--reference">
+                      {summary.referenceCode}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="confirmacion-summary-row">
                   <div className="confirmacion-summary-icon-col" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -297,6 +358,27 @@ export default function Confirmacion() {
                     <span className="confirmacion-summary-label">
                       {summary.totalIsEstimate ? "Total estimado" : "Total"}
                     </span>
+                    {summary.promoCode && (
+                      <div className="confirmacion-summary-breakdown">
+                        <span className="confirmacion-summary-breakdown-row">
+                          <span>Subtotal</span>
+                          <span>
+                            {formatPrice(
+                              summary.subtotalPrice ?? summary.totalPrice,
+                            )}
+                          </span>
+                        </span>
+                        <span className="confirmacion-summary-breakdown-row discount">
+                          <span>
+                            Descuento ({summary.promoCode}
+                            {summary.discountPercent !== null &&
+                              ` · −${summary.discountPercent}%`}
+                            )
+                          </span>
+                          <span>−{formatPrice(summary.discountAmount ?? 0)}</span>
+                        </span>
+                      </div>
+                    )}
                     <span className="confirmacion-summary-value confirmacion-summary-value--total">
                       {formatPrice(summary.totalPrice)}
                     </span>

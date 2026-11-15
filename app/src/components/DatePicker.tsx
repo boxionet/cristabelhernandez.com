@@ -27,6 +27,9 @@ export default function DatePicker({
   displayFormat,
   mode = "day",
   anchorRef,
+  min,
+  clearable = false,
+  ariaLabel,
 }: {
   value: string;
   onChange: (iso: string) => void;
@@ -36,6 +39,12 @@ export default function DatePicker({
   mode?: "day" | "month";
   /** Optional wider element the popover anchors to (e.g. a segmented control). */
   anchorRef?: RefObject<HTMLElement | null>;
+  /** Day-mode only: days before this ISO date cannot be picked. */
+  min?: string;
+  /** Show a "Quitar fecha" action inside the popover (for optional date fields). */
+  clearable?: boolean;
+  /** Accessible label for the trigger button. */
+  ariaLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
@@ -76,12 +85,24 @@ export default function DatePicker({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
+    // Close on any press outside the popover and its trigger. A
+    // document-level pointerdown is what makes this work on iOS:
+    // taps on the transparent backdrop div never produce a click
+    // event there, so the backdrop's onClick alone left the
+    // calendar stuck open on phones.
+    const onPointerDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (popRef.current?.contains(t) || btnRef.current?.contains(t)) return;
+      setOpen(false);
+    };
     const onMove = () => place();
     window.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("resize", onMove);
     window.addEventListener("scroll", onMove, true);
     return () => {
       window.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", onMove);
       window.removeEventListener("scroll", onMove, true);
     };
@@ -98,6 +119,7 @@ export default function DatePicker({
         ref={btnRef}
         type="button"
         className={`datepicker-btn${value ? "" : " placeholder"}`}
+        aria-label={ariaLabel}
         onClick={() => setOpen((o) => !o)}
       >
         <FiCalendar aria-hidden />
@@ -129,11 +151,25 @@ export default function DatePicker({
             ) : (
               <MonthCalendar
                 value={value}
+                min={min}
                 onPick={(iso) => {
                   onChange(iso);
                   setOpen(false);
                 }}
               />
+            )}
+            {clearable && value !== "" && (
+              <div className="datepicker-pop-foot">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange("");
+                    setOpen(false);
+                  }}
+                >
+                  Quitar fecha
+                </button>
+              </div>
             )}
           </div>
         </>

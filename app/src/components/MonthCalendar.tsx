@@ -42,10 +42,13 @@ export default function MonthCalendar({
   value,
   onPick,
   counts,
+  min,
 }: {
   value: string;
   onPick: (iso: string) => void;
   counts?: Record<string, number>;
+  /** Days before this ISO date render dimmed and cannot be picked. */
+  min?: string;
 }) {
   const today = clinicToday();
   const [month, setMonth] = useState((value || today).slice(0, 7));
@@ -66,6 +69,7 @@ export default function MonthCalendar({
           <button
             type="button"
             className="btn ghost small"
+            disabled={min !== undefined && today < min}
             onClick={() => {
               setMonth(today.slice(0, 7));
               onPick(today);
@@ -100,10 +104,12 @@ export default function MonthCalendar({
         {cells.map((d) => {
           const n = counts?.[d] ?? 0;
           const inMonth = d.slice(0, 7) === month;
+          const disabled = min !== undefined && d < min;
           return (
             <button
               key={d}
               type="button"
+              disabled={disabled}
               className={`cal-day${inMonth ? "" : " dim"}`}
               onClick={() => pick(d)}
             >

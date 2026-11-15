@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiMoreHorizontal, FiTrash2, FiXCircle } from "react-icons/fi";
 import {
+  clinicToday,
   confirmHold,
   displayName,
   markNoShow,
@@ -11,6 +12,7 @@ import {
 import { decideAppointment } from "../lib/api";
 import { formatDateEs, formatPrice, formatTime12h } from "../lib/format";
 import AppointmentServicesEditor from "./AppointmentServicesEditor";
+import DatePicker from "../components/DatePicker";
 import { useToast } from "../components/Toast";
 
 // Staff actions on one appointment. Direct RLS writes for the plain
@@ -223,7 +225,7 @@ export default function AppointmentActions({
 
       {rescheduling && (
         <span className="inline-reschedule">
-          <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+          <DatePicker value={newDate} onChange={setNewDate} min={clinicToday()} />
           <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
           <button type="button" className="btn primary small" disabled={busy} onClick={() => void saveReschedule()}>
             Guardar

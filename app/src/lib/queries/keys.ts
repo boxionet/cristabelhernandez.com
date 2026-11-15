@@ -7,6 +7,7 @@ export const panelKeys = {
   services: ["panel", "services"] as const,
   schedule: ["panel", "schedule"] as const,
   exceptions: ["panel", "exceptions"] as const,
+  promotions: ["panel", "promotions"] as const,
 };
 
 export const patientKeys = {

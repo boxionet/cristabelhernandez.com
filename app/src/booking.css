@@ -202,3 +202,156 @@
     font-size: 0.8rem;
   }
 }
+
+/* Promo code box in the cart (2026-11-13, migration 008): the input
+   + Aplicar row, the applied state (sage tint, matching the Panel
+   chip), and the error state when a code stops being usable for the
+   picked date. The box renders in the desktop sidebar and in the
+   mobile bottom panel, so the styles stay inside the cart's own
+   class namespace. */
+.booking-promo-box {
+  margin-top: 1rem;
+}
+.booking-promo-label {
+  display: block;
+  color: var(--booking-main-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.booking-promo-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.booking-promo-input {
+  border: 1px solid var(--booking-card-border);
+  border-radius: 0.5rem;
+  color: var(--booking-main-text);
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.875rem;
+  min-width: 0;
+  padding: 0.6rem 0.75rem;
+  text-transform: uppercase;
+}
+.booking-promo-input::placeholder {
+  text-transform: none;
+}
+.booking-promo-apply-btn {
+  background-color: var(--booking-primary-button);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--booking-primary-button-text);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+}
+.booking-promo-apply-btn:hover {
+  background-color: var(--booking-primary-button-hover);
+}
+.booking-promo-apply-btn:disabled {
+  background-color: var(--booking-disabled-background);
+  color: var(--booking-disabled-text);
+  cursor: not-allowed;
+}
+.booking-promo-apply-error {
+  color: var(--booking-error);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  margin-top: 0.5rem;
+}
+.booking-promo-applied,
+.booking-promo-error-box {
+  align-items: center;
+  border-radius: 0.6rem;
+  display: flex;
+  font-size: 0.875rem;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+}
+.booking-promo-applied {
+  background-color: #eef2e8;
+  color: #3e4c35;
+}
+.booking-promo-applied-text {
+  align-items: center;
+  display: flex;
+  font-weight: 600;
+  gap: 0.45rem;
+}
+.booking-promo-applied-text svg {
+  flex-shrink: 0;
+}
+.booking-promo-error-box {
+  background-color: #fbeae9;
+  color: #b3261e;
+}
+.booking-promo-error-text {
+  font-weight: 600;
+  line-height: 1.4;
+}
+.booking-promo-remove {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+  padding: 0;
+}
+.booking-cart-row--discount {
+  color: #3e4c35;
+  font-weight: 600;
+}
+.booking-cart-bottom-panel-total.booking-cart-row--discount {
+  color: #3e4c35;
+  font-weight: 600;
+}
+
+/* Confirmation page: bold reference + verification deadline
+   (user feedback 2026-11-13). The reference used to hide inside a
+   muted paragraph; it now renders bold in the copy, as the first
+   row of the summary card, and the deadline gets its own notice
+   box instead of a sentence inside the paragraph. */
+#booking-confirmacion .confirmacion-subtitle strong {
+  color: var(--booking-main-text);
+  font-weight: 700;
+}
+#booking-confirmacion .confirmacion-expiry-notice {
+  background-color: #fff8ec;
+  border: 1px solid #e8d9bc;
+  border-radius: 0.625rem;
+  color: var(--booking-main-text);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0.875rem 1.25rem;
+  text-align: center;
+  width: 100%;
+}
+#booking-confirmacion .confirmacion-summary-value--reference {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+#booking-confirmacion .confirmacion-summary-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0.25rem 0 0.35rem;
+}
+#booking-confirmacion .confirmacion-summary-breakdown-row {
+  color: var(--booking-secondary-text);
+  display: flex;
+  font-size: 0.85rem;
+  font-weight: 400;
+  justify-content: space-between;
+}
+#booking-confirmacion .confirmacion-summary-breakdown-row.discount {
+  color: #3e4c35;
+  font-weight: 600;
+}

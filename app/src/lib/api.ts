@@ -143,6 +143,7 @@ export interface CreateBookingPayload {
   startTime: string; // HH:MM (24h)
   idempotencyKey: string;
   captchaToken?: string | null;
+  promoCode?: string | null;
 }
 
 export interface CreateBookingOutcome {
@@ -209,6 +210,11 @@ export interface BookingSummary {
   durationMinutes: number;
   totalPrice: number;
   totalIsEstimate: boolean;
+  // Promo snapshot (migration 008); nulls when no code was applied.
+  promoCode: string | null;
+  discountPercent: number | null;
+  discountAmount: number | null;
+  subtotalPrice: number | null;
   confirmationExpiresAt: string | null;
   patientName: string | null;
   items: BookingSummaryItem[];
@@ -232,12 +238,43 @@ export async function fetchBookingSummary(
   }
 }
 
+export interface PromoValidation {
+  valid: boolean;
+  discountPercent?: number;
+  reason?: "invalid" | "expired" | "exhausted";
+}
+
+// Advisory promo check for the cart (the authoritative check runs in
+// create_booking at submit). With a date, the validity window is
+// checked against the appointment date; without one, only the active
+// flag and the use cap are checked. Returns null on transport error.
+export async function validatePromo(
+  code: string,
+  date?: string | null,
+): Promise<PromoValidation | null> {
+  try {
+    const params = new URLSearchParams({ code });
+    if (date) params.set("date", date);
+    const res = await fetch(
+      `/.netlify/functions/booking-promo-validate?${params.toString()}`,
+    );
+    if (!res.ok) return null;
+    return (await res.json()) as PromoValidation;
+  } catch {
+    return null;
+  }
+}
+
 export const ERROR_MESSAGES: Record<string, string> = {
   outside_window:
     "Esta cita ya está dentro de las 24 horas previas: para cambiarla o cancelarla, llámanos o escríbenos.",
   slot_taken: "Ese horario acaba de ocuparse. Elige otra hora, por favor.",
   already_final: "Esta cita ya no se puede modificar.",
   not_found: "No encontramos la cita.",
+  invalid_promo:
+    "Ese código promocional ya no es válido. Quítalo o verifica el código e inténtalo de nuevo.",
+  promo_exhausted:
+    "Ese código promocional ya llegó a su límite de usos. Quítalo para continuar sin descuento.",
 };
 
 export function errorText(e: unknown): string {

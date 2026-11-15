@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   clearIdempotencyKey,
+  clearPromo,
   setBookingResult,
   setCustomer,
   setIdempotencyKey,
@@ -10,6 +11,7 @@ import {
 import { useAuth } from "../auth";
 import { useToast } from "../components/Toast";
 import { createBooking } from "../lib/api";
+import { formatPhoneNumber } from "../lib/format";
 import { useBookingCatalog } from "../lib/queries/bookingQueries";
 import {
   RECAPTCHA_CONTAINER_ID,
@@ -18,40 +20,9 @@ import {
 } from "../lib/recaptcha";
 import CartSummary from "./components/CartSummary";
 
-// Phone rules, ported verbatim from the static datos page: NANP
-// (+1) numbers only, formatted as "+1 (829) 316-3313" or
-// "(829) 316-3313" while typing; valid means exactly 10 digits
-// (after the country code when present).
-function formatPhoneNumber(value: string): string {
-  const cleaned = value.replace(/[^\d+]/g, "");
-  if (cleaned.startsWith("+")) {
-    const digits = cleaned.slice(1).replace(/\D/g, "");
-    if (digits.length <= 1) return "+" + digits;
-    if (digits.length <= 4) return "+" + digits.slice(0, 1) + " (" + digits.slice(1);
-    if (digits.length <= 7) {
-      return "+" + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " + digits.slice(4);
-    }
-    return (
-      "+" + digits.slice(0, 1) + " (" + digits.slice(1, 4) + ") " +
-      digits.slice(4, 7) + "-" + digits.slice(7, 11)
-    );
-  }
-  const digits = cleaned.replace(/\D/g, "");
-  if (digits.startsWith("1") && digits.length > 1) {
-    const countryCode = digits.slice(0, 1);
-    const areaCode = digits.slice(1, 4);
-    const exchange = digits.slice(4, 7);
-    const line = digits.slice(7, 11);
-    if (digits.length <= 1) return "+" + countryCode;
-    if (digits.length <= 4) return "+" + countryCode + " (" + areaCode;
-    if (digits.length <= 7) return "+" + countryCode + " (" + areaCode + ") " + exchange;
-    return "+" + countryCode + " (" + areaCode + ") " + exchange + "-" + line;
-  }
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 6) return "(" + digits.slice(0, 3) + ") " + digits.slice(3);
-  return "(" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6, 10);
-}
-
+// Phone validation: NANP (+1) numbers only; valid means exactly 10
+// digits (after the country code when present). Formatting lives in
+// lib/format (formatPhoneNumber), shared with every phone display.
 function isValidPhoneNumber(value: string): boolean {
   const cleaned = value.replace(/[^\d+]/g, "");
   const allDigits = cleaned.replace(/\D/g, "");
@@ -141,6 +112,10 @@ export default function Datos() {
     Boolean(customer.lastName.trim()) &&
     Boolean(customer.email.trim()) &&
     isValidPhoneNumber(customer.phone.trim());
+  // A promo code that stopped being usable (the cart re-validates it
+  // against the picked date) blocks submit until the patient removes
+  // it from the cart.
+  const promoBlocked = Boolean(booking.promo && booking.promoError);
 
   function update(field: keyof typeof customer, value: string) {
     dispatch(setCustomer({ [field]: value }));
@@ -149,6 +124,13 @@ export default function Datos() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (submitting || !valid) return;
+    if (promoBlocked) {
+      setSubmitError(
+        booking.promoError ??
+          "El código promocional ya no es válido. Quítalo del resumen para continuar.",
+      );
+      return;
+    }
     if (!booking.date || !booking.time) {
       navigate("/reservar/fecha-hora");
       return;
@@ -170,6 +152,7 @@ export default function Datos() {
         date: booking.date,
         startTime: booking.time,
         idempotencyKey: idemKey,
+        promoCode: booking.promo?.code ?? null,
       };
 
       let created;
@@ -219,6 +202,21 @@ export default function Datos() {
       if (created.status === 403) {
         setSubmitError(
           "No pudimos verificar que eres humano. Por favor intenta de nuevo.",
+        );
+        return;
+      }
+      if (
+        created.data.error === "invalid_promo" ||
+        created.data.error === "promo_exhausted"
+      ) {
+        // The code died between the cart check and the submit (the
+        // server is authoritative). Drop it so the patient retries
+        // cleanly, without losing the rest of the form.
+        dispatch(clearPromo());
+        setSubmitError(
+          created.data.error === "promo_exhausted"
+            ? "Ese código promocional ya llegó a su límite de usos. Lo quitamos del resumen; puedes reservar sin descuento."
+            : "Ese código promocional ya no es válido. Lo quitamos del resumen; puedes reservar sin descuento.",
         );
         return;
       }
@@ -368,7 +366,7 @@ export default function Datos() {
                 type="submit"
                 className="confirmation-btn"
                 id="confirm-btn"
-                disabled={!valid || submitting}
+                disabled={!valid || submitting || promoBlocked}
               >
                 {submitting ? "Reservando…" : "Reservar Cita"}
               </button>
@@ -382,7 +380,7 @@ export default function Datos() {
             catalog={catalog}
             onContinue={() => formRef.current?.requestSubmit()}
             continueLabel="Reservar Cita"
-            continueDisabled={!valid || submitting}
+            continueDisabled={!valid || submitting || promoBlocked}
             showDesktopContinue={false}
           />
         )}

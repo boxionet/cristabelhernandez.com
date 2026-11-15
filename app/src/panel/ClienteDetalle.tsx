@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import {
   formatDateEs,
   formatDateLongEs,
+  formatPhoneNumber,
   formatPrice,
   formatTime12h,
   STATUS_LABELS,
@@ -75,7 +76,7 @@ export default function ClienteDetalle() {
         </div>
         <p className="muted">
           {patient.email}
-          {patient.phone ? ` · ${patient.phone}` : ""}
+          {patient.phone ? ` · ${formatPhoneNumber(patient.phone)}` : ""}
         </p>
         <p className="muted">
           Paciente desde {formatDateLongEs(toClinicDateISO(patient.created_at))} · {own.length} citas ·{" "}

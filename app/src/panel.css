@@ -384,6 +384,14 @@
 .inline-reschedule input {
   padding: 0.4rem 0.5rem;
 }
+/* The date picker trigger packs to its label inside tight rows
+   (inline reschedule, promo date cells, add-form date fields)
+   instead of forcing its 210px desktop minimum. */
+.inline-reschedule .datepicker-btn,
+.promo-dates .datepicker-btn,
+.add-field.date .datepicker-btn {
+  min-width: 0;
+}
 
 /* ---------- Panel appointment card (shared: Citas / Agenda / Historial) ---------- */
 .appt2-head {
@@ -446,6 +454,12 @@
   margin-top: 0.3rem;
   color: var(--muted);
   font-size: 0.85rem;
+}
+/* Pills with a short label (appointment card headline): the short
+   label shows only on narrow screens, where the full one squeezes
+   the headline. */
+.pill-short {
+  display: none;
 }
 .appt2-items {
   list-style: none;
@@ -579,6 +593,14 @@
   .appt2-head {
     gap: 0.75rem;
   }
+  /* The headline pill keeps its place but shows the short label
+     ("Por verificar"), so it stops squeezing the patient name. */
+  .appt2-head .pill-full {
+    display: none;
+  }
+  .appt2-head .pill-short {
+    display: inline;
+  }
   .datechip {
     width: 56px;
     border-radius: 12px;
@@ -699,6 +721,11 @@
 @media (max-width: 900px) {
   .kpis.four {
     grid-template-columns: 1fr 1fr;
+  }
+  /* Four KPIs stay a 2x2 grid: the shared rule that stretches the
+     last KPI full-width is for 3-KPI grids only. */
+  .kpis.four .kpi:last-child {
+    grid-column: auto;
   }
   .dash-grid {
     grid-template-columns: 1fr;
@@ -938,6 +965,10 @@
   .kpis.four .kpi {
     padding: 0.9rem;
   }
+  /* Dashboard: tighter bar chart on phones. */
+  .bars {
+    gap: 0.35rem;
+  }
 }
 
 /* ---------- Design pass: Horario spec rows, Dashboard, Clientes, Servicios ---------- */
@@ -1153,7 +1184,8 @@
   padding-top: 0.8rem;
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
   font-size: 0.88rem;
   color: var(--muted);
 }
@@ -1434,12 +1466,14 @@
   color: var(--heading);
 }
 
-/* Servicios: compact add row (button sized to its label) */
+/* Servicios: compact add row (button sized to its label). Wraps by
+   default so the add forms never overflow their card on tablets:
+   on wide screens the fields still sit on one line. */
 .add-row {
   display: flex;
   gap: 0.9rem;
   align-items: flex-end;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .add-field {
   display: flex;
@@ -1458,6 +1492,19 @@
 }
 .add-row .btn {
   flex-shrink: 0;
+}
+/* Add forms (Servicios, Promociones): every control in the row shares
+   the input metrics, so labels, boxes and button line up exactly —
+   the date trigger fills its field and matches input height. */
+.add-field .datepicker-btn {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  font-size: 1rem;
+}
+.add-row .btn {
+  padding: 0.65rem 1.1rem;
+  font-size: 1rem;
+  border-radius: 10px;
 }
 /* Servicios: description textareas — same treatment as the other
    Panel inputs. The editor one lives inside the existing name cell
@@ -1622,4 +1669,130 @@
   .spec-row {
     gap: 0.75rem;
   }
+  /* Dashboard agenda rows: the amount + status pill drop to their
+     own right-aligned line instead of crushing the patient name,
+     and the chevron hides. Card headers wrap the same way. */
+  .agenda-row {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .agenda-main {
+    flex: 1 1 170px;
+  }
+  .agenda-right {
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+  }
+  .agenda-right .pill {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+  }
+  .agenda-chevron {
+    display: none;
+  }
+  .chart-head {
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+  }
+}
+
+/* Promociones (2026-11-13): same self-saving catalog pattern as
+   Tratamientos. The code is display-only (never editable); the
+   percent, validity dates and use limit save on blur. */
+.promo-table td {
+  vertical-align: middle;
+}
+.promo-table .switch-cell {
+  padding-top: 0;
+}
+/* Percent and uses cells keep their parts on one centered line:
+   the % never drops below its box, and "1 de" centers on the box. */
+.pct-wrap,
+.uses-wrap {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.pct-wrap .num-input {
+  width: 72px;
+}
+.promo-code {
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.pct-suffix {
+  color: var(--muted);
+  margin-left: 0.3rem;
+  font-weight: 600;
+}
+.promo-dates {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.date-input {
+  width: 148px;
+  padding: 0.55rem 0.6rem;
+  font-size: 0.9rem;
+}
+.date-sep {
+  color: var(--muted);
+}
+.uses-count {
+  font-weight: 600;
+}
+.uses-of {
+  color: var(--muted);
+  margin: 0 0.3rem;
+}
+.uses-input {
+  width: 122px;
+}
+.add-field.date {
+  flex: 1 1 190px;
+}
+@media (max-width: 640px) {
+  .add-field.date {
+    flex: 1 1 140px;
+  }
+}
+
+/* Promo breakdown on the Panel appointment card (2026-11-13): the
+   subtotal and the code chip sit above the existing total row,
+   which keeps showing the final amount. */
+.appt2-promo {
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #eef0ea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.appt2-promo .promo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.appt2-promo .promo-amount {
+  font-weight: 600;
+  color: var(--sage-deep);
+  white-space: nowrap;
+}
+.promo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--sage-tint);
+  color: var(--sage-deep);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.promo-chip svg {
+  flex-shrink: 0;
 }

@@ -29,11 +29,6 @@ export default function PorConfirmar() {
   return (
     <>
       <h2 className="section-title">Por confirmar</h2>
-      <p className="muted">
-        Estas citas ya verificaron el correo y esperan tu decisión. Al
-        confirmar o no confirmar, la paciente recibe el aviso
-        automáticamente.
-      </p>
 
       {pending.length === 0 && (
         <section className="card empty">
