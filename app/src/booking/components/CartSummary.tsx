@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { FiTag } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   clearPromo,
@@ -29,7 +30,8 @@ import { validatePromo, type PromoValidation } from "../../lib/api";
 // re-checked whenever the picked date changes, because the validity
 // window compares against the appointment date. A code that stops
 // being usable keeps showing with its error and blocks Continue
-// until the patient removes it.
+// until the patient removes it. With no code applied, the input
+// stays hidden behind a trigger button until the patient taps it.
 
 function promoReasonText(reason: PromoValidation["reason"]): string {
   if (reason === "expired")
@@ -48,6 +50,7 @@ function PromoBox() {
   const [codeInput, setCodeInput] = useState("");
   const [checking, setChecking] = useState(false);
   const [applyError, setApplyError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   async function apply() {
     const code = codeInput.trim().toUpperCase();
@@ -131,6 +134,24 @@ function PromoBox() {
     );
   }
 
+  // No code yet: the input stays hidden until the patient asks for
+  // it, so the cart stays clean for patients without a code.
+  if (!expanded) {
+    return (
+      <div className="booking-promo-box">
+        <button
+          className="booking-promo-trigger"
+          type="button"
+          aria-expanded={false}
+          onClick={() => setExpanded(true)}
+        >
+          <FiTag aria-hidden />
+          ¿Tienes un código promocional?
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="booking-promo-box">
       <label className="booking-promo-label" htmlFor={inputId}>
@@ -176,12 +197,17 @@ export default function CartSummary({
   continueLabel = "Continuar",
   continueDisabled,
   showDesktopContinue = true,
+  showRemoveButtons = false,
 }: {
   catalog: BookingService[];
   onContinue: () => void;
   continueLabel?: string;
   continueDisabled?: boolean;
   showDesktopContinue?: boolean;
+  /** Only the servicios step lets patients remove items from the
+   * cart (the × next to each treatment). On later steps the cart is
+   * read-only — removing means going back to servicios. */
+  showRemoveButtons?: boolean;
 }) {
   const dispatch = useAppDispatch();
   const services = useAppSelector((s) => s.booking.services);
@@ -254,14 +280,16 @@ export default function CartSummary({
                 priceNote: service.priceNote,
               })}
         </span>
-        <button
-          className="booking-cart-item-remove"
-          aria-label="Eliminar servicio"
-          type="button"
-          onClick={() => dispatch(removeService(service.slug))}
-        >
-          ×
-        </button>
+        {showRemoveButtons && (
+          <button
+            className="booking-cart-item-remove"
+            aria-label="Eliminar servicio"
+            type="button"
+            onClick={() => dispatch(removeService(service.slug))}
+          >
+            ×
+          </button>
+        )}
       </div>
     ))
   );

@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { FiLogOut } from "react-icons/fi";
 import { useAuth } from "../auth";
 
 // The public booking shell — ports layouts/booking.html: the booking
 // header (back button + horizontal logo), no footer, and the
 // `booking-page` body class the booking styles scope under. When the
-// patient is signed in, the right slot shows a plain "Cerrar sesión"
-// text button; signing out keeps the in-progress booking (the draft
-// lives in memory, independent of the session) and the flow
-// continues as a guest.
+// patient is signed in, the right slot shows the same sign-out icon
+// as Mi Cuenta (FiLogOut, no text); signing out keeps the in-progress
+// booking (the draft lives in memory, independent of the session)
+// and the flow continues as a guest.
 export default function BookingLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,9 +74,10 @@ export default function BookingLayout() {
             <button
               className="booking-signout-btn"
               type="button"
+              aria-label="Cerrar sesión"
               onClick={() => void signOut()}
             >
-              Cerrar sesión
+              <FiLogOut size={24} aria-hidden />
             </button>
           ) : null}
         </div>

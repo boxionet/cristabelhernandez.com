@@ -162,30 +162,27 @@
   margin: 1rem 0 0;
 }
 
-/* "Cerrar sesión" text button in the booking header (user feedback
-   2026-11-12): plain text, no chrome, pinned to the right end of
-   the nav bar. Absolutely positioned against the sticky header
-   (the logo is absolutely centered the same way), so its place
-   never depends on the flex row. The right offset mirrors the
-   header container's padding at each breakpoint. Slightly smaller
-   on narrow phones so it clears the logo. */
+/* Sign-out icon button in the booking header (2026-11-15): the same
+   FiLogOut icon as Mi Cuenta, no text. Absolutely positioned against
+   the sticky header (the logo is absolutely centered the same way),
+   so its place never depends on the flex row. The right offset
+   mirrors the header container's padding at each breakpoint. */
 .booking-signout-btn {
   background: none;
   border: none;
   color: var(--booking-main-text);
   cursor: pointer;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
   position: absolute;
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  white-space: nowrap;
 }
 .booking-signout-btn:hover {
-  text-decoration: underline;
+  opacity: 0.65;
 }
 @media only screen and (min-width: 37.5rem) {
   .booking-signout-btn {
@@ -197,11 +194,6 @@
     right: 3.125rem;
   }
 }
-@media only screen and (max-width: 30rem) {
-  .booking-signout-btn {
-    font-size: 0.8rem;
-  }
-}
 
 /* Promo code box in the cart (2026-11-13, migration 008): the input
    + Aplicar row, the applied state (sage tint, matching the Panel
@@ -211,6 +203,24 @@
    class namespace. */
 .booking-promo-box {
   margin-top: 1rem;
+}
+/* Collapsed promo trigger (2026-11-15): a quiet text button with a
+   tag icon. The input row appears only after the patient taps it. */
+.booking-promo-trigger {
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--booking-primary-button);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+}
+.booking-promo-trigger:hover {
+  text-decoration: underline;
 }
 .booking-promo-label {
   display: block;

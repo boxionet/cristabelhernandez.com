@@ -184,6 +184,7 @@ export default function Servicios() {
           <CartSummary
             catalog={catalog}
             onContinue={() => navigate("/reservar/fecha-hora")}
+            showRemoveButtons
           />
         )}
       </div>
