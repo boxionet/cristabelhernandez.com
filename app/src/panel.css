@@ -682,10 +682,12 @@
   max-width: 100%;
 }
 .check-label input {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.05rem;
+  height: 1.05rem;
   flex-shrink: 0;
-  accent-color: var(--heading);
+  /* Sage green when checked, matching the Panel's primary buttons
+     (was var(--heading), near-black). */
+  accent-color: var(--sage);
 }
 .qty-input {
   width: 70px;
