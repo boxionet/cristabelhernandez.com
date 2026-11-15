@@ -6,6 +6,7 @@
 // Rules: weekly_schedule, overridden by date_exceptions, minus active
 // appointments (pendiente/confirmada + unexpired por_confirmar holds).
 const { serviceClient, json } = require("./_booking/supabase");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 const {
   computeSlots,
   clinicNow,
@@ -35,6 +36,8 @@ function validateDate(dateISO, todayISO) {
 
 exports.handler = async (event) => {
   try {
+    const throttle = await checkRateLimit(event, "booking-availability", 60);
+    if (!throttle.allowed) return rateLimited(throttle.resetAfter);
     const input = parseInput(event);
     const duration = input.durationMinutes;
     if (!duration || duration < 15 || duration > 480) {

@@ -6,6 +6,7 @@
 const { serviceClient, getAuthUser, isVerified, json, siteOrigin } = require("./_booking/supabase");
 const { sendOwnerBookingAlert, sendPatientVerificationEmail } = require("./_booking/email");
 const { verifyRecaptcha } = require("./_booking/captcha");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 const { clinicNow } = require("./_booking/time");
 const { randomUUID } = require("crypto");
 
@@ -36,6 +37,8 @@ function validate(body) {
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "method_not_allowed" });
   try {
+    const throttle = await checkRateLimit(event, "booking-create", 10);
+    if (!throttle.allowed) return rateLimited(throttle.resetAfter);
     const body = JSON.parse(event.body || "{}");
     const invalid = validate(body);
     if (invalid) return json(400, { error: invalid });

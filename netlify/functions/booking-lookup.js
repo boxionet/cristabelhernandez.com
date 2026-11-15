@@ -10,9 +10,12 @@
 // only. Por-confirmar holds report the guest name until the patient
 // record is linked at verification.
 const { serviceClient, json } = require("./_booking/supabase");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 
 exports.handler = async (event) => {
   try {
+    const throttle = await checkRateLimit(event, "booking-lookup", 10);
+    if (!throttle.allowed) return rateLimited(throttle.resetAfter);
     const ref = (event.queryStringParameters || {}).ref;
     if (!ref || !/^CH-[A-Z0-9]{6}$/.test(ref)) {
       return json(400, { error: "bad_ref" });

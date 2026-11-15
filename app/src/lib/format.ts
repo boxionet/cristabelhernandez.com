@@ -96,6 +96,19 @@ export function formatPhoneNumber(value: string): string {
   return "(" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6, 10);
 }
 
+// Phone validation: NANP (+1) numbers only; valid means exactly 10
+// digits (after the country code when present). Shared by the datos
+// form, the revision submit, and the revision route guard.
+export function isValidPhoneNumber(value: string): boolean {
+  const cleaned = value.replace(/[^\d+]/g, "");
+  const allDigits = cleaned.replace(/\D/g, "");
+  if (cleaned.startsWith("+")) {
+    if (allDigits.startsWith("1")) return allDigits.slice(1).length === 10;
+    return false;
+  }
+  return allDigits.length === 10;
+}
+
 export function capitalizeFirst(s: string): string {
   return s.replace(/^./, (c) => c.toUpperCase());
 }

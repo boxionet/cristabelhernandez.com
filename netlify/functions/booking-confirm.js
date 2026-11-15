@@ -17,10 +17,13 @@
 // can only fire once.
 const { serviceClient, siteOrigin } = require("./_booking/supabase");
 const { sendOwnerBookingAlert } = require("./_booking/email");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 exports.handler = async (event) => {
+  const throttle = await checkRateLimit(event, "booking-confirm", 10);
+  if (!throttle.allowed) return rateLimited(throttle.resetAfter);
   const origin = siteOrigin(event);
   const token = (event.queryStringParameters || {}).token || "";
   const wantsJson = (event.headers.accept || "").includes("application/json");

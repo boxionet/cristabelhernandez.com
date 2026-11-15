@@ -24,12 +24,16 @@ import BookingLayout from "./booking/BookingLayout";
 import ReservarStart from "./booking/ReservarStart";
 import Servicios from "./booking/Servicios";
 import FechaHora from "./booking/FechaHora";
+import Verificar from "./booking/Verificar";
 import Datos from "./booking/Datos";
+import Revision from "./booking/Revision";
 import Confirmacion from "./booking/Confirmacion";
 import {
   RequireBookingConfirmation,
   RequireBookingCustomerType,
   RequireBookingDateTime,
+  RequireBookingIdentity,
+  RequireBookingRevision,
   RequireBookingServices,
 } from "./booking/guards";
 import { SkeletonShell } from "./components/Skeleton";
@@ -191,11 +195,29 @@ export default function App() {
             }
           />
           <Route
+            path="verificar"
+            element={
+              <RequireBookingDateTime>
+                <Verificar />
+              </RequireBookingDateTime>
+            }
+          />
+          <Route
             path="datos"
             element={
               <RequireBookingDateTime>
-                <Datos />
+                <RequireBookingIdentity>
+                  <Datos />
+                </RequireBookingIdentity>
               </RequireBookingDateTime>
+            }
+          />
+          <Route
+            path="revision"
+            element={
+              <RequireBookingRevision>
+                <Revision />
+              </RequireBookingRevision>
             }
           />
           <Route

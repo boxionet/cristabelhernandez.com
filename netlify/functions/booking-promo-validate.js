@@ -11,12 +11,15 @@
 // a date (the servicios step, picked before the date) only the
 // active flag and the use cap are checked.
 const { serviceClient, json } = require("./_booking/supabase");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 
 exports.handler = async (event) => {
   try {
     if (event.httpMethod !== "GET") {
       return json(405, { error: "method_not_allowed" });
     }
+    const throttle = await checkRateLimit(event, "booking-promo-validate", 10);
+    if (!throttle.allowed) return rateLimited(throttle.resetAfter);
     const params = event.queryStringParameters || {};
     const raw = typeof params.code === "string" ? params.code.trim() : "";
     if (!raw || raw.length > 32) {

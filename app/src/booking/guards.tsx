@@ -45,6 +45,50 @@ export function RequireBookingDateTime({
   return children;
 }
 
+// The verification step must have been passed (identity recorded) or
+// a session must already exist — otherwise the patient goes to the
+// verification step, never straight into the form.
+export function RequireBookingIdentity({
+  children,
+}: {
+  children: ReactElement;
+}) {
+  const booking = useAppSelector((s) => s.booking);
+  const session = useAppSelector((s) => s.auth.session);
+  if (!booking.identity && !session) {
+    return <Navigate to="/reservar/verificar" replace />;
+  }
+  return children;
+}
+
+// Revision needs the full draft: services, date/time, identity, and
+// complete contact fields. Anything missing sends the patient back
+// to the step that collects it.
+export function RequireBookingRevision({
+  children,
+}: {
+  children: ReactElement;
+}) {
+  const booking = useAppSelector((s) => s.booking);
+  const session = useAppSelector((s) => s.auth.session);
+  if (Object.keys(booking.services).length === 0 || !booking.date || !booking.time) {
+    return <Navigate to="/reservar" replace />;
+  }
+  if (!booking.identity && !session) {
+    return <Navigate to="/reservar/verificar" replace />;
+  }
+  const c = booking.customer;
+  if (
+    !c.firstName.trim() ||
+    !c.lastName.trim() ||
+    !c.email.trim() ||
+    !c.phone.trim()
+  ) {
+    return <Navigate to="/reservar/datos" replace />;
+  }
+  return children;
+}
+
 export function RequireBookingConfirmation({
   children,
 }: {

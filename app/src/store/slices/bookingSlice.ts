@@ -12,6 +12,12 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type CustomerType = "new" | "returning";
 
+/** How the patient passed the verification step (Peachy-style flow):
+ * 'verified' = signed in (session, or email code just entered),
+ * 'guest' = chose "Continuar como invitado". Null until the step is
+ * passed; the datos/revision guards require it (or a session). */
+export type BookingIdentity = "verified" | "guest";
+
 export interface BookingCustomer {
   firstName: string;
   lastName: string;
@@ -36,6 +42,13 @@ export interface AppliedPromo {
 
 export interface BookingState {
   customerType: CustomerType | null;
+  identity: BookingIdentity | null;
+  /** True only on the first datos visit after the verification step
+   * passed, so datos can auto-skip to revision once for verified
+   * patients with complete info — and never skip again when the
+   * patient comes back to edit. Cleared by datos after its skip
+   * decision, whatever the outcome. */
+  identityFresh: boolean;
   /** slug -> quantity. The UI toggles services (quantity is always 1). */
   services: Record<string, number>;
   date: string | null; // YYYY-MM-DD
@@ -62,6 +75,8 @@ const emptyCustomer: BookingCustomer = {
 
 export const initialBookingState: BookingState = {
   customerType: null,
+  identity: null,
+  identityFresh: false,
   services: {},
   date: null,
   time: null,
@@ -78,6 +93,13 @@ const bookingSlice = createSlice({
   reducers: {
     setCustomerType(state, action: PayloadAction<CustomerType>) {
       state.customerType = action.payload;
+    },
+    setIdentity(state, action: PayloadAction<BookingIdentity>) {
+      state.identity = action.payload;
+      state.identityFresh = true;
+    },
+    clearIdentityFresh(state) {
+      state.identityFresh = false;
     },
     toggleService(state, action: PayloadAction<string>) {
       const slug = action.payload;
@@ -148,6 +170,8 @@ const bookingSlice = createSlice({
 
 export const {
   setCustomerType,
+  setIdentity,
+  clearIdentityFresh,
   toggleService,
   removeService,
   setBookingDate,

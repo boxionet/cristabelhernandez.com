@@ -254,7 +254,7 @@ export default function FechaHora() {
         {catalog && (
           <CartSummary
             catalog={catalog}
-            onContinue={() => navigate("/reservar/datos")}
+            onContinue={() => navigate("/reservar/verificar")}
             continueDisabled={!booking.date || !booking.time}
           />
         )}

@@ -1,4 +1,5 @@
 const { Resend } = require("resend");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 const {
   FROM,
   emailShell,
@@ -43,6 +44,9 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
+
+  const throttle = await checkRateLimit(event, "send-contact-email", 5);
+  if (!throttle.allowed) return rateLimited(throttle.resetAfter);
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {

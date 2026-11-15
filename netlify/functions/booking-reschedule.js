@@ -6,9 +6,12 @@ const { serviceClient, json, siteOrigin } = require("./_booking/supabase");
 const { resolveAppointment, outsideWindow, FINAL_STATUSES } = require("./_booking/manage");
 const { sendRescheduleNotice } = require("./_booking/email");
 const { formatDateEs, formatTime12h, clinicNow } = require("./_booking/time");
+const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "method_not_allowed" });
+  const throttle = await checkRateLimit(event, "booking-reschedule", 10);
+  if (!throttle.allowed) return rateLimited(throttle.resetAfter);
   try {
     const body = JSON.parse(event.body || "{}");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(body.newDate || ""))
