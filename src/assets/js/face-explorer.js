@@ -23,6 +23,24 @@
     });
     var gender = 'mujer';
 
+    /* The hotspot pulse starts only once the section scrolls into view:
+       five infinite animations running during initial load cost ~3s of
+       LCP on throttled phones (PSI bisect, Nov 14 2026). */
+    var section = document.getElementById('face-explorer');
+    if (section) {
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    section.classList.add('in-view');
+                    io.disconnect();
+                }
+            }, { threshold: 0.2 });
+            io.observe(section);
+        } else {
+            section.classList.add('in-view');
+        }
+    }
+
     /* The hombre photo loads only after the page's own load event, then
        when the browser is idle (or on first switch), so it can never
        compete with the hero image or the first paint on slow networks:

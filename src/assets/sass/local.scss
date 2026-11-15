@@ -1638,8 +1638,15 @@
             inset: -2px;
             border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, .95);
-            animation: pulse 2.2s ease-out infinite;
             pointer-events: none;
+        }
+
+        /* The pulse runs only once the section scrolls into view: five
+           infinite animations running during initial load cost ~3s of
+           LCP on throttled phones (PSI bisect, Nov 14 2026). The JS adds
+           .in-view via IntersectionObserver. */
+        &.in-view .hotspot::after {
+            animation: pulse 2.2s ease-out infinite;
         }
 
         .hotspot:hover::before {
@@ -1826,7 +1833,8 @@
             transition: none;
         }
 
-        .hotspot::after {
+        .hotspot::after,
+        &.in-view .hotspot::after {
             animation: none;
         }
 
