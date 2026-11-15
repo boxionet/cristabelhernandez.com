@@ -12,13 +12,13 @@ import { calcBookingTotals, formatServicePrice } from "../constants";
 import { formatPrice } from "../../lib/format";
 import { validatePromo, type PromoValidation } from "../../lib/api";
 
-// The cart summary shared by the servicios, fecha-hora and datos
+// The cart summary shared by the tratamientos, fecha-hora and datos
 // steps: desktop sidebar + mobile bottom bar with the expandable
 // panel. Same markup and classes as the static pages. Totals switch
 // to "Total estimado" when any cart item carries a "desde" or
 // per-unit price.
 //
-// The continue button varies per step: servicios/fecha-hora show it
+// The continue button varies per step: tratamientos/fecha-hora show it
 // in both the sidebar and the bottom bar ("Continuar"); datos shows
 // only the bottom-bar button ("Reservar Cita") because the form
 // carries its own submit button. The caller owns the disabled rule.
@@ -204,9 +204,9 @@ export default function CartSummary({
   continueLabel?: string;
   continueDisabled?: boolean;
   showDesktopContinue?: boolean;
-  /** Only the servicios step lets patients remove items from the
+  /** Only the tratamientos step lets patients remove items from the
    * cart (the × next to each treatment). On later steps the cart is
-   * read-only — removing means going back to servicios. */
+   * read-only — removing means going back to tratamientos. */
   showRemoveButtons?: boolean;
 }) {
   const dispatch = useAppDispatch();
@@ -261,7 +261,7 @@ export default function CartSummary({
   if (mins > 0) detailsText += ` ${mins}m`;
 
   const cartItems = empty ? (
-    <p className="booking-cart-empty">Selecciona un servicio para comenzar</p>
+    <p className="booking-cart-empty">Selecciona un tratamiento para comenzar</p>
   ) : (
     entries.map(({ service, quantity }) => (
       <div className="booking-cart-item" key={service.slug}>
@@ -283,7 +283,7 @@ export default function CartSummary({
         {showRemoveButtons && (
           <button
             className="booking-cart-item-remove"
-            aria-label="Eliminar servicio"
+            aria-label="Eliminar tratamiento"
             type="button"
             onClick={() => dispatch(removeService(service.slug))}
           >

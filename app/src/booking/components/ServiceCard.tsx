@@ -2,7 +2,7 @@ import type { BookingService } from "../../lib/queries/bookingQueries";
 import { SERVICE_DESCRIPTIONS, formatServicePrice } from "../constants";
 
 // One selectable service card — same markup and classes as the static
-// servicios page, so the booking styles apply unchanged. Clicking
+// tratamientos page, so the booking styles apply unchanged. Clicking
 // anywhere on the card toggles it; the +/✓ button is the same action.
 export default function ServiceCard({
   service,
@@ -52,7 +52,7 @@ export default function ServiceCard({
           </span>
           <button
             className={`booking-service-add-btn${selected ? " selected" : ""}`}
-            aria-label={selected ? "Quitar servicio" : "Agregar servicio"}
+            aria-label={selected ? "Quitar tratamiento" : "Agregar tratamiento"}
             type="button"
             onClick={(e) => {
               e.stopPropagation();

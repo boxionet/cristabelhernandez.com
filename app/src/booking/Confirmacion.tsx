@@ -49,7 +49,7 @@ function buildGoogleCalendarUrl(summary: BookingSummary): string {
   const serviceNames = summary.items.map((i) => i.service_name).join(", ");
   const detailsParts = [
     `Paciente: ${summary.patientName || "N/A"}`,
-    `Servicios: ${serviceNames || "No especificado"}`,
+    `Tratamientos: ${serviceNames || "No especificado"}`,
     `Centro estético: ${CLINIC_NAME}`,
     `Teléfono: ${CLINIC_PHONE}`,
     `Dirección: ${CLINIC_ADDRESS}`,
@@ -325,7 +325,7 @@ export default function Confirmacion() {
                     </svg>
                   </div>
                   <div className="confirmacion-summary-info">
-                    <span className="confirmacion-summary-label">Servicios</span>
+                    <span className="confirmacion-summary-label">Tratamientos</span>
                     <ul className="confirmacion-services-list">
                       {summary.items.map((item) => (
                         <li key={item.service_name}>

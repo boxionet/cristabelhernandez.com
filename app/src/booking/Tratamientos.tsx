@@ -22,7 +22,7 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-export default function Servicios() {
+export default function Tratamientos() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const selected = useAppSelector((s) => s.booking.services);
@@ -121,7 +121,7 @@ export default function Servicios() {
         </button>
 
         <div className="booking-services-content">
-          <h1 className="booking-services-title">Selecciona un servicio</h1>
+          <h1 className="booking-services-title">Selecciona un tratamiento</h1>
 
           <div className="booking-services-tabs" id="services-tabs">
             {TABS.map((tab) => (

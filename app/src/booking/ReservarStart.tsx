@@ -21,7 +21,7 @@ export default function ReservarStart() {
 
   function choose(type: CustomerType) {
     dispatch(setCustomerType(type));
-    navigate("/reservar/servicios");
+    navigate("/reservar/tratamientos");
   }
 
   const arrow = (

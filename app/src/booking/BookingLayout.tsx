@@ -29,8 +29,8 @@ export default function BookingLayout() {
 
   function goBack() {
     if (path === "/reservar/datos") navigate("/reservar/fecha-hora");
-    else if (path === "/reservar/fecha-hora") navigate("/reservar/servicios");
-    else if (path === "/reservar/servicios") navigate("/reservar");
+    else if (path === "/reservar/fecha-hora") navigate("/reservar/tratamientos");
+    else if (path === "/reservar/tratamientos") navigate("/reservar");
     else navigate(-1);
   }
 

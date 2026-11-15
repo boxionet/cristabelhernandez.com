@@ -22,7 +22,7 @@ import Reportes from "./panel/Reportes";
 import ServiciosPanel from "./panel/Servicios";
 import BookingLayout from "./booking/BookingLayout";
 import ReservarStart from "./booking/ReservarStart";
-import Servicios from "./booking/Servicios";
+import TratamientosStep from "./booking/Tratamientos";
 import FechaHora from "./booking/FechaHora";
 import Verificar from "./booking/Verificar";
 import Datos from "./booking/Datos";
@@ -179,12 +179,17 @@ export default function App() {
         <Route path="/reservar" element={<BookingLayout />}>
           <Route index element={<ReservarStart />} />
           <Route
-            path="servicios"
+            path="tratamientos"
             element={
               <RequireBookingCustomerType>
-                <Servicios />
+                <TratamientosStep />
               </RequireBookingCustomerType>
             }
+          />
+          {/* Old step URL: keep it working for anyone holding it. */}
+          <Route
+            path="servicios"
+            element={<Navigate to="/reservar/tratamientos" replace />}
           />
           <Route
             path="fecha-hora"
