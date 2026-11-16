@@ -1,12 +1,51 @@
 /*-- -------------------------- -->
+<---          Banner            -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #banner-712 {
+        /* 175px - 200px top */
+        padding: clamp(10.9375rem, 10vw, 12.5rem) calc(16 / 16 * 1rem)
+            calc(100 / 16 * 1rem);
+        position: relative;
+        z-index: 1;
+
+        .cs-container {
+            text-align: center;
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: calc(16 / 16 * 1rem);
+        }
+
+        .cs-int-title {
+            /* 39px - 61px */
+            font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
+            font-weight: 900;
+            line-height: 1.2em;
+            text-align: inherit;
+            margin: 0;
+            color: var(--bodyTextColorWhite);
+            position: relative;
+        }
+    }
+}
+
+/*-- -------------------------- -->
 <---       Product Detail        -->
 <--- -------------------------- -*/
 
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #producto {
-        /* No green banner on this page: clears the fixed header itself */
-        padding: clamp(10.9375rem, 10vw, 12.5rem) calc(16 / 16 * 1rem)
+        /* The green banner above clears the fixed header; this is section spacing */
+        padding: clamp(2.5rem, 5vw, 4rem) calc(16 / 16 * 1rem)
             clamp(3.75rem, 7.82vw, 6.25rem);
 
         .cs-container {
@@ -100,27 +139,44 @@
             flex-direction: column;
             min-width: 0;
 
-            .cs-title {
-                margin-bottom: calc(16 / 16 * 1rem);
-            }
-
             .cs-text {
                 margin: 0 0 calc(16 / 16 * 1rem);
             }
         }
 
-        .cs-buy {
-            width: 100%;
-            text-align: center;
-            padding: calc(16 / 16 * 1rem);
-            margin: calc(8 / 16 * 1rem) 0 calc(16 / 16 * 1rem);
+        /* Availability notice: deliberately NOT button-shaped, since
+           nothing can be bought online. The real actions below are links. */
+        .cs-disponible {
+            display: flex;
+            align-items: flex-start;
+            gap: calc(16 / 16 * 1rem);
+            background-color: #eef2e8;
+            border-radius: calc(12 / 16 * 1rem);
+            padding: calc(16 / 16 * 1rem) calc(20 / 16 * 1rem);
+            margin: calc(8 / 16 * 1rem) 0 calc(20 / 16 * 1rem);
         }
 
-        .cs-note {
+        .cs-disponible-icon {
+            width: calc(28 / 16 * 1rem);
+            height: calc(28 / 16 * 1rem);
+            color: #3e4c35;
+            flex-shrink: 0;
+            margin-top: calc(2 / 16 * 1rem);
+        }
+
+        .cs-disponible-title {
+            font-size: calc(16 / 16 * 1rem);
+            line-height: 1.3em;
+            font-weight: 700;
+            color: var(--headerColor);
+            margin: 0 0 calc(4 / 16 * 1rem);
+        }
+
+        .cs-disponible-text {
             font-size: calc(15 / 16 * 1rem);
             line-height: 1.5em;
             color: var(--bodyTextColor);
-            margin: 0 0 calc(32 / 16 * 1rem);
+            margin: 0;
 
             a {
                 color: var(--headerColor);
@@ -130,6 +186,25 @@
                 &:hover {
                     text-decoration: underline;
                 }
+            }
+        }
+
+        .cs-acciones {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: calc(24 / 16 * 1rem);
+            row-gap: calc(8 / 16 * 1rem);
+            margin: 0 0 calc(32 / 16 * 1rem);
+        }
+
+        .cs-accion {
+            font-size: calc(16 / 16 * 1rem);
+            font-weight: 600;
+            color: var(--headerColor);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
             }
         }
 
@@ -371,6 +446,230 @@
     #producto-rutina {
         .cs-card-group {
             grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---    Por qué les encanta       -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #producto-obsesion {
+        background-color: #f6f4f1;
+        padding: var(--sectionPadding);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cs-title {
+            margin-bottom: calc(40 / 16 * 1rem);
+        }
+
+        .cs-obs-group {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: calc(24 / 16 * 1rem);
+            text-align: left;
+        }
+
+        .cs-obs-item {
+            background-color: #fff;
+            border: 1px solid #e9e4dc;
+            border-radius: calc(16 / 16 * 1rem);
+            padding: calc(24 / 16 * 1rem);
+            display: flex;
+            flex-direction: column;
+            gap: calc(12 / 16 * 1rem);
+            min-width: 0;
+        }
+
+        .cs-obs-title {
+            font-size: calc(18 / 16 * 1rem);
+            line-height: 1.3em;
+            font-weight: 700;
+            color: var(--headerColor);
+            margin: 0;
+        }
+
+        .cs-obs-text {
+            font-size: calc(16 / 16 * 1rem);
+            line-height: 1.5em;
+            color: var(--bodyTextColor);
+            margin: 0;
+        }
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #producto-obsesion {
+        .cs-obs-group {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+/* Desktop - 1024px */
+@media only screen and (min-width: 64rem) {
+    #producto-obsesion {
+        .cs-obs-group {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---  Agrega TiZO3 a tu rutina   -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #producto-rutina-diaria {
+        padding: var(--sectionPadding);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cs-title {
+            margin-bottom: calc(32 / 16 * 1rem);
+        }
+
+        .cs-toggle {
+            display: inline-flex;
+            gap: calc(4 / 16 * 1rem);
+            border: 1px solid #e5e0d8;
+            border-radius: calc(999 / 16 * 1rem);
+            padding: calc(4 / 16 * 1rem);
+            margin-bottom: calc(40 / 16 * 1rem);
+            background-color: #fff;
+        }
+
+        .cs-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: calc(8 / 16 * 1rem);
+            border: 0;
+            background: transparent;
+            padding: calc(10 / 16 * 1rem) calc(24 / 16 * 1rem);
+            border-radius: calc(999 / 16 * 1rem);
+            cursor: pointer;
+            font: inherit;
+            font-size: calc(16 / 16 * 1rem);
+            font-weight: 600;
+            color: var(--headerColor);
+
+            &.is-active {
+                background-color: #3e4c35;
+                color: #fff;
+            }
+        }
+
+        .cs-toggle-icon {
+            width: calc(18 / 16 * 1rem);
+            height: calc(18 / 16 * 1rem);
+        }
+
+        .cs-steps {
+            display: none;
+            width: 100%;
+
+            &.is-active {
+                display: block;
+            }
+        }
+
+        .cs-step-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: calc(24 / 16 * 1rem);
+        }
+
+        .cs-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: calc(8 / 16 * 1rem);
+            padding: calc(24 / 16 * 1rem);
+            border-radius: calc(16 / 16 * 1rem);
+            min-width: 0;
+
+            &.is-highlight {
+                background-color: #eef2e8;
+            }
+
+            &.is-highlight .cs-step-dot {
+                background-color: #849573;
+                color: #fff;
+            }
+        }
+
+        .cs-step-dot {
+            width: calc(28 / 16 * 1rem);
+            height: calc(28 / 16 * 1rem);
+            border: 2px solid #849573;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(14 / 16 * 1rem);
+            font-weight: 700;
+            color: #849573;
+        }
+
+        .cs-step-num {
+            font-size: calc(13 / 16 * 1rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #849573;
+        }
+
+        .cs-step-title {
+            font-size: calc(20 / 16 * 1rem);
+            line-height: 1.2em;
+            font-weight: 700;
+            color: var(--headerColor);
+            margin: 0;
+        }
+
+        .cs-step-text {
+            font-size: calc(16 / 16 * 1rem);
+            line-height: 1.5em;
+            color: var(--bodyTextColor);
+            margin: 0;
+            max-width: calc(320 / 16 * 1rem);
+        }
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #producto-rutina-diaria {
+        .cs-step-list {
+            grid-template-columns: repeat(3, 1fr);
         }
     }
 }

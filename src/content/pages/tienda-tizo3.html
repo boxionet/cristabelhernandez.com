@@ -14,6 +14,16 @@ permalink: "/tienda/tizo3/"
 {% block body %}
 
     <!-- ============================================ -->
+    <!--                  Interior Page               -->
+    <!-- ============================================ -->
+
+    <div id="banner-712">
+        <div class="cs-container">
+            <h1 class="cs-int-title">TiZO3 Primer / Protector Solar</h1>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
     <!--                Product Detail                -->
     <!-- ============================================ -->
 
@@ -67,17 +77,25 @@ permalink: "/tienda/tizo3/"
                     </div>
                 </div>
                 <div class="cs-info">
-                    <h1 class="cs-title">TiZO3 Primer / Protector Solar</h1>
                     <p class="cs-text">
                         Protector solar facial mineral con color y acabado mate. Se integra bajo el maquillaje como primer, con óxidos de titanio y zinc y antioxidantes C y E.
                     </p>
                     <p class="cs-text">
                         Amplio espectro FPS 40, resistente al agua por 80 minutos. Para uso diario, solo o como base antes del maquillaje.
                     </p>
-                    <a href="/contactanos/" class="cs-button-solid cs-buy">Disponible en el centro</a>
-                    <p class="cs-note">
-                        A la venta directamente en el centro, en Puerto Plata. ¿Dudas? Llámanos al <a href="tel:{{ client.phoneForTel }}">{{ client.phoneFormatted }}</a>.
-                    </p>
+                    <div class="cs-disponible">
+                        <svg class="cs-disponible-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg>
+                        <div class="cs-disponible-body">
+                            <p class="cs-disponible-title">Disponible en el centro</p>
+                            <p class="cs-disponible-text">
+                                A la venta directamente en el centro, en Puerto Plata. Ven durante tu cita o escríbenos y te apartamos el tuyo. ¿Dudas? Llámanos al <a href="tel:{{ client.phoneForTel }}">{{ client.phoneFormatted }}</a>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="cs-acciones">
+                        <a class="cs-accion" href="/reservar/">Reserva tu cita &rarr;</a>
+                        <a class="cs-accion" href="/contactanos/">Contáctanos &rarr;</a>
+                    </div>
                     <div class="cs-accordions">
                         <div class="cs-acc is-open">
                             <h2>
@@ -146,6 +164,102 @@ permalink: "/tienda/tizo3/"
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--             Por qué les encanta              -->
+    <!-- ============================================ -->
+
+    <section id="producto-obsesion">
+        <div class="cs-container">
+            <h2 class="cs-title">Por qué les encanta</h2>
+            <ul class="cs-obs-group">
+                <li class="cs-obs-item">
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Tinte ligero, acabado mate</h3>
+                    <p class="cs-obs-text">Se integra bajo el maquillaje como primer.</p>
+                </li>
+                <li class="cs-obs-item">
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Protección mineral</h3>
+                    <p class="cs-obs-text">Óxidos de titanio y zinc, amplio espectro FPS 40.</p>
+                </li>
+                <li class="cs-obs-item">
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Resistente al agua</h3>
+                    <p class="cs-obs-text">80 minutos al nadar o sudar.</p>
+                </li>
+                <li class="cs-obs-item">
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Para uso diario</h3>
+                    <p class="cs-obs-text">Con antioxidantes C y E y PA+++.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--           Agrega TiZO3 a tu rutina           -->
+    <!-- ============================================ -->
+
+    <section id="producto-rutina-diaria">
+        <div class="cs-container">
+            <h2 class="cs-title">Agrega TiZO3 a tu rutina</h2>
+            <div class="cs-toggle" role="group" aria-label="Momento del día">
+                <button class="cs-toggle-btn is-active" type="button" data-rutina-toggle="am" aria-pressed="true">
+                    <svg class="cs-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
+                    AM
+                </button>
+                <button class="cs-toggle-btn" type="button" data-rutina-toggle="pm" aria-pressed="false">
+                    <svg class="cs-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    PM
+                </button>
+            </div>
+            <div class="cs-steps is-active" data-rutina-panel="am">
+                <ol class="cs-step-list">
+                    <li class="cs-step">
+                        <span class="cs-step-dot" aria-hidden="true">1</span>
+                        <span class="cs-step-num">Paso 1</span>
+                        <h3 class="cs-step-title">Limpia</h3>
+                        <p class="cs-step-text">Lava tu rostro con un limpiador suave.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-dot" aria-hidden="true">2</span>
+                        <span class="cs-step-num">Paso 2</span>
+                        <h3 class="cs-step-title">Hidrata</h3>
+                        <p class="cs-step-text">Aplica tu hidratante habitual.</p>
+                    </li>
+                    <li class="cs-step is-highlight">
+                        <span class="cs-step-dot" aria-hidden="true">3</span>
+                        <span class="cs-step-num">Paso 3</span>
+                        <h3 class="cs-step-title">Protege</h3>
+                        <p class="cs-step-text">Aplica TiZO3 como último paso, antes del maquillaje.</p>
+                    </li>
+                </ol>
+            </div>
+            <div class="cs-steps" data-rutina-panel="pm">
+                <ol class="cs-step-list">
+                    <li class="cs-step">
+                        <span class="cs-step-dot" aria-hidden="true">1</span>
+                        <span class="cs-step-num">Paso 1</span>
+                        <h3 class="cs-step-title">Limpia</h3>
+                        <p class="cs-step-text">Retira el protector solar y el maquillaje del día.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-dot" aria-hidden="true">2</span>
+                        <span class="cs-step-num">Paso 2</span>
+                        <h3 class="cs-step-title">Trata</h3>
+                        <p class="cs-step-text">Aplica tu tratamiento de noche, si usas alguno.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-dot" aria-hidden="true">3</span>
+                        <span class="cs-step-num">Paso 3</span>
+                        <h3 class="cs-step-title">Hidrata</h3>
+                        <p class="cs-step-text">Termina con tu hidratante habitual.</p>
+                    </li>
+                </ol>
             </div>
         </div>
     </section>

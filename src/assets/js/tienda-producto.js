@@ -45,4 +45,23 @@
             }
         });
     });
+
+    var rutinaToggles = document.querySelectorAll("[data-rutina-toggle]");
+    var rutinaPanels = document.querySelectorAll("[data-rutina-panel]");
+    rutinaToggles.forEach(function (toggle) {
+        toggle.addEventListener("click", function () {
+            var target = toggle.getAttribute("data-rutina-toggle");
+            rutinaToggles.forEach(function (t) {
+                var on = t === toggle;
+                t.classList.toggle("is-active", on);
+                t.setAttribute("aria-pressed", on ? "true" : "false");
+            });
+            rutinaPanels.forEach(function (panel) {
+                panel.classList.toggle(
+                    "is-active",
+                    panel.getAttribute("data-rutina-panel") === target
+                );
+            });
+        });
+    });
 })();
