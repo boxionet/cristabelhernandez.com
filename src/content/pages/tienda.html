@@ -1,0 +1,145 @@
+---
+title: "Tienda | Centro Estético Dra. Cristabel Hernández"
+description: "Protectores solares minerales TiZO disponibles en el centro: TiZO3 con color, TiZO2 sin color y TiZO Mineral Stick. A la venta en el centro, en Puerto Plata."
+permalink: "/tienda/"
+---
+
+{% extends "layouts/base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/assets/css/tienda.css">
+{% endblock %}
+
+{% block body %}
+
+    <!-- ============================================ -->
+    <!--                    Intro                     -->
+    <!-- ============================================ -->
+
+    <section id="tienda-intro">
+        <div class="cs-container">
+            <h1 class="cs-title">Esenciales diarios para cuidar y proteger tu piel</h1>
+            <p class="cs-text">
+                Protectores solares minerales para el cuidado diario de tu piel. Disponibles para la venta en el centro.
+            </p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--                Product Grid                  -->
+    <!-- ============================================ -->
+
+    <section id="tienda-grid">
+        <div class="cs-container">
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <picture class="cs-picture">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-primer-tinted.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-primer-tinted.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-primer-tinted.jpg" | resize({ width: 800, height: 1067 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-primer-tinted.jpg" | resize({ width: 800, height: 1067 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo3-primer-tinted.jpg" | resize({ width: 800, height: 1067 }) | jpeg({ quality: 82 }) %}" alt="Caja de TiZO3 Primer y protector solar con color, FPS 40" width="800" height="1067">
+                    </picture>
+                    <h2 class="cs-h3">TiZO3 Primer / Protector Solar</h2>
+                    <p class="cs-item-text">
+                        FPS 40 · Protector solar facial mineral con color y acabado mate. Óxidos de titanio y zinc, con antioxidantes C y E.
+                    </p>
+                    <a href="/contactanos/" class="cs-button-solid cs-card-button">Disponible en el centro</a>
+                </li>
+                <li class="cs-item">
+                    <picture class="cs-picture">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 1067 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 1067 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 1067 }) | jpeg({ quality: 82 }) %}" alt="Caja de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="1067">
+                    </picture>
+                    <h2 class="cs-h3">TiZO2 Primer / Protector Solar</h2>
+                    <p class="cs-item-text">
+                        FPS 40 · Protector solar facial mineral sin color y acabado mate. Óxidos de titanio y zinc, con antioxidantes C y E.
+                    </p>
+                    <a href="/contactanos/" class="cs-button-solid cs-card-button">Disponible en el centro</a>
+                </li>
+                <li class="cs-item">
+                    <picture class="cs-picture">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-mineral-stick.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-mineral-stick.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-mineral-stick.jpg" | resize({ width: 800, height: 1067 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-mineral-stick.jpg" | resize({ width: 800, height: 1067 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-mineral-stick.jpg" | resize({ width: 800, height: 1067 }) | jpeg({ quality: 82 }) %}" alt="Caja de TiZO Mineral Stick sin color, FPS 45" width="800" height="1067">
+                    </picture>
+                    <h2 class="cs-h3">TiZO Mineral Stick</h2>
+                    <p class="cs-item-text">
+                        FPS 45 · Protector solar mineral en barra para rostro y cuerpo. Amplio espectro, resistente al agua por 80 minutos.
+                    </p>
+                    <a href="/contactanos/" class="cs-button-solid cs-card-button">Disponible en el centro</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--               Solo lo bueno                  -->
+    <!-- ============================================ -->
+
+    <section id="tienda-good">
+        <div class="cs-container">
+            <h2 class="cs-title">Solo lo bueno</h2>
+            <p class="cs-text">
+                Protectores solares minerales con lo esencial para el cuidado diario de tu piel.
+            </p>
+            <ul class="cs-good-group">
+                <li class="cs-good-item">
+                    <svg class="cs-good-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 11.5 2 2 4-4.5"/></svg>
+                    <span class="cs-good-label">Protección mineral</span>
+                </li>
+                <li class="cs-good-item">
+                    <svg class="cs-good-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
+                    <span class="cs-good-label">Amplio espectro</span>
+                </li>
+                <li class="cs-good-item">
+                    <svg class="cs-good-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7 17.7 9a6 6 0 1 1-11.4 0L12 2.7z"/><path d="M9.5 14a2.5 2.5 0 0 0 2.5 2.5"/></svg>
+                    <span class="cs-good-label">Resistente al agua · 80 min</span>
+                </li>
+                <li class="cs-good-item">
+                    <svg class="cs-good-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+                    <span class="cs-good-label">Con color y sin color</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--            Disponibles en el centro          -->
+    <!-- ============================================ -->
+
+    <section id="tienda-centro">
+        <div class="cs-container">
+            <picture class="cs-picture">
+                <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-grupo.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %}" type="image/avif">
+                <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-grupo.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %}" type="image/webp">
+                <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-grupo.jpg" | resize({ width: 900, height: 1200 }) | avif({ quality: 70 }) %}" type="image/avif">
+                <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-grupo.jpg" | resize({ width: 900, height: 1200 }) | webp({ quality: 78 }) %}" type="image/webp">
+                <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-grupo.jpg" | resize({ width: 900, height: 1200 }) | jpeg({ quality: 82 }) %}" alt="Las tres cajas de protectores solares TiZO sobre una mesa en el centro" width="900" height="1200">
+            </picture>
+            <div class="cs-content">
+                <span class="cs-topper">En el centro</span>
+                <h2 class="cs-title">Disponibles en el centro</h2>
+                <p class="cs-text">
+                    Estos productos están a la venta directamente en el centro, en Puerto Plata. No vendemos en línea: visítanos durante tu cita o contáctanos y te ayudamos.
+                </p>
+                <p class="cs-text cs-address">
+                    Calle Beller No. 129, Plaza Metropolis, 2do Nivel, Puerto Plata<br>
+                    <a href="tel:{{ client.phoneForTel }}">{{ client.phoneFormatted }}</a>
+                </p>
+                <div class="cs-button-box">
+                    <a href="/reservar/" class="cs-button-solid">Reserva tu cita</a>
+                    <a href="/contactanos/" class="cs-button-outline">Contáctanos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% include "sections/cta.html" %}
+
+{% endblock %}
