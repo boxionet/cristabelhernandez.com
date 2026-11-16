@@ -13,6 +13,16 @@ permalink: "/tienda/"
 {% block body %}
 
     <!-- ============================================ -->
+    <!--                  Interior Page               -->
+    <!-- ============================================ -->
+
+    <div id="banner-712">
+        <div class="cs-container">
+            <span class="cs-int-title">Tienda</span>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
     <!--                    Intro                     -->
     <!-- ============================================ -->
 
@@ -33,6 +43,7 @@ permalink: "/tienda/"
         <div class="cs-container">
             <ul class="cs-card-group">
                 <li class="cs-item">
+                    <a class="cs-card-link" href="/tienda/tizo3/" aria-label="Ver TiZO3 Primer / Protector Solar">
                     <picture class="cs-picture">
                         <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
                         <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
@@ -44,7 +55,7 @@ permalink: "/tienda/"
                     <p class="cs-item-text">
                         FPS 40 · Protector solar facial mineral con color y acabado mate. Óxidos de titanio y zinc, con antioxidantes C y E.
                     </p>
-                    <a href="/contactanos/" class="cs-button-solid cs-card-button">Disponible en el centro</a>
+                    </a>
                 </li>
                 <li class="cs-item">
                     <picture class="cs-picture">
@@ -58,7 +69,6 @@ permalink: "/tienda/"
                     <p class="cs-item-text">
                         FPS 40 · Protector solar facial mineral sin color y acabado mate. Óxidos de titanio y zinc, con antioxidantes C y E.
                     </p>
-                    <a href="/contactanos/" class="cs-button-solid cs-card-button">Disponible en el centro</a>
                 </li>
                 <li class="cs-item">
                     <picture class="cs-picture">
@@ -72,7 +82,6 @@ permalink: "/tienda/"
                     <p class="cs-item-text">
                         FPS 45 · Protector solar mineral en barra para rostro y cuerpo. Amplio espectro, resistente al agua por 80 minutos.
                     </p>
-                    <a href="/contactanos/" class="cs-button-solid cs-card-button">Disponible en el centro</a>
                 </li>
             </ul>
         </div>
@@ -123,10 +132,10 @@ permalink: "/tienda/"
                 <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-grupo-studio.jpg" | resize({ width: 900, height: 900 }) | jpeg({ quality: 82 }) %}" alt="Los tres protectores solares TiZO juntos sobre un fondo gris" width="900" height="900">
             </picture>
             <div class="cs-content">
-                <span class="cs-topper">En el centro</span>
+                <span class="cs-topper">En Puerto Plata</span>
                 <h2 class="cs-title">Disponibles en el centro</h2>
                 <p class="cs-text">
-                    Estos productos están a la venta directamente en el centro, en Puerto Plata. No vendemos en línea: visítanos durante tu cita o contáctanos y te ayudamos.
+                    Ven a buscarlos durante tu cita, o escríbenos y te apartamos el tuyo. Te ayudamos a elegir el protector ideal para tu piel.
                 </p>
                 <p class="cs-text cs-address">
                     Calle Beller No. 129, Plaza Metropolis, 2do Nivel, Puerto Plata<br>

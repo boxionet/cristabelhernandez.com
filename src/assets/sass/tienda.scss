@@ -1,12 +1,51 @@
 /*-- -------------------------- -->
+<---          Banner            -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #banner-712 {
+        /* 175px - 200px top */
+        padding: clamp(10.9375rem, 10vw, 12.5rem) calc(16 / 16 * 1rem)
+            calc(100 / 16 * 1rem);
+        position: relative;
+        z-index: 1;
+
+        .cs-container {
+            text-align: center;
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: calc(16 / 16 * 1rem);
+        }
+
+        .cs-int-title {
+            /* 39px - 61px */
+            font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
+            font-weight: 900;
+            line-height: 1.2em;
+            text-align: inherit;
+            margin: 0;
+            color: var(--bodyTextColorWhite);
+            position: relative;
+        }
+    }
+}
+
+/*-- -------------------------- -->
 <---        Tienda Intro          -->
 <--- -------------------------- -*/
 
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
     #tienda-intro {
-        /* Same top clearance as the interior banner: clears the fixed header */
-        padding: clamp(10.9375rem, 10vw, 12.5rem) calc(16 / 16 * 1rem)
+        /* The green banner above clears the fixed header; this is section spacing */
+        padding: clamp(2.5rem, 5vw, 4rem) calc(16 / 16 * 1rem)
             calc(32 / 16 * 1rem);
 
         .cs-container {
@@ -61,6 +100,14 @@
             min-width: 0;
         }
 
+        .cs-card-link {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
         .cs-picture {
             display: block;
             width: 100%;
@@ -73,7 +120,12 @@
                 height: 100%;
                 object-fit: cover;
                 display: block;
+                transition: transform 0.3s ease;
             }
+        }
+
+        .cs-card-link:hover .cs-picture img {
+            transform: scale(1.03);
         }
 
         .cs-h3 {
@@ -93,13 +145,6 @@
             margin: 0 0 calc(24 / 16 * 1rem);
         }
 
-        .cs-card-button {
-            /* Pins every card button to the same baseline in its row */
-            margin-top: auto;
-            width: 100%;
-            padding: calc(16 / 16 * 1rem);
-            padding-top: calc(16 / 16 * 1rem);
-        }
     }
 }
 
@@ -283,6 +328,49 @@
         .cs-container {
             grid-template-columns: 1fr 1fr;
             gap: calc(64 / 16 * 1rem);
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---     CTA: centered on Tienda   -->
+<--- -------------------------- -*/
+
+/* This stylesheet loads only on /tienda/, so these overrides center the
+   shared CTA here without touching any other page. */
+@media only screen and (min-width: 0rem) {
+    #cta-2353 {
+        .cs-container {
+            align-items: center;
+        }
+
+        .cs-content {
+            text-align: center;
+        }
+
+        .cs-button-box {
+            justify-content: center;
+        }
+    }
+}
+
+/* Desktop - 1024px */
+@media only screen and (min-width: 64rem) {
+    #cta-2353 {
+        .cs-container {
+            align-items: center;
+        }
+
+        .cs-content {
+            width: 100%;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #tienda-grid {
+        .cs-card-link:hover .cs-picture img {
+            transform: none;
         }
     }
 }
