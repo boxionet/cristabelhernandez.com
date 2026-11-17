@@ -11,6 +11,7 @@ import {
 import { useAuth } from "../auth";
 import { useToast } from "../components/Toast";
 import { createBooking } from "../lib/api";
+import { trackBookingCompleted } from "../lib/analytics";
 import {
   capitalizeFirst,
   formatDateEs,
@@ -133,6 +134,16 @@ export default function Revision() {
           }),
         );
         dispatch(clearIdempotencyKey());
+        // One booking_completed event per successful submit, with
+        // how the patient verified (verified/guest) — no patient
+        // data. Fired here, not on the confirmation page, because
+        // the draft (including the identity) is consumed on landing
+        // there, and email-link landings must not count as bookings.
+        trackBookingCompleted({
+          identity: booking.identity,
+          customerType: booking.customerType,
+          serviceCount: Object.keys(booking.services).length,
+        });
         navigate(`/reservar/confirmacion?ref=${data.referenceCode ?? ""}`);
         return;
       }

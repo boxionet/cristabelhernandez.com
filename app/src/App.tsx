@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { AuthProvider, isAdmin, useAuth } from "./auth";
 import Layout from "./components/Layout";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 import CompletarPerfil from "./pages/CompletarPerfil";
 import Historial from "./pages/Historial";
 import Login from "./pages/Login";
@@ -123,6 +124,7 @@ function ClienteRedirect() {
 export default function App() {
   return (
     <AuthProvider>
+      <AnalyticsTracker />
       <Routes>
         <Route path="/mi-cuenta/login" element={<Login />} />
         <Route

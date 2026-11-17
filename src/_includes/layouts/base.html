@@ -3,6 +3,15 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
+        <!-- Google Tag Manager (container GTM-KR663M52, supplied by the
+             site owner 2026-11-16; the container already carries the
+             GA4 tag G-EVBG5T80N5). Standard container snippet, as high
+             in <head> as possible, so page views fire on every static
+             page that uses this layout (home, tratamientos, tienda,
+             blog listing + posts, and the rest). The Panel never uses
+             this layout, so it is never tracked. -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KR663M52');</script>
+        <!-- End Google Tag Manager -->
         <!-- Standard meta tags -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,12 +46,16 @@
         <!-- Sitewide Stylesheets and Scripts -->
         <link rel="stylesheet" href="/assets/css/root.css">
         <script defer src="/assets/js/nav.js"></script>
+        <script defer src="/assets/js/analytics.js"></script>
 
         {% block head %}{% endblock %}
 
         <title>{{ title }}</title>
     </head>
     <body>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KR663M52" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
         <!--Screen reader skip main nav-->
         <a class="skip" aria-label="skip to main content" href="#main">Click To Skip To Main Content</a>
 
