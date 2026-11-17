@@ -22,14 +22,24 @@
                     p.getAttribute("data-gallery-panel") === index
                 );
             });
-            // On mobile the main area is a swipe strip: scroll the chosen
-            // photo into view. On tablet/desktop only one panel is
-            // displayed, so this is a no-op there.
+            // Center the chosen photo in the strip. The mobile carousel
+            // has side gutters + peeks, so the target offset is computed
+            // from the panel's position, not from the strip width.
+            // On tablet/desktop there is no scrollable overflow, so
+            // this is a no-op there.
             if (scroll && main) {
-                main.scrollTo({
-                    left: parseInt(index, 10) * main.clientWidth,
-                    behavior: "smooth",
-                });
+                var target = panels[parseInt(index, 10)];
+                if (target) {
+                    var r = target.getBoundingClientRect();
+                    var sr = main.getBoundingClientRect();
+                    main.scrollTo({
+                        left:
+                            main.scrollLeft +
+                            (r.left - sr.left) -
+                            (sr.width - r.width) / 2,
+                        behavior: "smooth",
+                    });
+                }
             }
         }
 
@@ -49,11 +59,21 @@
                     if (ticking) return;
                     ticking = true;
                     requestAnimationFrame(function () {
-                        var index = Math.round(
-                            main.scrollLeft / main.clientWidth
-                        );
-                        index = Math.max(0, Math.min(panels.length - 1, index));
-                        setActive(String(index), false);
+                        // The active photo is the one nearest the strip's
+                        // visible center (centered carousel with peeks).
+                        var sr = main.getBoundingClientRect();
+                        var center = sr.left + sr.width / 2;
+                        var best = 0;
+                        var bestDist = Infinity;
+                        panels.forEach(function (p, i) {
+                            var r = p.getBoundingClientRect();
+                            var d = Math.abs(r.left + r.width / 2 - center);
+                            if (d < bestDist) {
+                                bestDist = d;
+                                best = i;
+                            }
+                        });
+                        setActive(String(best), false);
                         ticking = false;
                     });
                 },

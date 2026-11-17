@@ -80,10 +80,17 @@
             min-width: 0;
         }
 
+        /* Mobile: Peachy-style centered carousel — the active photo is
+           centered and taller (4/5), neighbours peek in from both
+           edges, swipe moves the next photo to the center. The 40px
+           side padding + full-width slides centers slide 1 with no
+           scroll; the 12px gap leaves a ~28px peek of each neighbour. */
         .cs-main {
             order: 1;
             min-width: 0;
             display: flex;
+            gap: calc(12 / 16 * 1rem);
+            padding: 0 calc(40 / 16 * 1rem);
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scrollbar-width: none;
@@ -124,10 +131,11 @@
         .cs-main .cs-picture {
             display: block;
             flex: 0 0 100%;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 4 / 5;
+            border: 1px solid #e5e0d8;
             border-radius: calc(16 / 16 * 1rem);
             overflow: hidden;
-            scroll-snap-align: start;
+            scroll-snap-align: center;
 
             img {
                 width: 100%;
@@ -392,10 +400,12 @@
             flex: 1;
             display: block;
             overflow: visible;
+            padding: 0;
         }
 
         .cs-main .cs-picture {
             display: none;
+            aspect-ratio: 1 / 1;
 
             &.is-active {
                 display: block;
