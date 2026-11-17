@@ -85,23 +85,81 @@
         // centered when the page loads, with a peek of the first and
         // third photos on either side — like Peachy's mobile gallery.
         // Tablet/desktop keep the first photo (the thumb rail decides).
+        //
+        // The position is asserted more than once on purpose: on fast
+        // (cached) loads, some browsers reset a snap scroller to its
+        // start AFTER this script runs, so the initial set alone does
+        // not always stick — the slider would open on the first photo
+        // when arriving from a link. The re-asserts below only run
+        // while the user has not touched the strip, so a photo the
+        // user swiped to is never yanked away.
         var mobileQuery = window.matchMedia("(max-width: 767px)");
+        var stripTouched = false;
 
         function centerPanelInstant(index) {
             var target = panels[index];
             if (!main || !target) return;
             var r = target.getBoundingClientRect();
             var sr = main.getBoundingClientRect();
-            main.scrollLeft =
+            var want =
                 main.scrollLeft +
                 (r.left - sr.left) -
                 (sr.width - r.width) / 2;
+            if (Math.abs(main.scrollLeft - want) <= 2) return;
+            // Snap is paused while the position is set, so the snap
+            // system cannot pull the strip back to the first photo.
+            var prevSnap = main.style.scrollSnapType;
+            main.style.scrollSnapType = "none";
+            main.scrollLeft = want;
+            void main.offsetWidth;
+            main.style.scrollSnapType = prevSnap;
         }
 
-        if (mobileQuery.matches) {
+        function ensureMobileDefault() {
+            if (!mobileQuery.matches) return;
             centerPanelInstant(1);
             setActive("1", false);
         }
+
+        function reassertIfUntouched() {
+            if (!stripTouched) ensureMobileDefault();
+        }
+
+        if (main) {
+            main.addEventListener(
+                "pointerdown",
+                function () {
+                    stripTouched = true;
+                },
+                { passive: true }
+            );
+            main.addEventListener(
+                "wheel",
+                function () {
+                    stripTouched = true;
+                },
+                { passive: true }
+            );
+        }
+
+        ensureMobileDefault();
+        // After first paint, once the page is fully loaded, and once
+        // more shortly after — covers late snap/restore resets.
+        requestAnimationFrame(reassertIfUntouched);
+        if (document.readyState === "complete") {
+            reassertIfUntouched();
+        } else {
+            window.addEventListener("load", reassertIfUntouched);
+        }
+        setTimeout(reassertIfUntouched, 600);
+
+        window.addEventListener("pageshow", function (event) {
+            if (!event.persisted) return;
+            // Restored from the back/forward cache: the script does not
+            // re-run, so the default is applied again here.
+            stripTouched = false;
+            ensureMobileDefault();
+        });
         if (mobileQuery.addEventListener) {
             mobileQuery.addEventListener("change", function () {
                 if (!mobileQuery.matches) return;
