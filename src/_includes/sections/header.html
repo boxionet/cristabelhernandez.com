@@ -41,25 +41,25 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="cs-li">
-                        <a href="/resultados/" class="cs-li-link {% if page.url == "/resultados/" %} cs-active {% endif %}">
-                            Resultados
-                        </a>
-                    </li>
-                    <li class="cs-li">
-                        <a href="/testimonios/" class="cs-li-link {% if page.url == "/testimonios/" %} cs-active {% endif %}">
-                            Testimonios
-                        </a>
-                    </li>
-                    <li class="cs-li">
-                        <a href="/blog/" class="cs-li-link {% if page.url == "/blog/" %} cs-active {% endif %}">
-                            Blog
-                        </a>
-                    </li>
-                    <li class="cs-li">
-                        <a href="/nosotros/" class="cs-li-link {% if page.url == "/nosotros/" %} cs-active {% endif %}">
-                            Nosotros
-                        </a>
+                    <li class="cs-li cs-dropdown">
+                        <span class="cs-li-link {% if page.url == "/nosotros/" or page.url == "/resultados/" or page.url == "/testimonios/" or page.url == "/blog/" %} cs-active {% endif %}">
+                            Conócenos
+                            <img class="cs-drop-icon" src="/assets/svgs/dropdown.svg" alt="dropdown icon" width="15" height="15" decoding="async" aria-hidden="true">
+                        </span>
+                        <ul class="cs-drop-ul">
+                            <li class="cs-drop-li">
+                                <a href="/nosotros/" class="cs-li-link cs-drop-link">Nosotros</a>
+                            </li>
+                            <li class="cs-drop-li">
+                                <a href="/resultados/" class="cs-li-link cs-drop-link">Resultados</a>
+                            </li>
+                            <li class="cs-drop-li">
+                                <a href="/testimonios/" class="cs-li-link cs-drop-link">Testimonios</a>
+                            </li>
+                            <li class="cs-drop-li">
+                                <a href="/blog/" class="cs-li-link cs-drop-link">Blog</a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="cs-li">
                         <a href="/contactanos/" class="cs-li-link {% if page.url == "/contactanos/" %} cs-active {% endif %}">

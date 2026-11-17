@@ -104,6 +104,23 @@ export async function requestConfirmation(
   return data as unknown as { sent: boolean };
 }
 
+// Ask a patient for a Google review after the Dra marked the cita
+// paid (booking-review-request): the popup in AppointmentActions
+// offers it, and this call sends the email.
+export async function requestReview(
+  appointmentId: string,
+): Promise<{ emailSent: boolean }> {
+  const { ok, data } = await staffCallFunction("booking-review-request", {
+    appointmentId,
+  });
+  if (!ok) {
+    throw new Error(
+      typeof data.error === "string" ? data.error : "review_request_failed",
+    );
+  }
+  return data as unknown as { emailSent: boolean };
+}
+
 // Public availability (no auth needed) for the reschedule picker.
 export async function fetchSlots(
   dateISO: string,

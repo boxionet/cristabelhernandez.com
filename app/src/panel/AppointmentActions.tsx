@@ -6,10 +6,11 @@ import {
   displayName,
   markNoShow,
   releaseHold,
+  servicesSummary,
   updateAppointment,
   type PanelAppointment,
 } from "../lib/panel";
-import { decideAppointment } from "../lib/api";
+import { decideAppointment, requestReview } from "../lib/api";
 import { formatDateEs, formatPrice, formatTime12h } from "../lib/format";
 import AppointmentServicesEditor from "./AppointmentServicesEditor";
 import DatePicker from "../components/DatePicker";
@@ -27,6 +28,11 @@ import { useToast } from "../components/Toast";
 //   pendiente:     Confirmar (+ Mover, Tratamientos; No confirmar in the menu)
 //   confirmada:    Completar, Marcar pagado, Mover, Tratamientos
 //                  (+ No asistió, Cancelar in the menu)
+//   completada:    Marcar pagado (while unpaid)
+// Marking a cita paid opens the review-request popup (when the
+// patient has an email): the Dra chooses whether to send the Google
+// review email. The button only shows while unpaid, so the popup
+// fires at most once per cita.
 export default function AppointmentActions({
   appt,
   onChanged,
@@ -40,9 +46,16 @@ export default function AppointmentActions({
   const [editingServices, setEditingServices] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmModal, setConfirmModal] = useState<"cancel" | "reject" | null>(null);
+  const [reviewModal, setReviewModal] = useState(false);
+  const [reviewSending, setReviewSending] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const [newDate, setNewDate] = useState(appt.date);
   const [newTime, setNewTime] = useState(appt.start_time.slice(0, 5));
   const toast = useToast();
+
+  // The review email goes to the patient's account email, or the
+  // guest email for a booking without an account. No email, no popup.
+  const reviewEmail = appt.patients?.email || appt.guest_email || null;
 
   async function run(fn: () => Promise<void>, successMessage?: string) {
     setBusy(true);
@@ -54,6 +67,46 @@ export default function AppointmentActions({
     } catch {
       toast.error("No se pudo guardar el cambio. Inténtalo de nuevo.");
       setBusy(false);
+    }
+  }
+
+  // Own busy handling (not run()): busy must be cleared again on
+  // success, or the popup's buttons would stay disabled.
+  async function markPaid() {
+    setBusy(true);
+    setMenuOpen(false);
+    try {
+      await updateAppointment(appt.id, { payment_status: "pagado" });
+      toast.success("Pago registrado");
+      onChanged();
+      setBusy(false);
+      if (reviewEmail) {
+        setReviewError(null);
+        setReviewModal(true);
+      }
+    } catch {
+      toast.error("No se pudo guardar el cambio. Inténtalo de nuevo.");
+      setBusy(false);
+    }
+  }
+
+  // The popup stays open on a failed send, with the error inline, so
+  // the Dra can retry — the Marcar pagado button is already gone.
+  async function sendReviewRequest() {
+    setReviewSending(true);
+    setReviewError(null);
+    try {
+      const r = await requestReview(appt.id);
+      setReviewSending(false);
+      if (r.emailSent) {
+        setReviewModal(false);
+        toast.success("Solicitud de reseña enviada");
+      } else {
+        setReviewError("No se pudo enviar el correo. Inténtalo de nuevo.");
+      }
+    } catch {
+      setReviewSending(false);
+      setReviewError("No se pudo enviar el correo. Inténtalo de nuevo.");
     }
   }
 
@@ -80,13 +133,15 @@ export default function AppointmentActions({
     (active && !rescheduling);
 
   useEffect(() => {
-    if (!confirmModal) return;
+    if (!confirmModal && !reviewModal) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !busy) setConfirmModal(null);
+      if (e.key !== "Escape") return;
+      if (confirmModal && !busy) setConfirmModal(null);
+      if (reviewModal && !reviewSending) setReviewModal(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [confirmModal, busy]);
+  }, [confirmModal, reviewModal, busy, reviewSending]);
 
   return (
     <>
@@ -135,7 +190,7 @@ export default function AppointmentActions({
             Completar
           </button>
           {appt.payment_status === "pendiente" && (
-            <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }), "Pago registrado")}>
+            <button type="button" className="btn ghost small" disabled={busy} onClick={() => void markPaid()}>
               Marcar pagado
             </button>
           )}
@@ -148,7 +203,7 @@ export default function AppointmentActions({
         </>
       )}
       {appt.status === "completada" && appt.payment_status === "pendiente" && (
-        <button type="button" className="btn ghost small" disabled={busy} onClick={() => void run(() => updateAppointment(appt.id, { payment_status: "pagado" }), "Pago registrado")}>
+        <button type="button" className="btn ghost small" disabled={busy} onClick={() => void markPaid()}>
           Marcar pagado
         </button>
       )}
@@ -304,6 +359,53 @@ export default function AppointmentActions({
               }
             >
               {confirmModal === "reject" ? "Sí, no confirmar" : "Sí, cancelar"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    {reviewModal && (
+      <div
+        className="modal-backdrop"
+        onClick={() => {
+          if (!reviewSending) setReviewModal(false);
+        }}
+      >
+        <div
+          className="modal-card"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Solicitar reseña"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3>¿Enviar solicitud de reseña?</h3>
+          <p className="modal-appt">
+            <strong>{displayName(appt)}</strong> · {formatDateEs(appt.date)} ·{" "}
+            {formatTime12h(appt.start_time)}
+            <br />
+            {servicesSummary(appt)}
+          </p>
+          <p className="muted">
+            Se enviará un correo a {reviewEmail} con un botón para dejar una
+            reseña en Google.
+          </p>
+          {reviewError && <p className="error">{reviewError}</p>}
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="btn ghost"
+              disabled={reviewSending}
+              onClick={() => setReviewModal(false)}
+            >
+              Ahora no
+            </button>
+            <button
+              type="button"
+              className="btn primary"
+              disabled={reviewSending}
+              onClick={() => void sendReviewRequest()}
+            >
+              {reviewSending ? "Enviando…" : "Enviar email"}
             </button>
           </div>
         </div>
