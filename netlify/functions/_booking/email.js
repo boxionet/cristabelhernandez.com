@@ -22,6 +22,10 @@ const CLINIC_ADDRESS = "Calle Beller No. 129, Plaza Metropolis 2do Nivel, Puerto
 const CLINIC_PHONE = "(829) 316-3313";
 const MAP_LINK =
   "https://www.google.com/maps/place/Dra.+Cristabel+Hern%C3%A1ndez+-+Medicina+Est%C3%A9tica,+regenerativa+y+antienvejecimiento/@19.7948341,-70.6881958,678m/data=!3m1!1e3!4m6!3m5!1s0x8eb1ef32ad8b0575:0x38e44379a6429fa7!8m2!3d19.7946178!4d-70.6871262!16s%2Fg%2F11zgy_vn4p?entry=ttu&g_ep=EgoyMDI2MTEwMy4wIKXMDSoASAFQAw%3D%3D";
+// The clinic's Google review form (from the owner's review
+// solicitation link) — the button in the review-request email.
+const GOOGLE_REVIEW_URL =
+  "https://search.google.com/local/writereview?placeid=ChIJdQWLrTLvsY4Rp59CpnlD5Dg&source=g.page.m.ia._&laa=nmx-review-solicitation-ia2";
 // The favicon mark, already live on production — absolute URL because
 // email clients load images outside the site.
 const ICON_URL = "https://cristabelhernandez.com/assets/favicons/apple-touch-icon.png";
@@ -630,6 +634,61 @@ async function sendRescheduleNotice({ appointment, when, wasConfirmed, panelUrl 
   }
 }
 
+// After the Dra marks a cita paid, she can ask the patient for a
+// Google review: this email carries the review-form button. No
+// price or total — the visit is already paid; only the date and the
+// services, so the patient recognizes the visit.
+async function sendReviewRequestEmail({ appointment, items, to }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    await resend.emails.send({
+      from: FROM,
+      to,
+      reply_to: OWNER_EMAIL,
+      subject: `Cuéntanos cómo te fue en tu cita — ${appointment.reference_code}`,
+      html: emailShell({
+        preheader: "Tu opinión nos ayuda a mejorar — déjanos una reseña en Google, solo toma un minuto.",
+        title: "¿Cómo te fue en tu cita?",
+        body:
+          emailParagraph("Hola,") +
+          emailParagraph(
+            `Gracias por visitarnos en el ${CLINIC_NAME}. Nos encantaría saber cómo te fue:`,
+          ) +
+          emailDetails([
+            ["Referencia", escapeHtml(appointment.reference_code)],
+            ["Fecha", when],
+            ["Servicios", itemsListCell(items)],
+          ]) +
+          emailParagraph(
+            "¿Nos ayudas con una reseña en Google? Solo toma un minuto y nos ayuda mucho a que otras personas nos encuentren.",
+          ) +
+          emailButton("Dejar una reseña en Google", GOOGLE_REVIEW_URL) +
+          emailParagraph("Gracias por confiar en nosotros."),
+      }),
+      text: [
+        `Hola,`,
+        ``,
+        `Gracias por visitarnos en ${CLINIC_NAME}. Nos encantaría saber cómo te fue:`,
+        ``,
+        `Referencia: ${appointment.reference_code}`,
+        `Fecha: ${when}`,
+        `Servicios:`,
+        itemsListText(items),
+        ``,
+        `¿Nos ayudas con una reseña en Google? Solo toma un minuto y nos ayuda mucho a que otras personas nos encuentren:`,
+        `${GOOGLE_REVIEW_URL}`,
+        ``,
+        `Gracias por confiar en nosotros.`,
+      ].join("\n"),
+    });
+    return true;
+  } catch (e) {
+    console.error("review-request email failed", e);
+    return false;
+  }
+}
+
 module.exports = {
   OWNER_EMAIL,
   FROM_EMAIL,
@@ -651,4 +710,5 @@ module.exports = {
   sendReminderEmail,
   sendCancellationNotice,
   sendRescheduleNotice,
+  sendReviewRequestEmail,
 };

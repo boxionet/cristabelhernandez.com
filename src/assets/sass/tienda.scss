@@ -1,0 +1,352 @@
+/*-- -------------------------- -->
+<---          Banner            -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #banner-712 {
+        /* 175px - 200px top */
+        padding: clamp(10.9375rem, 10vw, 12.5rem) calc(16 / 16 * 1rem)
+            calc(100 / 16 * 1rem);
+        position: relative;
+        z-index: 1;
+
+        .cs-container {
+            text-align: center;
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: calc(16 / 16 * 1rem);
+        }
+
+        .cs-int-title {
+            /* 39px - 61px */
+            font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
+            font-weight: 900;
+            line-height: 1.2em;
+            text-align: inherit;
+            margin: 0;
+            color: var(--bodyTextColorWhite);
+            position: relative;
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---        Tienda Intro          -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #tienda-intro {
+        /* The green banner above clears the fixed header; this is section spacing */
+        padding: clamp(2.5rem, 5vw, 4rem) calc(16 / 16 * 1rem)
+            calc(32 / 16 * 1rem);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cs-title {
+            margin-bottom: calc(16 / 16 * 1rem);
+        }
+
+        .cs-text {
+            max-width: calc(640 / 16 * 1rem);
+            margin: 0;
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---       Product Grid          -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #tienda-grid {
+        padding: calc(32 / 16 * 1rem) calc(16 / 16 * 1rem)
+            clamp(3.75rem, 7.82vw, 6.25rem);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+        }
+
+        .cs-card-group {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: calc(36 / 16 * 1rem);
+        }
+
+        .cs-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .cs-card-link {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .cs-picture {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: calc(16 / 16 * 1rem);
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease;
+            }
+        }
+
+        .cs-card-link:hover .cs-picture img {
+            transform: scale(1.03);
+        }
+
+        .cs-h3 {
+            font-size: calc(24 / 16 * 1rem);
+            line-height: 1.2em;
+            font-weight: 700;
+            color: var(--headerColor);
+            text-align: left;
+            margin: calc(20 / 16 * 1rem) 0 calc(8 / 16 * 1rem);
+        }
+
+        .cs-item-text {
+            font-size: calc(16 / 16 * 1rem);
+            line-height: 1.5em;
+            color: var(--bodyTextColor);
+            text-align: left;
+            margin: 0 0 calc(24 / 16 * 1rem);
+        }
+
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #tienda-grid {
+        .cs-card-group {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+/* Desktop - 1024px */
+@media only screen and (min-width: 64rem) {
+    #tienda-grid {
+        .cs-card-group {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---       Solo lo bueno         -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #tienda-good {
+        background-color: #f6f4f1;
+        padding: var(--sectionPadding);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cs-title {
+            margin-bottom: calc(16 / 16 * 1rem);
+        }
+
+        .cs-text {
+            max-width: calc(640 / 16 * 1rem);
+            margin: 0 0 calc(40 / 16 * 1rem);
+        }
+
+        .cs-good-group {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            width: 100%;
+            max-width: calc(1024 / 16 * 1rem);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: calc(32 / 16 * 1rem) calc(16 / 16 * 1rem);
+        }
+
+        .cs-good-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: calc(12 / 16 * 1rem);
+            min-width: 0;
+        }
+
+        .cs-good-icon {
+            width: calc(36 / 16 * 1rem);
+            height: calc(36 / 16 * 1rem);
+            color: var(--headerColor);
+            flex-shrink: 0;
+        }
+
+        .cs-good-label {
+            font-size: calc(15 / 16 * 1rem);
+            line-height: 1.35em;
+            font-weight: 500;
+            color: var(--headerColor);
+            text-align: center;
+        }
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #tienda-good {
+        .cs-good-group {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---   Disponibles en el centro  -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #tienda-centro {
+        padding: var(--sectionPadding);
+
+        .cs-container {
+            width: 100%;
+            max-width: calc(1280 / 16 * 1rem);
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: calc(40 / 16 * 1rem);
+            align-items: center;
+        }
+
+        .cs-picture {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: calc(16 / 16 * 1rem);
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+        }
+
+        .cs-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .cs-title {
+            margin-bottom: calc(16 / 16 * 1rem);
+        }
+
+        .cs-text {
+            margin: 0 0 calc(16 / 16 * 1rem);
+        }
+
+        .cs-address {
+            margin-bottom: calc(32 / 16 * 1rem);
+
+            a {
+                color: var(--headerColor);
+                font-weight: 700;
+                text-decoration: none;
+            }
+        }
+
+        .cs-button-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: calc(16 / 16 * 1rem);
+
+            /* Same box for both buttons; outline in the clinic brown
+               instead of the kit default black, to match the hover fill.
+               Flex centering keeps the label centered even when the
+               row stretches one button taller than the other, and the
+               transparent border gives the solid button the same
+               2px frame as the outline so both boxes match. */
+            .cs-button-solid,
+            .cs-button-outline {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: calc(16 / 16 * 1rem) calc(24 / 16 * 1rem);
+                font-size: calc(16 / 16 * 1rem);
+                line-height: 1em;
+                font-weight: 500;
+            }
+
+            .cs-button-solid {
+                border: 2px solid transparent;
+            }
+
+            .cs-button-outline {
+                border: 2px solid #705d3f;
+                color: #705d3f;
+                border-radius: calc(4 / 16 * 1rem);
+            }
+        }
+    }
+}
+
+/* Desktop - 1024px */
+@media only screen and (min-width: 64rem) {
+    #tienda-centro {
+        .cs-container {
+            grid-template-columns: 1fr 1fr;
+            gap: calc(64 / 16 * 1rem);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #tienda-grid {
+        .cs-card-link:hover .cs-picture img {
+            transform: none;
+        }
+    }
+}
