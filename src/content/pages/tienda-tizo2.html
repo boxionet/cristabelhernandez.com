@@ -1,0 +1,351 @@
+---
+title: "TiZO2 Primer / Protector Solar | Centro Estético Dra. Cristabel Hernández"
+description: "TiZO2: protector solar facial mineral sin color, FPS 40, acabado mate. Disponible en el centro, en Puerto Plata."
+permalink: "/tienda/tizo2/"
+---
+
+{% extends "layouts/base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="/assets/css/tienda-producto.css">
+    <script src="/assets/js/tienda-producto.js" defer></script>
+{% endblock %}
+
+{% block body %}
+
+    <!-- ============================================ -->
+    <!--                  Interior Page               -->
+    <!-- ============================================ -->
+
+    <div id="banner-712">
+        <div class="cs-container">
+            <h1 class="cs-int-title">TiZO2 Primer / Protector Solar</h1>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!--                Product Detail                -->
+    <!-- ============================================ -->
+
+    <section id="producto">
+        <div class="cs-container">
+            <a class="cs-back" href="/tienda/">&larr; Volver a la tienda</a>
+            <div class="cs-layout">
+                <div class="cs-gallery" data-gallery>
+                    <div class="cs-thumbs" aria-label="Fotos y video del producto">
+                        <button class="cs-thumb is-active" type="button" data-gallery-thumb="0" aria-pressed="true" aria-label="Ver foto 1: tubo de TiZO2">
+                            <picture>
+                                <source srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
+                            </picture>
+                        </button>
+                        <button class="cs-thumb" type="button" data-gallery-thumb="1" aria-pressed="false" aria-label="Ver foto 2: tubo de TiZO2 con una muestra de la crema">
+                            <picture>
+                                <source srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
+                            </picture>
+                        </button>
+                        <button class="cs-thumb" type="button" data-gallery-thumb="2" aria-pressed="false" aria-label="Ver foto 3: caja de TiZO2">
+                            <picture>
+                                <source srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
+                            </picture>
+                        </button>
+                        <button class="cs-thumb" type="button" data-gallery-thumb="3" aria-pressed="false" aria-label="Ver foto 4: textura cremosa sin color de TiZO2">
+                            <picture>
+                                <source srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
+                            </picture>
+                        </button>
+                        <button class="cs-thumb cs-thumb-video" type="button" data-gallery-thumb="4" aria-pressed="false" aria-label="Ver video del producto TiZO2">
+                            <picture>
+                                <source srcset="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
+                            </picture>
+                            <span class="cs-thumb-play" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+                        </button>
+                    </div>
+                    <div class="cs-main">
+                        <picture class="cs-picture is-active" data-gallery-panel="0">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <img loading="eager" decoding="async" src="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Tubo de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="800">
+                        </picture>
+                        <picture class="cs-picture" data-gallery-panel="1">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Tubo de TiZO2 con una muestra de la crema" width="800" height="800">
+                        </picture>
+                        <picture class="cs-picture" data-gallery-panel="2">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Caja de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="800">
+                        </picture>
+                        <picture class="cs-picture" data-gallery-panel="3">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Muestra de la textura cremosa sin color de TiZO2" width="800" height="800">
+                        </picture>
+                        <div class="cs-picture cs-video" data-gallery-panel="4">
+                            <video muted loop playsinline preload="metadata" poster="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" aria-label="Video del producto TiZO2">
+                                <source src="/assets/videos/tizo2-video.mp4" type="video/mp4">
+                            </video>
+                            <button class="cs-video-toggle" type="button" data-video-toggle aria-label="Reproducir video">
+                                <svg class="cs-icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+                                <svg class="cs-icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="cs-info">
+                    <h2 class="cs-title">TiZO2 Primer / Protector Solar</h2>
+                    <p class="cs-text">
+                        Protector solar facial mineral sin color y acabado mate. Se integra bajo el maquillaje como primer, con óxidos de titanio y zinc y antioxidantes C y E.
+                    </p>
+                    <p class="cs-text">
+                        Amplio espectro FPS 40, resistente al agua por 80 minutos. Para uso diario, solo o como base antes del maquillaje.
+                    </p>
+                    <div class="cs-disponible">
+                        <svg class="cs-disponible-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg>
+                        <div class="cs-disponible-body">
+                            <p class="cs-disponible-title">Disponible en el centro</p>
+                            <p class="cs-disponible-text">
+                                A la venta directamente en el centro, en Puerto Plata. Ven durante tu cita o escríbenos y te apartamos el tuyo. ¿Dudas? Llámanos al <a href="tel:{{ client.phoneForTel }}">{{ client.phoneFormatted }}</a>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="cs-acciones">
+                        <a class="cs-accion-btn is-primary" href="/reservar/">Reserva tu cita</a>
+                        <a class="cs-accion-btn is-secondary" href="/contactanos/">Contáctanos</a>
+                    </div>
+                    <div class="cs-accordions">
+                        <div class="cs-acc">
+                            <h2>
+                                <button class="cs-acc-button" type="button" data-acc-button aria-expanded="false" aria-controls="acc-detalles" id="acc-detalles-btn">
+                                    Detalles
+                                    <span class="cs-acc-icon" aria-hidden="true"></span>
+                                </button>
+                            </h2>
+                            <div class="cs-acc-body" id="acc-detalles" role="region" aria-labelledby="acc-detalles-btn">
+                                <div class="cs-acc-inner">
+                                    <ul class="cs-facts">
+                                        <li>Sin color · Acabado mate</li>
+                                        <li>Óxidos de titanio y zinc</li>
+                                        <li>Antioxidantes C y E</li>
+                                        <li>Amplio espectro FPS 40 · PA++++</li>
+                                        <li>Resistente al agua por 80 minutos</li>
+                                        <li>Contenido: 1.75 oz / 50 g</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cs-acc">
+                            <h2>
+                                <button class="cs-acc-button" type="button" data-acc-button aria-expanded="false" aria-controls="acc-uso" id="acc-uso-btn">
+                                    Cómo usarlo
+                                    <span class="cs-acc-icon" aria-hidden="true"></span>
+                                </button>
+                            </h2>
+                            <div class="cs-acc-body" id="acc-uso" role="region" aria-labelledby="acc-uso-btn">
+                                <div class="cs-acc-inner">
+                                    <p>Aplicar generosamente 15 minutos antes de la exposición al sol.</p>
+                                    <p>Reaplicar después de 80 minutos de nadar o sudar, inmediatamente después de secarse con una toalla, y al menos cada 2 horas.</p>
+                                    <p>Aplicar como último paso de la rutina de cuidado de la piel, antes del maquillaje.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cs-acc">
+                            <h2>
+                                <button class="cs-acc-button" type="button" data-acc-button aria-expanded="false" aria-controls="acc-estandares" id="acc-estandares-btn">
+                                    Nuestros estándares
+                                    <span class="cs-acc-icon" aria-hidden="true"></span>
+                                </button>
+                            </h2>
+                            <div class="cs-acc-body" id="acc-estandares" role="region" aria-labelledby="acc-estandares-btn">
+                                <div class="cs-acc-inner">
+                                    <ul class="cs-standards">
+                                        <li>
+                                            <svg class="cs-standard-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 11.5 2 2 4-4.5"/></svg>
+                                            <span>Protección mineral</span>
+                                        </li>
+                                        <li>
+                                            <svg class="cs-standard-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
+                                            <span>Amplio espectro</span>
+                                        </li>
+                                        <li>
+                                            <svg class="cs-standard-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7 17.7 9a6 6 0 1 1-11.4 0L12 2.7z"/><path d="M9.5 14a2.5 2.5 0 0 0 2.5 2.5"/></svg>
+                                            <span>Resistente al agua · 80 min</span>
+                                        </li>
+                                        <li>
+                                            <svg class="cs-standard-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+                                            <span>Sin color</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--             Por qué les encanta              -->
+    <!-- ============================================ -->
+
+    <section id="producto-obsesion">
+        <div class="cs-container">
+            <h2 class="cs-title">Por qué les encanta</h2>
+            <!-- Nombres inventados solo para la vista previa: reemplazar con nombres reales de pacientes antes de publicar. -->
+            <ul class="cs-obs-group">
+                <li class="cs-obs-item">
+                    <p class="cs-obs-name">Rosa E.</p>
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Sin color, acabado mate</h3>
+                    <p class="cs-obs-text">Se integra bajo el maquillaje como primer.</p>
+                </li>
+                <li class="cs-obs-item">
+                    <p class="cs-obs-name">Damaris G.</p>
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Protección mineral</h3>
+                    <p class="cs-obs-text">Óxidos de titanio y zinc, amplio espectro FPS 40.</p>
+                </li>
+                <li class="cs-obs-item">
+                    <p class="cs-obs-name">Luz M.</p>
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Resistente al agua</h3>
+                    <p class="cs-obs-text">80 minutos al nadar o sudar.</p>
+                </li>
+                <li class="cs-obs-item">
+                    <p class="cs-obs-name">Carlos J.</p>
+                    <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
+                    <h3 class="cs-obs-title">Para uso diario</h3>
+                    <p class="cs-obs-text">Con antioxidantes C y E y PA++++.</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--           Agrega TiZO2 a tu rutina           -->
+    <!-- ============================================ -->
+
+    <section id="producto-rutina-diaria">
+        <div class="cs-container">
+            <h2 class="cs-title">Agrega TiZO2 a tu rutina</h2>
+            <div class="cs-toggle" role="group" aria-label="Momento del día">
+                <span class="cs-toggle-thumb" aria-hidden="true"></span>
+                <button class="cs-toggle-btn is-active" type="button" data-rutina-toggle="am" aria-pressed="true">
+                    <svg class="cs-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
+                    AM
+                </button>
+                <button class="cs-toggle-btn" type="button" data-rutina-toggle="pm" aria-pressed="false">
+                    <svg class="cs-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    PM
+                </button>
+            </div>
+            <div class="cs-timeline" aria-hidden="true">
+                <span class="cs-timeline-cell"><span class="cs-timeline-dot"></span></span>
+                <span class="cs-timeline-cell"><span class="cs-timeline-dot"></span></span>
+                <span class="cs-timeline-cell"><span class="cs-timeline-dot"></span></span>
+            </div>
+            <div class="cs-steps-wrap">
+            <div class="cs-steps is-active" data-rutina-panel="am">
+                <ol class="cs-step-list">
+                    <li class="cs-step">
+                        <span class="cs-step-num">Paso 1</span>
+                        <h3 class="cs-step-title">Limpia</h3>
+                        <p class="cs-step-text">Lava tu rostro con un limpiador suave.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-num">Paso 2</span>
+                        <h3 class="cs-step-title">Hidrata</h3>
+                        <p class="cs-step-text">Aplica tu hidratante habitual.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-num">Paso 3</span>
+                        <h3 class="cs-step-title">Protege</h3>
+                        <p class="cs-step-text">Aplica TiZO2 como último paso, antes del maquillaje.</p>
+                    </li>
+                </ol>
+            </div>
+            <div class="cs-steps" data-rutina-panel="pm">
+                <ol class="cs-step-list">
+                    <li class="cs-step">
+                        <span class="cs-step-num">Paso 1</span>
+                        <h3 class="cs-step-title">Limpia</h3>
+                        <p class="cs-step-text">Retira el protector solar y el maquillaje del día.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-num">Paso 2</span>
+                        <h3 class="cs-step-title">Trata</h3>
+                        <p class="cs-step-text">Aplica tu tratamiento de noche, si usas alguno.</p>
+                    </li>
+                    <li class="cs-step">
+                        <span class="cs-step-num">Paso 3</span>
+                        <h3 class="cs-step-title">Hidrata</h3>
+                        <p class="cs-step-text">Termina con tu hidratante habitual.</p>
+                    </li>
+                </ol>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!--             Completa tu rutina               -->
+    <!-- ============================================ -->
+
+    <section id="producto-rutina">
+        <div class="cs-container">
+            <h2 class="cs-title">Completa tu rutina</h2>
+            <p class="cs-text">
+                Los otros protectores minerales de la línea TiZO, también disponibles en el centro.
+            </p>
+            <ul class="cs-card-group">
+                <li class="cs-item">
+                    <a class="cs-card-link" href="/tienda/tizo3/" aria-label="Ver TiZO3 Primer / Protector Solar">
+                    <picture class="cs-picture">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Tubo de TiZO3 Primer y protector solar con color, FPS 40" width="800" height="800">
+                    </picture>
+                    <h3 class="cs-h3">TiZO3 Primer / Protector Solar</h3>
+                    <p class="cs-item-text">
+                        FPS 40 · Protector solar facial mineral con color y acabado mate. Óxidos de titanio y zinc, con antioxidantes C y E.
+                    </p>
+                    </a>
+                </li>
+                <li class="cs-item">
+                    <a class="cs-card-link" href="/tienda/mineral-stick/" aria-label="Ver TiZO Mineral Stick">
+                    <picture class="cs-picture">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Envase de TiZO Mineral Stick sin color, FPS 45" width="800" height="800">
+                    </picture>
+                    <h3 class="cs-h3">TiZO Mineral Stick</h3>
+                    <p class="cs-item-text">
+                        FPS 45 · Protector solar mineral en barra para rostro y cuerpo. Amplio espectro, resistente al agua por 80 minutos.
+                    </p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    {% include "sections/cta.html" %}
+
+{% endblock %}
