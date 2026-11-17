@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { type ScheduleRow, clinicToday } from "../lib/panel";
-import { buildMonthGrid, shiftMonthKey } from "../lib/calendarGrid";
+import { buildMonthGrid, formatDayList, shiftMonthKey } from "../lib/calendarGrid";
 import { formatDateLongEs, formatTime12h } from "../lib/format";
 import { usePanelData } from "../lib/queries/panelQueries";
 import AsyncButton from "../components/AsyncButton";
@@ -103,6 +103,11 @@ export default function Horario() {
   const [open, setOpen] = useState("09:00");
   const [close, setClose] = useState("18:00");
   const [reason, setReason] = useState("");
+  // Bulk mode: the "Varios días" switch turns day taps into collecting a
+  // selection instead of viewing one day. The selection survives
+  // flipping months, so days from several months go in one save.
+  const [multiMode, setMultiMode] = useState(false);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
   const byDate = useMemo(
     () => new Map((exceptions ?? []).map((e) => [e.date, e])),
@@ -114,17 +119,25 @@ export default function Horario() {
     () => (exceptions ?? []).filter((e) => e.date.startsWith(month)).length,
     [exceptions, month],
   );
+  const selectedSet = useMemo(() => new Set(selectedDays), [selectedDays]);
+  const sortedSelection = useMemo(() => [...selectedDays].sort(), [selectedDays]);
+  const selectionExistingCount = useMemo(
+    () => sortedSelection.filter((iso) => byDate.has(iso)).length,
+    [sortedSelection, byDate],
+  );
 
   // The panel form always reflects the selected day: its saved
   // exception, or the blank defaults for a day without one. It
   // re-initializes when the selection moves or fresh data arrives
-  // after a save — never while the Dra is typing.
+  // after a save — never while the Dra is typing, and never in bulk
+  // mode, where the form holds the values to apply to the selection.
   useEffect(() => {
+    if (multiMode) return;
     setClosed(existing ? existing.is_closed : true);
     setOpen(existing?.open_time?.slice(0, 5) ?? "09:00");
     setClose(existing?.close_time?.slice(0, 5) ?? "18:00");
     setReason(existing?.label ?? "");
-  }, [existing]);
+  }, [existing, multiMode]);
 
   if (error) return <p className="error">{error}</p>;
   if (!schedule || !exceptions) return <SkeletonTable rows={7} />;
@@ -162,12 +175,139 @@ export default function Horario() {
     void reload();
   }
 
+  function toggleMultiMode() {
+    if (multiMode) {
+      // Leaving bulk mode: drop the selection; the form re-syncs to
+      // the selected day via the effect above.
+      setSelectedDays([]);
+      setMultiMode(false);
+    } else {
+      // Entering bulk mode: start from a clean slate — closed all
+      // day, no motivo — instead of the last single day's values.
+      setClosed(true);
+      setOpen("09:00");
+      setClose("18:00");
+      setReason("");
+      setMultiMode(true);
+    }
+  }
+
+  function onDayClick(iso: string) {
+    if (multiMode) {
+      setSelectedDays((prev) =>
+        prev.includes(iso) ? prev.filter((d) => d !== iso) : [...prev, iso],
+      );
+    } else {
+      setSelectedISO(iso);
+    }
+  }
+
+  async function applyBulk() {
+    const rows = sortedSelection.map((date) => ({
+      date,
+      is_closed: closed,
+      open_time: closed ? null : open,
+      close_time: closed ? null : close,
+      label: reason.trim() || null,
+    }));
+    // date is unique, so one upsert writes the whole selection: new
+    // days are inserted, days with an exception are updated.
+    const { error: saveError } = await supabase
+      .from("date_exceptions")
+      .upsert(rows, { onConflict: "date" });
+    if (saveError) {
+      toast.error(`No se pudieron guardar los días: ${saveError.message}`);
+      return;
+    }
+    toast.success(
+      `${rows.length} día${rows.length === 1 ? "" : "s"} actualizado${rows.length === 1 ? "" : "s"}`,
+    );
+    setSelectedDays([]);
+    void reload();
+  }
+
+  async function removeBulk() {
+    const ids = sortedSelection
+      .map((iso) => byDate.get(iso)?.id)
+      .filter((id): id is string => Boolean(id));
+    if (ids.length === 0) return;
+    const { error: deleteError } = await supabase
+      .from("date_exceptions")
+      .delete()
+      .in("id", ids);
+    if (deleteError) {
+      toast.error(`No se pudieron quitar los días: ${deleteError.message}`);
+      return;
+    }
+    toast.success(
+      `${ids.length} día${ids.length === 1 ? "" : "s"} especial${ids.length === 1 ? "" : "es"} eliminado${ids.length === 1 ? "" : "s"}`,
+    );
+    setSelectedDays([]);
+    void reload();
+  }
+
+  // The Motivo / Cerrado / hours fields, shared by the single-day
+  // panel and the bulk panel — one set of values either way.
+  const fields = (
+    <>
+      <label>
+        Motivo
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Feriado, actividad, etc."
+        />
+      </label>
+      <label className="check-label">
+        <input
+          type="checkbox"
+          checked={closed}
+          onChange={(e) => setClosed(e.target.checked)}
+        />
+        Cerrado todo el día
+      </label>
+      {!closed && (
+        <div className="form-grid">
+          <label>
+            Apertura
+            <input type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
+          </label>
+          <label>
+            Cierre
+            <input type="time" value={close} onChange={(e) => setClose(e.target.value)} />
+          </label>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <>
       <h2 className="section-title">Días especiales (feriados, cierres, horarios cortos)</h2>
       <section className="card">
         <div className="spec-cal-wrap">
           <div>
+            <div className="spec-multi-row">
+              <button
+                type="button"
+                role="switch"
+                aria-checked={multiMode}
+                aria-label="Seleccionar varios días"
+                className={multiMode ? "switch on" : "switch"}
+                onClick={toggleMultiMode}
+              >
+                <span className="track" aria-hidden="true" />
+                <span className="knob" aria-hidden="true" />
+              </button>
+              <span className="spec-multi-label" onClick={toggleMultiMode}>
+                Varios días
+              </span>
+              {multiMode && selectedDays.length > 0 && (
+                <span className="spec-multi-count">
+                  {selectedDays.length} seleccionado{selectedDays.length === 1 ? "" : "s"}
+                </span>
+              )}
+            </div>
             <div className="spec-cal-head">
               <button
                 className="spec-cal-nav-btn"
@@ -199,7 +339,7 @@ export default function Horario() {
                 if (!iso) return <div className="spec-cal-blank" key={`blank-${i}`} />;
                 const ex = byDate.get(iso);
                 const isToday = iso === today;
-                const isSelected = iso === selectedISO;
+                const isSelected = multiMode ? selectedSet.has(iso) : iso === selectedISO;
                 const className = [
                   "spec-cal-day",
                   ex?.is_closed ? "spec-cal-day--closed" : "",
@@ -215,8 +355,8 @@ export default function Horario() {
                     type="button"
                     className={className}
                     aria-pressed={isSelected}
-                    aria-label={`${DAY_NAMES[weekdayOfISO(iso)]}, ${formatDateLongEs(iso)}${ex ? (ex.is_closed ? ", cerrado" : ", horario corto") : ""}`}
-                    onClick={() => setSelectedISO(iso)}
+                    aria-label={`${DAY_NAMES[weekdayOfISO(iso)]}, ${formatDateLongEs(iso)}${ex ? (ex.is_closed ? ", cerrado" : ", horario corto") : ""}${multiMode && isSelected ? ", seleccionado" : ""}`}
+                    onClick={() => onDayClick(iso)}
                   >
                     <span className="spec-cal-num">{Number(iso.slice(8, 10))}</span>
                     {ex?.is_closed && <span className="spec-cal-dot closed" aria-hidden="true" />}
@@ -248,75 +388,111 @@ export default function Horario() {
           </div>
 
           <aside className="spec-detail">
-            <h3>
-              {DAY_NAMES[weekdayOfISO(selectedISO)]}, {formatDateLongEs(selectedISO)}
-            </h3>
-            {existing ? (
-              <div className="spec-detail-status">
-                {existing.is_closed ? (
-                  <span className="spec-tag closed">Cerrado</span>
+            {multiMode ? (
+              <>
+                {sortedSelection.length === 0 ? (
+                  <>
+                    <h3>Varios días</h3>
+                    <p className="muted">
+                      Toca días en el calendario para seleccionarlos. Puedes
+                      cambiar de mes sin perder la selección.
+                    </p>
+                  </>
                 ) : (
                   <>
-                    <span className="spec-tag short">Horario corto</span>
-                    <span>
-                      {existing.open_time ? formatTime12h(existing.open_time.slice(0, 5)) : ""} –{" "}
-                      {existing.close_time ? formatTime12h(existing.close_time.slice(0, 5)) : ""}
-                    </span>
+                    <h3>
+                      {sortedSelection.length} día{sortedSelection.length === 1 ? "" : "s"}{" "}
+                      seleccionado{sortedSelection.length === 1 ? "" : "s"}
+                    </h3>
+                    <p className="spec-detail-dates">{formatDayList(sortedSelection)}</p>
+                    {selectionExistingCount > 0 && (
+                      <p className="spec-detail-note">
+                        {selectionExistingCount} de {sortedSelection.length} día
+                        {sortedSelection.length === 1 ? "" : "s"} ya{" "}
+                        {selectionExistingCount === 1 ? "tiene" : "tienen"} excepción — se
+                        actualizará{selectionExistingCount === 1 ? "" : "n"}
+                      </p>
+                    )}
+                    <div className="spec-detail-fields">
+                      {fields}
+                      <div className="spec-detail-actions">
+                        <AsyncButton
+                          className="btn primary"
+                          pendingText="Guardando…"
+                          onClick={applyBulk}
+                        >
+                          Aplicar a {sortedSelection.length} día
+                          {sortedSelection.length === 1 ? "" : "s"}
+                        </AsyncButton>
+                        <AsyncButton
+                          className="btn danger-ghost"
+                          pendingText="Quitando…"
+                          disabled={selectionExistingCount === 0}
+                          onClick={removeBulk}
+                        >
+                          Quitar
+                        </AsyncButton>
+                      </div>
+                      <button
+                        type="button"
+                        className="spec-detail-clear"
+                        onClick={() => setSelectedDays([])}
+                      >
+                        Limpiar selección
+                      </button>
+                    </div>
                   </>
                 )}
-              </div>
+                <p className="spec-detail-hint">
+                  Toca un día para agregarlo o quitarlo de la selección.
+                </p>
+              </>
             ) : (
-              <p className="muted">Este día sigue el horario semanal.</p>
-            )}
-            <div className="spec-detail-fields">
-              <label>
-                Motivo
-                <input
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  placeholder="Feriado, actividad, etc."
-                />
-              </label>
-              <label className="check-label">
-                <input
-                  type="checkbox"
-                  checked={closed}
-                  onChange={(e) => setClosed(e.target.checked)}
-                />
-                Cerrado todo el día
-              </label>
-              {!closed && (
-                <div className="form-grid">
-                  <label>
-                    Apertura
-                    <input type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
-                  </label>
-                  <label>
-                    Cierre
-                    <input type="time" value={close} onChange={(e) => setClose(e.target.value)} />
-                  </label>
-                </div>
-              )}
-              <div className="spec-detail-actions">
-                <AsyncButton
-                  className="btn primary"
-                  pendingText="Guardando…"
-                  onClick={saveException}
-                >
-                  {existing ? "Guardar cambios" : "Agregar día especial"}
-                </AsyncButton>
-                {existing && (
-                  <AsyncButton
-                    className="btn danger-ghost"
-                    pendingText="Quitando…"
-                    onClick={removeException}
-                  >
-                    Quitar
-                  </AsyncButton>
+              <>
+                <h3>
+                  {DAY_NAMES[weekdayOfISO(selectedISO)]}, {formatDateLongEs(selectedISO)}
+                </h3>
+                {existing ? (
+                  <div className="spec-detail-status">
+                    {existing.is_closed ? (
+                      <span className="spec-tag closed">Cerrado</span>
+                    ) : (
+                      <>
+                        <span className="spec-tag short">Horario corto</span>
+                        <span>
+                          {existing.open_time ? formatTime12h(existing.open_time.slice(0, 5)) : ""} –{" "}
+                          {existing.close_time ? formatTime12h(existing.close_time.slice(0, 5)) : ""}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <p className="muted">Este día sigue el horario semanal.</p>
                 )}
-              </div>
-            </div>
-            <p className="spec-detail-hint">Haz clic en un día para verlo o agregarlo.</p>
+                <div className="spec-detail-fields">
+                  {fields}
+                  <div className="spec-detail-actions">
+                    <AsyncButton
+                      className="btn primary"
+                      pendingText="Guardando…"
+                      onClick={saveException}
+                    >
+                      {existing ? "Guardar cambios" : "Agregar día especial"}
+                    </AsyncButton>
+                    {existing && (
+                      <AsyncButton
+                        className="btn danger-ghost"
+                        pendingText="Quitando…"
+                        onClick={removeException}
+                      >
+                        Quitar
+                      </AsyncButton>
+                    )}
+                  </div>
+                </div>
+                <p className="spec-detail-hint">Haz clic en un día para verlo o agregarlo.</p>
+              </>
+            )}
           </aside>
         </div>
       </section>

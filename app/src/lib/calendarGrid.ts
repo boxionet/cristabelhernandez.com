@@ -46,3 +46,28 @@ export function shiftMonthKey(monthKey: string, delta: number): string {
   const d = new Date(Date.UTC(y, m - 1 + delta, 1));
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
 }
+
+/** One readable sentence for a set of ISO dates, grouped by month so a
+ *  cross-month selection still reads naturally:
+ *  "18, 19, 20 y 25 de noviembre de 2026" or
+ *  "30 de noviembre de 2026; 1 de diciembre de 2026". */
+export function formatDayList(isos: string[]): string {
+  const sorted = [...isos].sort();
+  const groups = new Map<string, number[]>();
+  for (const iso of sorted) {
+    const key = iso.slice(0, 7);
+    const days = groups.get(key) ?? [];
+    days.push(Number(iso.slice(8, 10)));
+    groups.set(key, days);
+  }
+  const parts: string[] = [];
+  for (const [key, days] of groups) {
+    const [y, m] = key.split("-").map(Number);
+    const nums =
+      days.length === 1
+        ? `${days[0]}`
+        : `${days.slice(0, -1).join(", ")} y ${days[days.length - 1]}`;
+    parts.push(`${nums} de ${MONTHS_ES[m - 1].toLowerCase()} de ${y}`);
+  }
+  return parts.join("; ");
+}

@@ -1487,6 +1487,49 @@
   font-size: 0.85rem;
   color: var(--muted);
 }
+/* Bulk mode: the "Varios días" switch reuses the .switch component
+   from the Servicios/Promociones tables. */
+.spec-multi-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+.spec-multi-label {
+  font-weight: 700;
+  color: var(--heading);
+  cursor: pointer;
+  user-select: none;
+}
+.spec-multi-count {
+  border-radius: 999px;
+  background: #eef2e8;
+  color: var(--sage-deep);
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.spec-detail-dates {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+  color: var(--heading);
+}
+.spec-detail-note {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.spec-detail-clear {
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--sage-deep);
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 /* Clientes: search bar + client cards */
 .search-bar {
