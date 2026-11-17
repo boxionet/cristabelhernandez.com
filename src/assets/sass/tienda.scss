@@ -304,13 +304,24 @@
             gap: calc(16 / 16 * 1rem);
 
             /* Same box for both buttons; outline in the clinic brown
-               instead of the kit default black, to match the hover fill */
+               instead of the kit default black, to match the hover fill.
+               Flex centering keeps the label centered even when the
+               row stretches one button taller than the other, and the
+               transparent border gives the solid button the same
+               2px frame as the outline so both boxes match. */
             .cs-button-solid,
             .cs-button-outline {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 padding: calc(16 / 16 * 1rem) calc(24 / 16 * 1rem);
                 font-size: calc(16 / 16 * 1rem);
                 line-height: 1em;
                 font-weight: 500;
+            }
+
+            .cs-button-solid {
+                border: 2px solid transparent;
             }
 
             .cs-button-outline {

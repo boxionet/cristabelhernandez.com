@@ -162,6 +162,27 @@
             }
         }
 
+        /* Mobile slide order only: the studio photo (panel 1) is the
+           centered default, and the box photo (panel 2) goes last.
+           Visual order: muestra, studio, textura, video, caja.
+           Tablet/desktop are unaffected — .cs-main becomes display:
+           block at 48rem, where order has no effect. */
+        .cs-main .cs-picture[data-gallery-panel="0"] {
+            order: 2;
+        }
+        .cs-main .cs-picture[data-gallery-panel="1"] {
+            order: 1;
+        }
+        .cs-main .cs-picture[data-gallery-panel="2"] {
+            order: 5;
+        }
+        .cs-main .cs-picture[data-gallery-panel="3"] {
+            order: 3;
+        }
+        .cs-main .cs-picture[data-gallery-panel="4"] {
+            order: 4;
+        }
+
         /* Video slide: small round play/pause button at the bottom
            right of the video. The icon swaps on .is-playing. */
         .cs-video-toggle {
@@ -680,8 +701,7 @@
             line-height: 1.4em;
             font-weight: 700;
             color: var(--headerColor);
-            margin: auto 0 0;
-            padding-top: calc(4 / 16 * 1rem);
+            margin: 0;
         }
     }
 }

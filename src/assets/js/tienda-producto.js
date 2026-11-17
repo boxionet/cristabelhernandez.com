@@ -10,9 +10,29 @@
         );
         var main = gallery.querySelector(".cs-main");
 
+        var currentActive = null;
+
         function setActive(index, scroll) {
+            // The video plays automatically when its slide becomes the
+            // active one (swipe or thumb click) — but only on the
+            // change INTO the slide, so pausing with the button is
+            // never overridden by a later sync on the same slide.
+            var changed = index !== currentActive;
+            currentActive = index;
             // A video stops the moment its slide is no longer active.
             pauseVideosExcept(index);
+            if (changed) {
+                var target = panels[parseInt(index, 10)];
+                var video = target
+                    ? target.querySelector("video")
+                    : null;
+                if (video && video.paused) {
+                    var pending = video.play();
+                    if (pending && pending.catch) {
+                        pending.catch(function () {});
+                    }
+                }
+            }
             thumbs.forEach(function (t) {
                 var on = t.getAttribute("data-gallery-thumb") === index;
                 t.classList.toggle("is-active", on);
@@ -129,10 +149,12 @@
             );
         }
 
-        // Mobile default: the SECOND photo (the middle one) is the one
-        // centered when the page loads, with a peek of the first and
-        // third photos on either side — like Peachy's mobile gallery.
-        // Tablet/desktop keep the first photo (the thumb rail decides).
+        // Mobile default: the STUDIO photo is the one centered when
+        // the page loads, with a peek of the neighbouring photos on
+        // either side — like Peachy's mobile gallery. The studio photo
+        // is panel 0, which the mobile slide order places in the
+        // second visual slot. Tablet/desktop keep the first photo
+        // (the thumb rail decides).
         //
         // The position is asserted more than once on purpose: on fast
         // (cached) loads, some browsers reset a snap scroller to its
@@ -165,8 +187,8 @@
 
         function ensureMobileDefault() {
             if (!mobileQuery.matches) return;
-            centerPanelInstant(1);
-            setActive("1", false);
+            centerPanelInstant(0);
+            setActive("0", false);
         }
 
         function reassertIfUntouched() {
