@@ -1349,6 +1349,62 @@
 .spec-form > * + * {
   margin-top: 1rem;
 }
+/* The add form sits above the list now, so it carries the divider
+   below it instead of above. */
+.spec-form--top {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-top: 0;
+  padding-bottom: 1.5rem;
+  border-top: none;
+  border-bottom: 1px solid #eef0ea;
+}
+.spec-month + .spec-month {
+  margin-top: 1.4rem;
+}
+.spec-month-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.2rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+.spec-month-count {
+  border-radius: 999px;
+  background: #eef2e8;
+  color: var(--sage-deep);
+  padding: 0.1rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+.spec-past {
+  margin-top: 1.5rem;
+  padding-top: 1.05rem;
+  border-top: 1px solid #eef0ea;
+}
+.spec-past-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--heading);
+  cursor: pointer;
+}
+.spec-past-chevron {
+  transition: transform 0.2s ease;
+}
+.spec-past-toggle[aria-expanded="true"] .spec-past-chevron {
+  transform: rotate(180deg);
+}
 
 /* Clientes: search bar + client cards */
 .search-bar {

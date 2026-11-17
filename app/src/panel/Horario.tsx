@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { type ScheduleRow, closedDateSet } from "../lib/panel";
+import { type ExceptionRow, type ScheduleRow, clinicToday, closedDateSet } from "../lib/panel";
+import { groupExceptionsByMonth, splitExceptions } from "../lib/exceptions";
 import { formatDateLongEs, formatTime12h } from "../lib/format";
 import { usePanelData } from "../lib/queries/panelQueries";
 import DatePicker from "../components/DatePicker";
@@ -32,6 +33,54 @@ function chipParts(iso: string) {
     day: d.getUTCDate(),
     mon: CHIP_MON[d.getUTCMonth()],
   };
+}
+
+// One exception row, shared by the upcoming month groups and the
+// collapsed past list.
+function ExceptionRowItem({
+  e,
+  onRemove,
+}: {
+  e: ExceptionRow;
+  onRemove: (id: string) => Promise<void>;
+}) {
+  const chip = chipParts(e.date);
+  return (
+    <li className="spec-row">
+      <span className="datechip">
+        <span className="dc-dow">{chip.dow}</span>
+        <span className="dc-day">{chip.day}</span>
+        <span className="dc-mon">{chip.mon}</span>
+      </span>
+      <span className="spec-main">
+        <span className="spec-date">{formatDateLongEs(e.date)}</span>
+        <span className="spec-sub">
+          {e.is_closed ? (
+            <>
+              <span className="spec-tag closed">Cerrado</span>
+              {e.label && <span>{e.label}</span>}
+            </>
+          ) : (
+            <>
+              <span className="spec-tag short">Horario corto</span>
+              <span>
+                {e.open_time ? formatTime12h(e.open_time.slice(0, 5)) : ""} –{" "}
+                {e.close_time ? formatTime12h(e.close_time.slice(0, 5)) : ""}
+              </span>
+              {e.label && <span>· {e.label}</span>}
+            </>
+          )}
+        </span>
+      </span>
+      <AsyncButton
+        className="btn danger-ghost small"
+        pendingText="Quitando…"
+        onClick={() => onRemove(e.id)}
+      >
+        Quitar
+      </AsyncButton>
+    </li>
+  );
 }
 
 function ScheduleEditor({
@@ -111,12 +160,26 @@ export default function Horario() {
   const [open, setOpen] = useState("09:00");
   const [close, setClose] = useState("18:00");
   const [reason, setReason] = useState("");
+  const [pastOpen, setPastOpen] = useState(false);
 
   // Dates already closed all day render greyed out in the picker and
   // cannot be picked again; short-hours dates stay enabled.
   const closedDates = useMemo(
     () => closedDateSet(exceptions ?? []),
     [exceptions],
+  );
+
+  // The list is split so a long history of closed days doesn't bury
+  // the form or the days that still matter: upcoming grouped by
+  // month, past collapsed behind a toggle.
+  const today = clinicToday();
+  const { upcoming, past } = useMemo(
+    () => splitExceptions(exceptions ?? [], today),
+    [exceptions, today],
+  );
+  const monthGroups = useMemo(
+    () => groupExceptionsByMonth(upcoming),
+    [upcoming],
   );
 
   if (error) return <p className="error">{error}</p>;
@@ -160,101 +223,104 @@ export default function Horario() {
     <>
       <h2 className="section-title">Días especiales (feriados, cierres, horarios cortos)</h2>
       <section className="card">
+        <div className="spec-form spec-form--top">
+          <h3>Agregar día especial</h3>
+          <div className="form-grid">
+            <div className="field-like">
+              Fecha
+              <DatePicker
+                value={date}
+                onChange={setDate}
+                placeholder="Elige la fecha"
+                disabledDates={closedDates}
+              />
+            </div>
+            <label>
+              Motivo
+              <input
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Feriado, actividad, etc."
+              />
+            </label>
+          </div>
+          <label className="check-label">
+            <input
+              type="checkbox"
+              checked={closed}
+              onChange={(e) => setClosed(e.target.checked)}
+            />
+            Cerrado todo el día
+          </label>
+          {!closed && (
+            <div className="form-grid">
+              <label>
+                Apertura
+                <input type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
+              </label>
+              <label>
+                Cierre
+                <input type="time" value={close} onChange={(e) => setClose(e.target.value)} />
+              </label>
+            </div>
+          )}
+          <AsyncButton
+            className="btn primary"
+            pendingText="Agregando…"
+            disabled={!date}
+            onClick={addException}
+          >
+            Agregar día especial
+          </AsyncButton>
+        </div>
+
         {exceptions.length === 0 && (
           <p className="muted">No hay días especiales registrados.</p>
         )}
-        <ul className="spec-list">
-          {[...exceptions]
-            .sort((a, b) => a.date.localeCompare(b.date))
-            .map((e) => {
-              const chip = chipParts(e.date);
-              return (
-                <li key={e.id} className="spec-row">
-                  <span className="datechip">
-                    <span className="dc-dow">{chip.dow}</span>
-                    <span className="dc-day">{chip.day}</span>
-                    <span className="dc-mon">{chip.mon}</span>
-                  </span>
-                  <span className="spec-main">
-                    <span className="spec-date">{formatDateLongEs(e.date)}</span>
-                    <span className="spec-sub">
-                      {e.is_closed ? (
-                        <>
-                          <span className="spec-tag closed">Cerrado</span>
-                          {e.label && <span>{e.label}</span>}
-                        </>
-                      ) : (
-                        <>
-                          <span className="spec-tag short">Horario corto</span>
-                          <span>
-                            {e.open_time ? formatTime12h(e.open_time.slice(0, 5)) : ""} –{" "}
-                            {e.close_time ? formatTime12h(e.close_time.slice(0, 5)) : ""}
-                          </span>
-                          {e.label && <span>· {e.label}</span>}
-                        </>
-                      )}
-                    </span>
-                  </span>
-                  <AsyncButton
-                    className="btn danger-ghost small"
-                    pendingText="Quitando…"
-                    onClick={() => removeException(e.id)}
-                  >
-                    Quitar
-                  </AsyncButton>
-                </li>
-              );
-            })}
-        </ul>
-        <div className="spec-form">
-        <div className="form-grid">
-          <div className="field-like">
-            Fecha
-            <DatePicker
-              value={date}
-              onChange={setDate}
-              placeholder="Elige la fecha"
-              disabledDates={closedDates}
-            />
+        {exceptions.length > 0 && upcoming.length === 0 && (
+          <p className="muted">No hay días especiales próximos.</p>
+        )}
+        {monthGroups.map((group) => (
+          <div className="spec-month" key={group.key}>
+            <h4 className="spec-month-title">
+              {group.title}
+              <span className="spec-month-count">{group.items.length}</span>
+            </h4>
+            <ul className="spec-list">
+              {group.items.map((e) => (
+                <ExceptionRowItem key={e.id} e={e} onRemove={removeException} />
+              ))}
+            </ul>
           </div>
-          <label>
-            Motivo
-            <input
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="Feriado, actividad, etc."
-            />
-          </label>
-        </div>
-        <label className="check-label">
-          <input
-            type="checkbox"
-            checked={closed}
-            onChange={(e) => setClosed(e.target.checked)}
-          />
-          Cerrado todo el día
-        </label>
-        {!closed && (
-          <div className="form-grid">
-            <label>
-              Apertura
-              <input type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
-            </label>
-            <label>
-              Cierre
-              <input type="time" value={close} onChange={(e) => setClose(e.target.value)} />
-            </label>
+        ))}
+        {past.length > 0 && (
+          <div className="spec-past">
+            <button
+              className="spec-past-toggle"
+              type="button"
+              aria-expanded={pastOpen}
+              onClick={() => setPastOpen((open) => !open)}
+            >
+              Días pasados
+              <span className="spec-month-count">{past.length}</span>
+              <img
+                className="spec-past-chevron"
+                src="/assets/svgs/dropdown.svg"
+                alt=""
+                width="15"
+                height="15"
+                aria-hidden="true"
+              />
+            </button>
+            {pastOpen && (
+              <ul className="spec-list">
+                {past.map((e) => (
+                  <ExceptionRowItem key={e.id} e={e} onRemove={removeException} />
+                ))}
+              </ul>
+            )}
           </div>
         )}
-        <AsyncButton
-          className="btn primary"
-          pendingText="Agregando…"
-          disabled={!date}
-          onClick={addException}
-        >
-          Agregar día especial
-        </AsyncButton>
-        </div>
       </section>
 
       <h2 className="section-title">Horario semanal</h2>
@@ -284,7 +350,7 @@ export default function Horario() {
         </table>
         <p className="muted">
           La disponibilidad de la web se calcula con este horario: la última
-          cita puede empezar hasta que quepa su duración completa antes del
+          cita puede empezar siempre que su duración completa quepa antes del
           cierre.
         </p>
       </section>
