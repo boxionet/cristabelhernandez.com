@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { type ExceptionRow, type ScheduleRow, clinicToday, closedDateSet } from "../lib/panel";
-import { groupExceptionsByMonth, splitExceptions } from "../lib/exceptions";
+import { type ScheduleRow, clinicToday } from "../lib/panel";
+import { buildMonthGrid, shiftMonthKey } from "../lib/calendarGrid";
 import { formatDateLongEs, formatTime12h } from "../lib/format";
 import { usePanelData } from "../lib/queries/panelQueries";
-import DatePicker from "../components/DatePicker";
 import AsyncButton from "../components/AsyncButton";
 import { useToast } from "../components/Toast";
 import { SkeletonTable } from "../components/Skeleton";
@@ -19,68 +18,10 @@ const DAY_NAMES = [
   "Sábado",
 ];
 const ORDER = [1, 2, 3, 4, 5, 6, 0];
+const WEEKDAY_SHORT = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
-const CHIP_DOW = ["DOM", "LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB"];
-const CHIP_MON = [
-  "ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
-  "JUL", "AGO", "SEP", "OCT", "NOV", "DIC",
-];
-
-function chipParts(iso: string) {
-  const d = new Date(`${iso}T12:00:00Z`);
-  return {
-    dow: CHIP_DOW[d.getUTCDay()],
-    day: d.getUTCDate(),
-    mon: CHIP_MON[d.getUTCMonth()],
-  };
-}
-
-// One exception row, shared by the upcoming month groups and the
-// collapsed past list.
-function ExceptionRowItem({
-  e,
-  onRemove,
-}: {
-  e: ExceptionRow;
-  onRemove: (id: string) => Promise<void>;
-}) {
-  const chip = chipParts(e.date);
-  return (
-    <li className="spec-row">
-      <span className="datechip">
-        <span className="dc-dow">{chip.dow}</span>
-        <span className="dc-day">{chip.day}</span>
-        <span className="dc-mon">{chip.mon}</span>
-      </span>
-      <span className="spec-main">
-        <span className="spec-date">{formatDateLongEs(e.date)}</span>
-        <span className="spec-sub">
-          {e.is_closed ? (
-            <>
-              <span className="spec-tag closed">Cerrado</span>
-              {e.label && <span>{e.label}</span>}
-            </>
-          ) : (
-            <>
-              <span className="spec-tag short">Horario corto</span>
-              <span>
-                {e.open_time ? formatTime12h(e.open_time.slice(0, 5)) : ""} –{" "}
-                {e.close_time ? formatTime12h(e.close_time.slice(0, 5)) : ""}
-              </span>
-              {e.label && <span>· {e.label}</span>}
-            </>
-          )}
-        </span>
-      </span>
-      <AsyncButton
-        className="btn danger-ghost small"
-        pendingText="Quitando…"
-        onClick={() => onRemove(e.id)}
-      >
-        Quitar
-      </AsyncButton>
-    </li>
-  );
+function weekdayOfISO(iso: string): number {
+  return new Date(`${iso}T12:00:00Z`).getUTCDay();
 }
 
 function ScheduleEditor({
@@ -155,62 +96,64 @@ function ScheduleEditor({
 export default function Horario() {
   const toast = useToast();
   const { schedule, exceptions, error, reload } = usePanelData();
-  const [date, setDate] = useState("");
+  const today = clinicToday();
+  const [selectedISO, setSelectedISO] = useState(today);
+  const [month, setMonth] = useState(() => today.slice(0, 7));
   const [closed, setClosed] = useState(true);
   const [open, setOpen] = useState("09:00");
   const [close, setClose] = useState("18:00");
   const [reason, setReason] = useState("");
-  const [pastOpen, setPastOpen] = useState(false);
 
-  // Dates already closed all day render greyed out in the picker and
-  // cannot be picked again; short-hours dates stay enabled.
-  const closedDates = useMemo(
-    () => closedDateSet(exceptions ?? []),
+  const byDate = useMemo(
+    () => new Map((exceptions ?? []).map((e) => [e.date, e])),
     [exceptions],
   );
+  const existing = byDate.get(selectedISO);
+  const grid = useMemo(() => buildMonthGrid(month), [month]);
+  const monthCount = useMemo(
+    () => (exceptions ?? []).filter((e) => e.date.startsWith(month)).length,
+    [exceptions, month],
+  );
 
-  // The list is split so a long history of closed days doesn't bury
-  // the form or the days that still matter: upcoming grouped by
-  // month, past collapsed behind a toggle.
-  const today = clinicToday();
-  const { upcoming, past } = useMemo(
-    () => splitExceptions(exceptions ?? [], today),
-    [exceptions, today],
-  );
-  const monthGroups = useMemo(
-    () => groupExceptionsByMonth(upcoming),
-    [upcoming],
-  );
+  // The panel form always reflects the selected day: its saved
+  // exception, or the blank defaults for a day without one. It
+  // re-initializes when the selection moves or fresh data arrives
+  // after a save — never while the Dra is typing.
+  useEffect(() => {
+    setClosed(existing ? existing.is_closed : true);
+    setOpen(existing?.open_time?.slice(0, 5) ?? "09:00");
+    setClose(existing?.close_time?.slice(0, 5) ?? "18:00");
+    setReason(existing?.label ?? "");
+  }, [existing]);
 
   if (error) return <p className="error">{error}</p>;
   if (!schedule || !exceptions) return <SkeletonTable rows={7} />;
 
-  async function addException() {
-    if (!date) return;
-    const { error: insertError } = await supabase
-      .from("date_exceptions")
-      .insert({
-        date,
-        is_closed: closed,
-        open_time: closed ? null : open,
-        close_time: closed ? null : close,
-        label: reason.trim() || null,
-      });
-    if (insertError) {
-      toast.error(`No se pudo agregar el día especial: ${insertError.message}`);
+  async function saveException() {
+    const payload = {
+      date: selectedISO,
+      is_closed: closed,
+      open_time: closed ? null : open,
+      close_time: closed ? null : close,
+      label: reason.trim() || null,
+    };
+    const { error: saveError } = existing
+      ? await supabase.from("date_exceptions").update(payload).eq("id", existing.id)
+      : await supabase.from("date_exceptions").insert(payload);
+    if (saveError) {
+      toast.error(`No se pudo guardar el día especial: ${saveError.message}`);
       return;
     }
-    toast.success("Día especial agregado");
-    setDate("");
-    setReason("");
+    toast.success(existing ? "Día especial actualizado" : "Día especial agregado");
     void reload();
   }
 
-  async function removeException(id: string) {
+  async function removeException() {
+    if (!existing) return;
     const { error: deleteError } = await supabase
       .from("date_exceptions")
       .delete()
-      .eq("id", id);
+      .eq("id", existing.id);
     if (deleteError) {
       toast.error(`No se pudo quitar el día especial: ${deleteError.message}`);
       return;
@@ -223,104 +166,159 @@ export default function Horario() {
     <>
       <h2 className="section-title">Días especiales (feriados, cierres, horarios cortos)</h2>
       <section className="card">
-        <div className="spec-form spec-form--top">
-          <h3>Agregar día especial</h3>
-          <div className="form-grid">
-            <div className="field-like">
-              Fecha
-              <DatePicker
-                value={date}
-                onChange={setDate}
-                placeholder="Elige la fecha"
-                disabledDates={closedDates}
-              />
+        <div className="spec-cal-wrap">
+          <div>
+            <div className="spec-cal-head">
+              <button
+                className="spec-cal-nav-btn"
+                type="button"
+                aria-label="Mes anterior"
+                onClick={() => setMonth((m) => shiftMonthKey(m, -1))}
+              >
+                ‹
+              </button>
+              <h3 className="spec-cal-title">{grid.title}</h3>
+              <button
+                className="spec-cal-nav-btn"
+                type="button"
+                aria-label="Mes siguiente"
+                onClick={() => setMonth((m) => shiftMonthKey(m, 1))}
+              >
+                ›
+              </button>
             </div>
-            <label>
-              Motivo
-              <input
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                placeholder="Feriado, actividad, etc."
-              />
-            </label>
-          </div>
-          <label className="check-label">
-            <input
-              type="checkbox"
-              checked={closed}
-              onChange={(e) => setClosed(e.target.checked)}
-            />
-            Cerrado todo el día
-          </label>
-          {!closed && (
-            <div className="form-grid">
-              <label>
-                Apertura
-                <input type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
-              </label>
-              <label>
-                Cierre
-                <input type="time" value={close} onChange={(e) => setClose(e.target.value)} />
-              </label>
-            </div>
-          )}
-          <AsyncButton
-            className="btn primary"
-            pendingText="Agregando…"
-            disabled={!date}
-            onClick={addException}
-          >
-            Agregar día especial
-          </AsyncButton>
-        </div>
-
-        {exceptions.length === 0 && (
-          <p className="muted">No hay días especiales registrados.</p>
-        )}
-        {exceptions.length > 0 && upcoming.length === 0 && (
-          <p className="muted">No hay días especiales próximos.</p>
-        )}
-        {monthGroups.map((group) => (
-          <div className="spec-month" key={group.key}>
-            <h4 className="spec-month-title">
-              {group.title}
-              <span className="spec-month-count">{group.items.length}</span>
-            </h4>
-            <ul className="spec-list">
-              {group.items.map((e) => (
-                <ExceptionRowItem key={e.id} e={e} onRemove={removeException} />
+            <div className="spec-cal-weekdays" aria-hidden="true">
+              {WEEKDAY_SHORT.map((w) => (
+                <span className="spec-cal-weekday" key={w}>
+                  {w}
+                </span>
               ))}
-            </ul>
+            </div>
+            <div className="spec-cal-grid" role="group" aria-label={grid.title}>
+              {grid.cells.map((iso, i) => {
+                if (!iso) return <div className="spec-cal-blank" key={`blank-${i}`} />;
+                const ex = byDate.get(iso);
+                const isToday = iso === today;
+                const isSelected = iso === selectedISO;
+                const className = [
+                  "spec-cal-day",
+                  ex?.is_closed ? "spec-cal-day--closed" : "",
+                  ex && !ex.is_closed ? "spec-cal-day--short" : "",
+                  isToday ? "spec-cal-day--today" : "",
+                  isSelected ? "spec-cal-day--selected" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+                return (
+                  <button
+                    key={iso}
+                    type="button"
+                    className={className}
+                    aria-pressed={isSelected}
+                    aria-label={`${DAY_NAMES[weekdayOfISO(iso)]}, ${formatDateLongEs(iso)}${ex ? (ex.is_closed ? ", cerrado" : ", horario corto") : ""}`}
+                    onClick={() => setSelectedISO(iso)}
+                  >
+                    <span className="spec-cal-num">{Number(iso.slice(8, 10))}</span>
+                    {ex?.is_closed && <span className="spec-cal-dot closed" aria-hidden="true" />}
+                    {ex && !ex.is_closed && (
+                      <>
+                        <span className="spec-cal-dot short" aria-hidden="true" />
+                        <span className="spec-cal-hours">
+                          {ex.open_time?.slice(0, 5)}–{ex.close_time?.slice(0, 5)}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="spec-cal-foot">
+              <span className="spec-cal-legend">
+                <span className="spec-cal-dot closed" aria-hidden="true" /> Cerrado
+              </span>
+              <span className="spec-cal-legend">
+                <span className="spec-cal-dot short" aria-hidden="true" /> Horario corto
+              </span>
+              <span className="spec-cal-count">
+                {monthCount === 0
+                  ? "Sin días especiales este mes"
+                  : `${monthCount} día${monthCount === 1 ? "" : "s"} especial${monthCount === 1 ? "" : "es"} en ${grid.title.split(" de ")[0].toLowerCase()}`}
+              </span>
+            </div>
           </div>
-        ))}
-        {past.length > 0 && (
-          <div className="spec-past">
-            <button
-              className="spec-past-toggle"
-              type="button"
-              aria-expanded={pastOpen}
-              onClick={() => setPastOpen((open) => !open)}
-            >
-              Días pasados
-              <span className="spec-month-count">{past.length}</span>
-              <img
-                className="spec-past-chevron"
-                src="/assets/svgs/dropdown.svg"
-                alt=""
-                width="15"
-                height="15"
-                aria-hidden="true"
-              />
-            </button>
-            {pastOpen && (
-              <ul className="spec-list">
-                {past.map((e) => (
-                  <ExceptionRowItem key={e.id} e={e} onRemove={removeException} />
-                ))}
-              </ul>
+
+          <aside className="spec-detail">
+            <h3>
+              {DAY_NAMES[weekdayOfISO(selectedISO)]}, {formatDateLongEs(selectedISO)}
+            </h3>
+            {existing ? (
+              <div className="spec-detail-status">
+                {existing.is_closed ? (
+                  <span className="spec-tag closed">Cerrado</span>
+                ) : (
+                  <>
+                    <span className="spec-tag short">Horario corto</span>
+                    <span>
+                      {existing.open_time ? formatTime12h(existing.open_time.slice(0, 5)) : ""} –{" "}
+                      {existing.close_time ? formatTime12h(existing.close_time.slice(0, 5)) : ""}
+                    </span>
+                  </>
+                )}
+              </div>
+            ) : (
+              <p className="muted">Este día sigue el horario semanal.</p>
             )}
-          </div>
-        )}
+            <div className="spec-detail-fields">
+              <label>
+                Motivo
+                <input
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="Feriado, actividad, etc."
+                />
+              </label>
+              <label className="check-label">
+                <input
+                  type="checkbox"
+                  checked={closed}
+                  onChange={(e) => setClosed(e.target.checked)}
+                />
+                Cerrado todo el día
+              </label>
+              {!closed && (
+                <div className="form-grid">
+                  <label>
+                    Apertura
+                    <input type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
+                  </label>
+                  <label>
+                    Cierre
+                    <input type="time" value={close} onChange={(e) => setClose(e.target.value)} />
+                  </label>
+                </div>
+              )}
+              <div className="spec-detail-actions">
+                <AsyncButton
+                  className="btn primary"
+                  pendingText="Guardando…"
+                  onClick={saveException}
+                >
+                  {existing ? "Guardar cambios" : "Agregar día especial"}
+                </AsyncButton>
+                {existing && (
+                  <AsyncButton
+                    className="btn danger-ghost"
+                    pendingText="Quitando…"
+                    onClick={removeException}
+                  >
+                    Quitar
+                  </AsyncButton>
+                )}
+              </div>
+            </div>
+            <p className="spec-detail-hint">Haz clic en un día para verlo o agregarlo.</p>
+          </aside>
+        </div>
       </section>
 
       <h2 className="section-title">Horario semanal</h2>
