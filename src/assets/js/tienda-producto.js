@@ -8,9 +8,6 @@
         var panels = Array.prototype.slice.call(
             gallery.querySelectorAll("[data-gallery-panel]")
         );
-        var dots = Array.prototype.slice.call(
-            gallery.querySelectorAll("[data-gallery-dot]")
-        );
         var main = gallery.querySelector(".cs-main");
 
         function setActive(index, scroll) {
@@ -24,11 +21,6 @@
                     "is-active",
                     p.getAttribute("data-gallery-panel") === index
                 );
-            });
-            dots.forEach(function (d) {
-                var on = d.getAttribute("data-gallery-dot") === index;
-                d.classList.toggle("is-active", on);
-                d.setAttribute("aria-pressed", on ? "true" : "false");
             });
             // On mobile the main area is a swipe strip: scroll the chosen
             // photo into view. On tablet/desktop only one panel is
@@ -46,13 +38,8 @@
                 setActive(thumb.getAttribute("data-gallery-thumb"), true);
             });
         });
-        dots.forEach(function (dot) {
-            dot.addEventListener("click", function () {
-                setActive(dot.getAttribute("data-gallery-dot"), true);
-            });
-        });
 
-        // Keep thumbs, panels and dots in sync while the user swipes
+        // Keep thumbs and panels in sync while the user swipes
         // through the photos on mobile.
         var ticking = false;
         if (main) {
@@ -100,6 +87,10 @@
     rutinaToggles.forEach(function (toggle) {
         toggle.addEventListener("click", function () {
             var target = toggle.getAttribute("data-rutina-toggle");
+            var group = toggle.closest(".cs-toggle");
+            if (group) {
+                group.classList.toggle("is-pm", target === "pm");
+            }
             rutinaToggles.forEach(function (t) {
                 var on = t === toggle;
                 t.classList.toggle("is-active", on);

@@ -75,11 +75,6 @@ permalink: "/tienda/mineral-stick/"
                             <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-mineral-stick.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="TiZO Mineral Stick sobre la mesa del centro" width="800" height="800">
                         </picture>
                     </div>
-                    <div class="cs-dots" aria-label="Fotos del producto">
-                        <button class="cs-dot is-active" type="button" data-gallery-dot="0" aria-pressed="true" aria-label="Foto 1"></button>
-                        <button class="cs-dot" type="button" data-gallery-dot="1" aria-pressed="false" aria-label="Foto 2"></button>
-                        <button class="cs-dot" type="button" data-gallery-dot="2" aria-pressed="false" aria-label="Foto 3"></button>
-                    </div>
                 </div>
                 <div class="cs-info">
                     <h2 class="cs-title">TiZO Mineral Stick</h2>
@@ -99,13 +94,13 @@ permalink: "/tienda/mineral-stick/"
                         </div>
                     </div>
                     <div class="cs-acciones">
-                        <a class="cs-button-solid" href="/reservar/">Reserva tu cita</a>
-                        <a class="cs-button-outline" href="/contactanos/">Contáctanos</a>
+                        <a class="cs-accion-btn is-primary" href="/reservar/">Reserva tu cita</a>
+                        <a class="cs-accion-btn is-secondary" href="/contactanos/">Contáctanos</a>
                     </div>
                     <div class="cs-accordions">
-                        <div class="cs-acc is-open">
+                        <div class="cs-acc">
                             <h2>
-                                <button class="cs-acc-button" type="button" data-acc-button aria-expanded="true" aria-controls="acc-detalles" id="acc-detalles-btn">
+                                <button class="cs-acc-button" type="button" data-acc-button aria-expanded="false" aria-controls="acc-detalles" id="acc-detalles-btn">
                                     Detalles
                                     <span class="cs-acc-icon" aria-hidden="true"></span>
                                 </button>
@@ -180,26 +175,31 @@ permalink: "/tienda/mineral-stick/"
     <section id="producto-obsesion">
         <div class="cs-container">
             <h2 class="cs-title">Por qué les encanta</h2>
+            <!-- Nombres inventados solo para la vista previa: reemplazar con nombres reales de pacientes antes de publicar. -->
             <ul class="cs-obs-group">
                 <li class="cs-obs-item">
                     <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
                     <h3 class="cs-obs-title">En barra, fácil de aplicar</h3>
                     <p class="cs-obs-text">Directo sobre la piel, sin derrames.</p>
+                    <p class="cs-obs-name">Ana B.</p>
                 </li>
                 <li class="cs-obs-item">
                     <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
                     <h3 class="cs-obs-title">Protección mineral</h3>
                     <p class="cs-obs-text">Amplio espectro FPS 45.</p>
+                    <p class="cs-obs-name">Francia T.</p>
                 </li>
                 <li class="cs-obs-item">
                     <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
                     <h3 class="cs-obs-title">Resistente al agua</h3>
                     <p class="cs-obs-text">80 minutos al nadar o sudar.</p>
+                    <p class="cs-obs-name">Milagros S.</p>
                 </li>
                 <li class="cs-obs-item">
                     <img class="cs-obs-stars" aria-hidden="true" loading="lazy" decoding="async" src="/assets/svgs/stars.svg" alt="estrellas" width="96" height="16">
                     <h3 class="cs-obs-title">Para uso diario</h3>
                     <p class="cs-obs-text">Sin color, para rostro y cuerpo.</p>
+                    <p class="cs-obs-name">José L.</p>
                 </li>
             </ul>
         </div>
@@ -213,6 +213,7 @@ permalink: "/tienda/mineral-stick/"
         <div class="cs-container">
             <h2 class="cs-title">Agrega TiZO Mineral Stick a tu rutina</h2>
             <div class="cs-toggle" role="group" aria-label="Momento del día">
+                <span class="cs-toggle-thumb" aria-hidden="true"></span>
                 <button class="cs-toggle-btn is-active" type="button" data-rutina-toggle="am" aria-pressed="true">
                     <svg class="cs-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.9 4.9 1.4 1.4"/><path d="m17.7 17.7 1.4 1.4"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m4.9 19.1 1.4-1.4"/><path d="m17.7 6.3 1.4-1.4"/></svg>
                     AM
@@ -240,7 +241,7 @@ permalink: "/tienda/mineral-stick/"
                         <h3 class="cs-step-title">Hidrata</h3>
                         <p class="cs-step-text">Aplica tu hidratante habitual.</p>
                     </li>
-                    <li class="cs-step is-highlight">
+                    <li class="cs-step">
                         <span class="cs-step-num">Paso 3</span>
                         <h3 class="cs-step-title">Protege</h3>
                         <p class="cs-step-text">Aplica el stick en rostro y cuerpo como último paso de la mañana.</p>
