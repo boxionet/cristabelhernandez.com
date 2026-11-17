@@ -11,6 +11,8 @@
         var main = gallery.querySelector(".cs-main");
 
         function setActive(index, scroll) {
+            // A video stops the moment its slide is no longer active.
+            pauseVideosExcept(index);
             thumbs.forEach(function (t) {
                 var on = t.getAttribute("data-gallery-thumb") === index;
                 t.classList.toggle("is-active", on);
@@ -46,6 +48,52 @@
         thumbs.forEach(function (thumb) {
             thumb.addEventListener("click", function () {
                 setActive(thumb.getAttribute("data-gallery-thumb"), true);
+            });
+        });
+
+        // Video slides: the small round button at the bottom right
+        // plays/pauses. The button state follows the video's own
+        // play/pause events, and leaving the slide pauses it.
+        var videos = Array.prototype.slice.call(
+            gallery.querySelectorAll("video")
+        );
+
+        function pauseVideosExcept(index) {
+            videos.forEach(function (video) {
+                var panel = video.closest("[data-gallery-panel]");
+                if (
+                    panel &&
+                    panel.getAttribute("data-gallery-panel") !== index &&
+                    !video.paused
+                ) {
+                    video.pause();
+                }
+            });
+        }
+
+        videos.forEach(function (video) {
+            var panel = video.closest("[data-gallery-panel]");
+            var toggle = panel
+                ? panel.querySelector("[data-video-toggle]")
+                : null;
+            if (!toggle) return;
+            video.addEventListener("play", function () {
+                toggle.classList.add("is-playing");
+                toggle.setAttribute("aria-label", "Pausar video");
+            });
+            video.addEventListener("pause", function () {
+                toggle.classList.remove("is-playing");
+                toggle.setAttribute("aria-label", "Reproducir video");
+            });
+            toggle.addEventListener("click", function () {
+                if (video.paused) {
+                    var pending = video.play();
+                    if (pending && pending.catch) {
+                        pending.catch(function () {});
+                    }
+                } else {
+                    video.pause();
+                }
             });
         });
 
