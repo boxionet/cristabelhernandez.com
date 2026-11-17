@@ -5,17 +5,17 @@ import {
   MONTH_NAMES_SHORT,
   addDaysISO,
   eachDayISO,
-  isWeekendISO,
   weekdayOfISO,
 } from "../dateUtils";
 
 // The horizontal date strip — same markup and classes as the static
 // fecha-hora page. The window starts at today−7 … today+7; the arrows
-// extend it a week at a time. A tile is unavailable when the day is
-// past, a weekend, or the availability range says it is closed or
-// fully booked (when the range data is missing, the static
-// weekend/past rule decides, and the slot fetch on selection is
-// authoritative).
+// extend it a week at a time and scroll the new days into view. A
+// tile is unavailable when the day is past, or the availability
+// range says it is closed or fully booked (when the range data is
+// missing, the tile stays enabled and the slot fetch on selection is
+// authoritative). Weekends follow the same rule — a Saturday the
+// clinic opened with a short-hours exception shows as available.
 export default function DateCarousel({
   startISO,
   endISO,
@@ -35,6 +35,10 @@ export default function DateCarousel({
   const today = clinicTodayISO();
   const stripRef = useRef<HTMLDivElement>(null);
   const days = eachDayISO(startISO, endISO);
+  // After an arrow extends the window, the new days render off-screen
+  // past the end of the strip; this edge tile is scrolled into view
+  // once they exist, so the press visibly shows the additional days.
+  const pendingEdgeRef = useRef<string | null>(null);
 
   // Keep the selected tile in view when the selection moves (e.g. a
   // calendar-modal pick outside the visible strip).
@@ -47,9 +51,29 @@ export default function DateCarousel({
     tile?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }, [selectedISO]);
 
+  // Scroll the first newly added day into view after an arrow press.
+  // Runs only when the window edges change with a pending edge, so
+  // calendar picks that widen the window do not yank the strip.
+  useEffect(() => {
+    const edgeISO = pendingEdgeRef.current;
+    if (!edgeISO) return;
+    pendingEdgeRef.current = null;
+    const strip = stripRef.current;
+    if (!strip) return;
+    const tile = strip.querySelector<HTMLElement>(
+      `[data-iso-date="${edgeISO}"]`,
+    );
+    tile?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  }, [startISO, endISO]);
+
+  function handleExtend(direction: "prev" | "next") {
+    pendingEdgeRef.current =
+      direction === "next" ? addDaysISO(endISO, 1) : addDaysISO(startISO, -7);
+    onExtend(direction);
+  }
+
   function isUnavailable(dateISO: string): boolean {
     if (dateISO < today) return true;
-    if (isWeekendISO(dateISO)) return true;
     const info = availability.get(dateISO);
     if (info) return !info.open || !info.available;
     return false;
@@ -79,7 +103,7 @@ export default function DateCarousel({
         className="booking-date-prev"
         aria-label="Previous date"
         type="button"
-        onClick={() => onExtend("prev")}
+        onClick={() => handleExtend("prev")}
       >
         {chevron("prev")}
       </button>
@@ -121,7 +145,7 @@ export default function DateCarousel({
         className="booking-date-next"
         aria-label="Next date"
         type="button"
-        onClick={() => onExtend("next")}
+        onClick={() => handleExtend("next")}
       >
         {chevron("next")}
       </button>

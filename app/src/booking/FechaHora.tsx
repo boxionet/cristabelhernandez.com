@@ -9,7 +9,6 @@ import { calcBookingTotals } from "./constants";
 import {
   addDaysISO,
   formatDateForDisplay,
-  isWeekendISO,
   nextWeekdayISO,
 } from "./dateUtils";
 import DateCarousel, { initialCarouselWindow } from "./components/DateCarousel";
@@ -58,8 +57,11 @@ export default function FechaHora() {
     return map;
   }, [dayRange.data]);
 
-  const staticUnavailable =
-    selectedDate < today || isWeekendISO(selectedDate);
+  // Only the past is ruled out statically. Whether a day is open —
+  // including a Saturday the clinic opened with a short-hours
+  // exception — comes from the availability range, and a failed
+  // range fetch falls back to the day fetch deciding.
+  const isPast = selectedDate < today;
   const rangeInfo = availability.get(selectedDate);
   const rangeUnavailable =
     rangeInfo !== undefined && (!rangeInfo.open || !rangeInfo.available);
@@ -70,7 +72,7 @@ export default function FechaHora() {
   const slotsQuery = useAvailability(
     selectedDate,
     duration,
-    !staticUnavailable && !rangeUnavailable,
+    !isPast && !rangeUnavailable,
   );
   const slotsLoading = slotsQuery.isLoading;
   const slotsFailed =
@@ -78,7 +80,7 @@ export default function FechaHora() {
   const daySlots = slotsQuery.data;
 
   const noSlots =
-    !staticUnavailable &&
+    !isPast &&
     !rangeUnavailable &&
     !slotsLoading &&
     !slotsFailed &&
@@ -86,7 +88,7 @@ export default function FechaHora() {
     daySlots !== null &&
     (!daySlots.open || daySlots.slots.length === 0);
   const showUnavailable =
-    staticUnavailable || rangeUnavailable || noSlots;
+    isPast || rangeUnavailable || noSlots;
 
   function ensureWindowContains(dateISO: string) {
     setWindow((w) => ({
