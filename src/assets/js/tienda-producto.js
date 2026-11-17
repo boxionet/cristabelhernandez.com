@@ -80,6 +80,40 @@
                 { passive: true }
             );
         }
+
+        // Mobile default: the SECOND photo (the middle one) is the one
+        // centered when the page loads, with a peek of the first and
+        // third photos on either side — like Peachy's mobile gallery.
+        // Tablet/desktop keep the first photo (the thumb rail decides).
+        var mobileQuery = window.matchMedia("(max-width: 767px)");
+
+        function centerPanelInstant(index) {
+            var target = panels[index];
+            if (!main || !target) return;
+            var r = target.getBoundingClientRect();
+            var sr = main.getBoundingClientRect();
+            main.scrollLeft =
+                main.scrollLeft +
+                (r.left - sr.left) -
+                (sr.width - r.width) / 2;
+        }
+
+        if (mobileQuery.matches) {
+            centerPanelInstant(1);
+            setActive("1", false);
+        }
+        if (mobileQuery.addEventListener) {
+            mobileQuery.addEventListener("change", function () {
+                if (!mobileQuery.matches) return;
+                // Entering mobile (resize/rotation): center the photo
+                // the user is currently viewing.
+                var current = 0;
+                panels.forEach(function (p, i) {
+                    if (p.classList.contains("is-active")) current = i;
+                });
+                centerPanelInstant(current);
+            });
+        }
     }
 
     var accButtons = document.querySelectorAll("[data-acc-button]");

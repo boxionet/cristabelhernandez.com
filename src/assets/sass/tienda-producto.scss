@@ -81,16 +81,19 @@
         }
 
         /* Mobile: Peachy-style centered carousel — the active photo is
-           centered and taller (4/5), neighbours peek in from both
-           edges, swipe moves the next photo to the center. The 40px
-           side padding + full-width slides centers slide 1 with no
-           scroll; the 12px gap leaves a ~28px peek of each neighbour. */
+           centered and taller (3/4), neighbours peek in from both
+           edges, swipe moves the next photo to the center. The strip
+           bleeds to the viewport edges (like Peachy's gallery) with
+           48px side padding, so at a 390px viewport each slide renders
+           294 x 392 — the size Peachy's inspector shows. The 12px gap
+           leaves a ~36px peek of each neighbour. */
         .cs-main {
             order: 1;
             min-width: 0;
             display: flex;
             gap: calc(12 / 16 * 1rem);
-            padding: 0 calc(40 / 16 * 1rem);
+            margin: 0 calc(-1 * 1rem);
+            padding: 0 calc(48 / 16 * 1rem);
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scrollbar-width: none;
@@ -129,13 +132,25 @@
         }
 
         .cs-main .cs-picture {
+            position: relative;
             display: block;
             flex: 0 0 100%;
-            aspect-ratio: 4 / 5;
-            border: 1px solid #e5e0d8;
+            aspect-ratio: 3 / 4;
             border-radius: calc(16 / 16 * 1rem);
             overflow: hidden;
             scroll-snap-align: center;
+
+            /* Hairline ring so the white-background photo's peek reads
+               as a card. An overlay keeps the img box at exactly the
+               slide size (a border would shrink it by 2px). */
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border: 1px solid #e5e0d8;
+                border-radius: inherit;
+                pointer-events: none;
+            }
 
             img {
                 width: 100%;
@@ -400,6 +415,7 @@
             flex: 1;
             display: block;
             overflow: visible;
+            margin: 0;
             padding: 0;
         }
 
