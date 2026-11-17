@@ -75,8 +75,14 @@ permalink: "/tienda/tizo3/"
                             <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo3-primer-tinted.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Caja de TiZO3 Primer y protector solar con color, FPS 40" width="800" height="800">
                         </picture>
                     </div>
+                    <div class="cs-dots" aria-label="Fotos del producto">
+                        <button class="cs-dot is-active" type="button" data-gallery-dot="0" aria-pressed="true" aria-label="Foto 1"></button>
+                        <button class="cs-dot" type="button" data-gallery-dot="1" aria-pressed="false" aria-label="Foto 2"></button>
+                        <button class="cs-dot" type="button" data-gallery-dot="2" aria-pressed="false" aria-label="Foto 3"></button>
+                    </div>
                 </div>
                 <div class="cs-info">
+                    <h2 class="cs-title">TiZO3 Primer / Protector Solar</h2>
                     <p class="cs-text">
                         Protector solar facial mineral con color y acabado mate. Se integra bajo el maquillaje como primer, con óxidos de titanio y zinc y antioxidantes C y E.
                     </p>
@@ -93,8 +99,8 @@ permalink: "/tienda/tizo3/"
                         </div>
                     </div>
                     <div class="cs-acciones">
-                        <a class="cs-accion" href="/reservar/">Reserva tu cita &rarr;</a>
-                        <a class="cs-accion" href="/contactanos/">Contáctanos &rarr;</a>
+                        <a class="cs-button-solid" href="/reservar/">Reserva tu cita</a>
+                        <a class="cs-button-outline" href="/contactanos/">Contáctanos</a>
                     </div>
                     <div class="cs-accordions">
                         <div class="cs-acc is-open">
@@ -217,22 +223,25 @@ permalink: "/tienda/tizo3/"
                     PM
                 </button>
             </div>
+            <div class="cs-timeline" aria-hidden="true">
+                <span class="cs-timeline-cell"><span class="cs-timeline-dot"></span></span>
+                <span class="cs-timeline-cell"><span class="cs-timeline-dot"></span></span>
+                <span class="cs-timeline-cell"><span class="cs-timeline-dot"></span></span>
+            </div>
+            <div class="cs-steps-wrap">
             <div class="cs-steps is-active" data-rutina-panel="am">
                 <ol class="cs-step-list">
                     <li class="cs-step">
-                        <span class="cs-step-dot" aria-hidden="true">1</span>
                         <span class="cs-step-num">Paso 1</span>
                         <h3 class="cs-step-title">Limpia</h3>
                         <p class="cs-step-text">Lava tu rostro con un limpiador suave.</p>
                     </li>
                     <li class="cs-step">
-                        <span class="cs-step-dot" aria-hidden="true">2</span>
                         <span class="cs-step-num">Paso 2</span>
                         <h3 class="cs-step-title">Hidrata</h3>
                         <p class="cs-step-text">Aplica tu hidratante habitual.</p>
                     </li>
                     <li class="cs-step is-highlight">
-                        <span class="cs-step-dot" aria-hidden="true">3</span>
                         <span class="cs-step-num">Paso 3</span>
                         <h3 class="cs-step-title">Protege</h3>
                         <p class="cs-step-text">Aplica TiZO3 como último paso, antes del maquillaje.</p>
@@ -242,24 +251,22 @@ permalink: "/tienda/tizo3/"
             <div class="cs-steps" data-rutina-panel="pm">
                 <ol class="cs-step-list">
                     <li class="cs-step">
-                        <span class="cs-step-dot" aria-hidden="true">1</span>
                         <span class="cs-step-num">Paso 1</span>
                         <h3 class="cs-step-title">Limpia</h3>
                         <p class="cs-step-text">Retira el protector solar y el maquillaje del día.</p>
                     </li>
                     <li class="cs-step">
-                        <span class="cs-step-dot" aria-hidden="true">2</span>
                         <span class="cs-step-num">Paso 2</span>
                         <h3 class="cs-step-title">Trata</h3>
                         <p class="cs-step-text">Aplica tu tratamiento de noche, si usas alguno.</p>
                     </li>
                     <li class="cs-step">
-                        <span class="cs-step-dot" aria-hidden="true">3</span>
                         <span class="cs-step-num">Paso 3</span>
                         <h3 class="cs-step-title">Hidrata</h3>
                         <p class="cs-step-text">Termina con tu hidratante habitual.</p>
                     </li>
                 </ol>
+            </div>
             </div>
         </div>
     </section>
@@ -276,6 +283,7 @@ permalink: "/tienda/tizo3/"
             </p>
             <ul class="cs-card-group">
                 <li class="cs-item">
+                    <a class="cs-card-link" href="/tienda/tizo2/" aria-label="Ver TiZO2 Primer / Protector Solar">
                     <picture class="cs-picture">
                         <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
                         <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
@@ -287,8 +295,10 @@ permalink: "/tienda/tizo3/"
                     <p class="cs-item-text">
                         FPS 40 · Protector solar facial mineral sin color y acabado mate. Óxidos de titanio y zinc, con antioxidantes C y E.
                     </p>
+                    </a>
                 </li>
                 <li class="cs-item">
+                    <a class="cs-card-link" href="/tienda/mineral-stick/" aria-label="Ver TiZO Mineral Stick">
                     <picture class="cs-picture">
                         <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
                         <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
@@ -300,6 +310,7 @@ permalink: "/tienda/tizo3/"
                     <p class="cs-item-text">
                         FPS 45 · Protector solar mineral en barra para rostro y cuerpo. Amplio espectro, resistente al agua por 80 minutos.
                     </p>
+                    </a>
                 </li>
             </ul>
         </div>

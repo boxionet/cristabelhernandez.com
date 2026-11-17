@@ -332,41 +332,6 @@
     }
 }
 
-/*-- -------------------------- -->
-<---     CTA: centered on Tienda   -->
-<--- -------------------------- -*/
-
-/* This stylesheet loads only on /tienda/, so these overrides center the
-   shared CTA here without touching any other page. */
-@media only screen and (min-width: 0rem) {
-    #cta-2353 {
-        .cs-container {
-            align-items: center;
-        }
-
-        .cs-content {
-            text-align: center;
-        }
-
-        .cs-button-box {
-            justify-content: center;
-        }
-    }
-}
-
-/* Desktop - 1024px */
-@media only screen and (min-width: 64rem) {
-    #cta-2353 {
-        .cs-container {
-            align-items: center;
-        }
-
-        .cs-content {
-            width: 100%;
-        }
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     #tienda-grid {
         .cs-card-link:hover .cs-picture img {
