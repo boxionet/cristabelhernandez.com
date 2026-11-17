@@ -83,17 +83,29 @@ export function formatServicePrice(service: {
 }
 
 // The start times the booking flow offers, in 24h form — one slot
-// every hour, on the hour (clinic policy, user decision 2026-11-12).
-// The availability engine generates slots on the same hourly step,
-// so the intersection of the two is what a patient can pick.
+// every 30 minutes, on the hour and half hour (clinic policy, user
+// decision 2026-11-17, superseding the hourly grid from 2026-11-12).
+// The last start is 17:30: a 30-minute service starting then fits
+// exactly before the 18:00 close. The availability engine generates
+// slots on the same 30-minute step, so the intersection of the two
+// is what a patient can pick.
 export const STATIC_SLOT_TIMES_24H = [
   "09:00",
+  "09:30",
   "10:00",
+  "10:30",
   "11:00",
+  "11:30",
   "12:00",
+  "12:30",
   "13:00",
+  "13:30",
   "14:00",
+  "14:30",
   "15:00",
+  "15:30",
   "16:00",
+  "16:30",
   "17:00",
+  "17:30",
 ] as const;
