@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { clinicTodayISO } from "../../lib/format";
-import {
-  MONTH_NAMES_LONG,
-  isWeekendISO,
-} from "../dateUtils";
+import { MONTH_NAMES_LONG } from "../dateUtils";
 
 // The month-grid jump calendar — same markup and classes as the
-// static fecha-hora modal. Weeks start Monday. Past days are
-// disabled; weekend days stay clickable (they select the day and the
-// step shows the unavailable message, as the static page did).
+// static fecha-hora modal. Weeks start Monday. Only past days are
+// disabled; every future day stays clickable, and the step's
+// availability data decides whether it offers slots (a Saturday the
+// clinic opened with a short-hours exception works like any day).
 export default function CalendarModal({
   open,
   selectedISO,
@@ -113,13 +111,11 @@ export default function CalendarModal({
             const day = i + 1;
             const iso = `${month}-${String(day).padStart(2, "0")}`;
             const isPast = iso < today;
-            const isWeekend = isWeekendISO(iso);
             const className = [
               "booking-calendar-day",
               iso === today ? "today" : "",
               iso === selectedISO ? "selected" : "",
               isPast ? "disabled" : "",
-              !isPast && isWeekend ? "weekend" : "",
             ]
               .filter(Boolean)
               .join(" ");
