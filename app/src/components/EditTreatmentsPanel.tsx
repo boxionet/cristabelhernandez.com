@@ -23,17 +23,24 @@ interface Line {
   quantity: number;
 }
 
-// Patient editor for a cita's treatments: add new ones, remove
-// existing ones, or change quantities (a replace is a remove + an
-// add in the same save). The full list is sent to the server, which
+// Patient editor for a cita's treatments, in two modes behind two
+// card buttons so the patient sees both jobs upfront instead of
+// discovering one inside the other:
+//   * "add" — only adds NEW services (existing ones are carried
+//     through unchanged and listed as a read-only summary);
+//   * "edit" — only changes what is already on the cita (remove or
+//     change quantities), with no add control.
+// Both modes send the full desired list to the server, which
 // recomputes the totals from the catalog. Every save goes back to
 // 'pendiente' for the Dra to confirm.
 export default function EditTreatmentsPanel({
   appointment,
+  mode,
   onDone,
   onClose,
 }: {
   appointment: Appointment;
+  mode: "add" | "edit";
   onDone: () => void;
   onClose: () => void;
 }) {
@@ -173,15 +180,51 @@ export default function EditTreatmentsPanel({
     }
   }
 
+  // The services the cita already has: in "add" mode only the NEW
+  // lines are shown with controls; the originals ride along
+  // unchanged and are summarized in one line instead.
+  const originalIds = useMemo(
+    () =>
+      new Set(
+        appointment.appointment_services
+          .map((i) => i.service_id)
+          .filter((id): id is string => id !== null),
+      ),
+    [appointment],
+  );
+  const visibleLines = useMemo(
+    () =>
+      mode === "add"
+        ? (lines ?? []).filter((l) => !originalIds.has(l.service.id))
+        : (lines ?? []),
+    [mode, lines, originalIds],
+  );
+
   return (
     <div className="edit-treatments">
       <p className="muted">
-        Agrega tratamientos, quita los que no quieras o cambia las
-        cantidades. Al guardar, la cita vuelve a pendiente y el centro debe
-        confirmarla de nuevo.
+        {mode === "add"
+          ? "Agrega tratamientos a esta cita. Los que ya tienes no cambian. Al guardar, la cita vuelve a pendiente y el centro debe confirmarla de nuevo."
+          : "Quita tratamientos o cambia las cantidades de esta cita. Al guardar, la cita vuelve a pendiente y el centro debe confirmarla de nuevo."}
       </p>
 
-      {lines.map(({ service, quantity }) => (
+      {mode === "add" && (
+        <p className="muted">
+          Tu cita ya incluye:{" "}
+          {appointment.appointment_services
+            .map(
+              (i) => `${i.service_name}${i.quantity > 1 ? ` × ${i.quantity}` : ""}`,
+            )
+            .join(", ")}
+          .
+        </p>
+      )}
+
+      {mode === "add" && available.length === 0 && visibleLines.length === 0 && (
+        <p className="muted">Tu cita ya incluye todos los tratamientos disponibles.</p>
+      )}
+
+      {visibleLines.map(({ service, quantity }) => (
         <div key={service.id} className="svc-row">
           <span className="svc-name">
             {service.name}
@@ -220,7 +263,7 @@ export default function EditTreatmentsPanel({
         </div>
       ))}
 
-      {available.length > 0 && (
+      {mode === "add" && available.length > 0 && (
         <div className="svc-add">
           <select value={addId} onChange={(e) => setAddId(e.target.value)}>
             <option value="">Agregar un tratamiento…</option>

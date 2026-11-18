@@ -40,7 +40,8 @@ function dateParts(iso: string): { dow: string; day: number; mon: string } {
 // Patient appointment card — the zoned redesign shared with the Panel
 // (owner-approved 2026-11-11): date chip + Dominican long-form date,
 // services, money with the cash note, and the patient actions:
-// Reprogramar, Editar tratamientos (add/remove/quantities; back to
+// Reprogramar, Agregar tratamiento and Modificar tratamientos (two
+// entry points into the same editor; every save goes back to
 // pendiente for the Dra to confirm) and Cancelar cita.
 // Cancelar opens the same confirmation modal as the Panel.
 export default function AppointmentCard({
@@ -58,7 +59,7 @@ export default function AppointmentCard({
   const toast = useToast();
   const [cancelModal, setCancelModal] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
-  const [editingTreatments, setEditingTreatments] = useState(false);
+  const [treatmentsPanel, setTreatmentsPanel] = useState<"add" | "edit" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -207,7 +208,7 @@ export default function AppointmentCard({
 
       {error && !cancelModal && <p className="error">{error}</p>}
 
-      {manageable && !rescheduling && !editingTreatments && (
+      {manageable && !rescheduling && !treatmentsPanel && (
         <div className="pcard-actions">
           <button
             type="button"
@@ -217,13 +218,22 @@ export default function AppointmentCard({
             Reprogramar
           </button>
           {appointment.payment_status === "pendiente" && (
-            <button
-              type="button"
-              className="btn ghost"
-              onClick={() => setEditingTreatments(true)}
-            >
-              Editar tratamientos
-            </button>
+            <>
+              <button
+                type="button"
+                className="btn ghost"
+                onClick={() => setTreatmentsPanel("add")}
+              >
+                Agregar tratamiento
+              </button>
+              <button
+                type="button"
+                className="btn ghost"
+                onClick={() => setTreatmentsPanel("edit")}
+              >
+                Modificar tratamientos
+              </button>
+            </>
           )}
           <button
             type="button"
@@ -246,14 +256,15 @@ export default function AppointmentCard({
         />
       )}
 
-      {manageable && editingTreatments && (
+      {manageable && treatmentsPanel && (
         <EditTreatmentsPanel
           appointment={appointment}
+          mode={treatmentsPanel}
           onDone={() => {
-            setEditingTreatments(false);
+            setTreatmentsPanel(null);
             onChanged?.();
           }}
-          onClose={() => setEditingTreatments(false)}
+          onClose={() => setTreatmentsPanel(null)}
         />
       )}
 
