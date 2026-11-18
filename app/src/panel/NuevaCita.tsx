@@ -267,7 +267,7 @@ export default function NuevaCita() {
         <p>
           Referencia <strong>{done.referenceCode}</strong> · {formatPrice(finalTotal)}
           {done.emailState === "sent" &&
-            ` · enviamos un correo a ${done.email} para que la paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
+            ` · enviamos un correo a ${done.email} para que el paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
           {done.emailState === "failed" &&
             " · no pudimos enviar el correo de confirmación. Puedes confirmar la cita desde Citas."}
           {done.emailState === "none" &&
