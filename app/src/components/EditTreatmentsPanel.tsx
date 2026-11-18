@@ -130,6 +130,28 @@ export default function EditTreatmentsPanel({
     return { total, duration, estimate, endTime };
   }, [lines, appointment]);
 
+  // The services the cita already has: in "add" mode only the NEW
+  // lines are shown with controls; the originals ride along
+  // unchanged and are summarized in one line instead. These memos
+  // must stay above the early return — hooks after a conditional
+  // return crash React on the re-render that loads the catalog.
+  const originalIds = useMemo(
+    () =>
+      new Set(
+        appointment.appointment_services
+          .map((i) => i.service_id)
+          .filter((id): id is string => id !== null),
+      ),
+    [appointment],
+  );
+  const visibleLines = useMemo(
+    () =>
+      mode === "add"
+        ? (lines ?? []).filter((l) => !originalIds.has(l.service.id))
+        : (lines ?? []),
+    [mode, lines, originalIds],
+  );
+
   if (!catalog || !lines)
     return (
       <div className="edit-treatments" aria-busy="true" aria-label="Cargando">
@@ -179,26 +201,6 @@ export default function EditTreatmentsPanel({
       setBusy(false);
     }
   }
-
-  // The services the cita already has: in "add" mode only the NEW
-  // lines are shown with controls; the originals ride along
-  // unchanged and are summarized in one line instead.
-  const originalIds = useMemo(
-    () =>
-      new Set(
-        appointment.appointment_services
-          .map((i) => i.service_id)
-          .filter((id): id is string => id !== null),
-      ),
-    [appointment],
-  );
-  const visibleLines = useMemo(
-    () =>
-      mode === "add"
-        ? (lines ?? []).filter((l) => !originalIds.has(l.service.id))
-        : (lines ?? []),
-    [mode, lines, originalIds],
-  );
 
   return (
     <div className="edit-treatments">
