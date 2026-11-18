@@ -2,6 +2,20 @@
   publish = "public/"
   command = "npm run build"
 
+# Security headers. No enforced Content-Security-Policy on purpose: the
+# site has inline scripts on several pages, the GTM container snippet,
+# and the Decap CMS admin (unpkg + Netlify Identity) — an enforced CSP
+# needs its own inventory-and-hash pass before it can ship safely.
+# COOP uses same-origin-allow-popups so the Netlify Identity login popup
+# used by /admin keeps working.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
 # Booking app (app/): SPA fallback for the two gated areas only.
 # The React app is built into public/app by the root build (build:app).
 [[redirects]]
