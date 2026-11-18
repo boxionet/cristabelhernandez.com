@@ -536,3 +536,44 @@
     margin: 0 auto;
   }
 }
+
+/* Fresha-style date strip (Nov 2026): the chevrons sit above the
+   strip next to the label and page one visible width per press,
+   disabling at each end. Fresha shows them on desktop only — at
+   tablet (820px) and mobile widths the strip has no chevrons and
+   moves by swipe — so they render from the desktop breakpoint up
+   and stay hidden below it. The strip itself is full width now
+   that nothing flanks it. */
+#booking-flow-date-time .booking-date-carousel-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+#booking-flow-date-time .booking-date-carousel-head h2 {
+  margin: 0;
+}
+#booking-flow-date-time .booking-date-carousel-arrows {
+  display: none;
+  gap: 0.5rem;
+}
+#booking-flow-date-time .booking-date-prev:disabled,
+#booking-flow-date-time .booking-date-next:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+#booking-flow-date-time .booking-date-prev:hover:not(:disabled),
+#booking-flow-date-time .booking-date-next:hover:not(:disabled) {
+  color: #849573;
+}
+@media only screen and (min-width: 64rem) {
+  #booking-flow-date-time .booking-date-carousel-head {
+    margin-bottom: 1.25rem;
+  }
+  #booking-flow-date-time .booking-date-carousel {
+    width: 100%;
+  }
+  #booking-flow-date-time .booking-date-carousel-arrows {
+    display: flex;
+  }
+}

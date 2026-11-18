@@ -59,6 +59,24 @@ export async function rescheduleAppointment(
   }
 }
 
+// Edit a cita's treatments (booking-update-services): the full
+// desired list — adds, removals, and quantity changes in one save.
+// The server recomputes totals from the catalog and sends the cita
+// back to 'pendiente' for the Dra to confirm.
+export async function editAppointmentServices(
+  accessToken: string,
+  appointmentId: string,
+  items: { slug: string; quantity: number }[],
+): Promise<void> {
+  const { ok, data } = await callFunction("booking-update-services", accessToken, {
+    appointmentId,
+    items,
+  });
+  if (!ok) {
+    throw new Error(typeof data.error === "string" ? data.error : "services_change_failed");
+  }
+}
+
 // Staff-only function calls: the session is read here so Panel
 // components don't thread the token through the card tree.
 async function staffCallFunction(
@@ -288,6 +306,16 @@ export const ERROR_MESSAGES: Record<string, string> = {
   slot_taken: "Ese horario acaba de ocuparse. Elige otra hora, por favor.",
   already_final: "Esta cita ya no se puede modificar.",
   not_found: "No encontramos la cita.",
+  unverified_hold:
+    "Primero confirma tu correo con el enlace que te enviamos; después podrás agregar tratamientos.",
+  paid_cita:
+    "Esta cita ya está pagada: para cambiar los tratamientos, llámanos o escríbenos.",
+  outside_hours:
+    "Con la nueva duración, la cita terminaría después del horario de cierre. Quita un tratamiento o reprograma la cita.",
+  change_overlap:
+    "Con la nueva duración, la cita choca con otra. Quita un tratamiento o reprograma la cita.",
+  no_changes: "No cambiaste ningún tratamiento.",
+  invalid_items: "Revisa los tratamientos elegidos e inténtalo de nuevo.",
   invalid_promo:
     "Ese código promocional ya no es válido. Quítalo o verifica el código e inténtalo de nuevo.",
   promo_exhausted:

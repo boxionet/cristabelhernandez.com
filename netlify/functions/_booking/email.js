@@ -292,6 +292,144 @@ async function sendOwnerBookingAlert({ appointment, items, panelUrl, patientName
   }
 }
 
+// The patient clicked the confirmation link for a STAFF-created cita
+// (Panel manual booking): the hold resolved straight to 'confirmada'.
+// The Dra created it, but she doesn't watch the Panel constantly —
+// this tells her the patient confirmed, so she knows the cita is firm.
+// Fires once: the RPC clears the token on success, so a repeat click
+// returns 'invalid' and this branch never runs again. Never throws.
+async function sendOwnerManualConfirmAlert({ appointment, items, panelUrl, patientName, patientEmail, patientPhone }) {
+  try {
+    const resend = resendClient();
+    const when = `${formatDateEs(appointment.date)} a las ${formatTime12h(appointment.start_time.slice(0, 5))}`;
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const replyTo = patientEmail || OWNER_EMAIL;
+    const intro =
+      "El paciente confirmó la cita que creaste desde el Panel haciendo clic en el enlace del correo. La cita está confirmada.";
+    const patientRows = [
+      ["Paciente", escapeHtml(patientName || "(ver en el Panel)")],
+      ...(patientEmail ? [["Correo", escapeHtml(patientEmail)]] : []),
+      ...(patientPhone ? [["Teléfono", escapeHtml(patientPhone)]] : []),
+    ];
+    const ownerText = [
+      intro,
+      ``,
+      `Referencia: ${appointment.reference_code}`,
+      `Fecha: ${when}`,
+      `Servicios:`,
+      itemsListText(items),
+      ...promoTextLines(appointment),
+      `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
+      ``,
+      `Paciente: ${patientName || "(ver en el Panel)"}`,
+      patientEmail ? `Correo: ${patientEmail}` : "",
+      patientPhone ? `Teléfono: ${patientPhone}` : "",
+      ``,
+      `Ver en el Panel: ${panelUrl}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    await resend.emails.send({
+      from: FROM,
+      to: OWNER_EMAIL,
+      reply_to: replyTo,
+      subject: `El paciente confirmó su cita — ${appointment.reference_code}`,
+      html: emailShell({
+        preheader: "El paciente confirmó la cita creada desde el Panel; ya está confirmada.",
+        title: "Paciente confirmó su cita",
+        staff: true,
+        body:
+          emailParagraph(intro) +
+          emailDetails([...appointmentDetailsRows({ appointment, items, when, totalLabel }), ...patientRows]) +
+          emailButton("Ver en el Panel", panelUrl),
+      }),
+      text: ownerText,
+    });
+    return true;
+  } catch (e) {
+    console.error("owner manual-confirm email failed", e);
+    return false;
+  }
+}
+
+const SOURCE_LABELS = {
+  web: "Web",
+  telefono: "Teléfono",
+  whatsapp: "WhatsApp",
+  presencial: "Presencial",
+};
+
+// Digest of holds that expired unconfirmed and were purged by the
+// sweep: the slot is free again, and the Dra may want to follow up
+// with the patient to rebook. One email per sweep run, however many
+// holds expired. Never throws.
+async function sendOwnerExpiredHoldsDigest({ holds, panelUrl }) {
+  try {
+    const resend = resendClient();
+    const count = holds.length;
+    const plural = count !== 1;
+    const subject = plural
+      ? `${count} citas sin confirmar expiraron`
+      : `Cita sin confirmar expiró — ${holds[0].reference_code}`;
+    const title = plural ? "Citas sin confirmar expiraron" : "Cita sin confirmar expiró";
+    const intro = plural
+      ? `Estas ${count} citas no fueron confirmadas antes de que venciera el plazo, así que el sistema liberó el horario. Si quieres, contacta a cada paciente para reagendar.`
+      : "Esta cita no fue confirmada antes de que venciera el plazo, así que el sistema liberó el horario. Si quieres, contacta al paciente para reagendar.";
+    const blocks = holds.map((hold) => {
+      const when = `${formatDateEs(hold.date)} a las ${formatTime12h(hold.start_time.slice(0, 5))}`;
+      const totalLabel = hold.total_is_estimate ? "Total estimado" : "Total";
+      const rows = [
+        ["Referencia", escapeHtml(hold.reference_code)],
+        ["Fecha", when],
+        ["Servicios", itemsListCell(hold.items || [])],
+        [totalLabel, formatPrice(hold.total_price)],
+        ["Paciente", escapeHtml(hold.patientName || "(sin nombre)")],
+        ...(hold.patientEmail ? [["Correo", escapeHtml(hold.patientEmail)]] : []),
+        ...(hold.patientPhone ? [["Teléfono", escapeHtml(hold.patientPhone)]] : []),
+        ["Origen", SOURCE_LABELS[hold.source] || escapeHtml(hold.source || "")],
+      ];
+      return emailDetails(rows);
+    });
+    const textBlocks = holds.map((hold) => {
+      const when = `${formatDateEs(hold.date)} a las ${formatTime12h(hold.start_time.slice(0, 5))}`;
+      const totalLabel = hold.total_is_estimate ? "Total estimado" : "Total";
+      return [
+        `Referencia: ${hold.reference_code}`,
+        `Fecha: ${when}`,
+        `Servicios:`,
+        itemsListText(hold.items || []),
+        `${totalLabel}: ${formatPrice(hold.total_price)}`,
+        `Paciente: ${hold.patientName || "(sin nombre)"}`,
+        hold.patientEmail ? `Correo: ${hold.patientEmail}` : "",
+        hold.patientPhone ? `Teléfono: ${hold.patientPhone}` : "",
+        `Origen: ${SOURCE_LABELS[hold.source] || hold.source || ""}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+    });
+    const digestText = [intro, ``, ...textBlocks, ``, `Ver en el Panel: ${panelUrl}`].join("\n\n");
+    await resend.emails.send({
+      from: FROM,
+      to: OWNER_EMAIL,
+      subject,
+      html: emailShell({
+        preheader: intro,
+        title,
+        staff: true,
+        body:
+          emailParagraph(intro) +
+          blocks.join("") +
+          emailButton("Ver en el Panel", panelUrl),
+      }),
+      text: digestText,
+    });
+    return true;
+  } catch (e) {
+    console.error("owner expired-holds email failed", e);
+    return false;
+  }
+}
+
 // The verification email for a guest (web) booking. The button verifies
 // the email address — it does NOT confirm the appointment. Only after
 // this click does the cita reach the Dra's queue as pendiente.
@@ -599,6 +737,96 @@ async function sendCancellationNotice({ appointment, when, panelUrl }) {
   }
 }
 
+// Clinic notification: the patient edited the treatments of an
+// existing cita from Mi Cuenta (added, removed, or changed
+// quantities). The change always needs the Dra's confirmation — the
+// cita is back to pendiente (or stays pending) and the Dra decides
+// in Por confirmar. Never throws.
+async function sendOwnerServicesChangeAlert({
+  appointment,
+  changes,
+  patientName,
+  patientEmail,
+  patientPhone,
+  when,
+  wasConfirmed,
+  panelUrl,
+}) {
+  try {
+    const resend = resendClient();
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const replyTo = patientEmail || OWNER_EMAIL;
+    // One line per change, in the order the Dra reads them: what was
+    // added, what was removed, what changed quantity.
+    const changeLines = [
+      ...changes.added.map((a) => {
+        let price = formatPrice(a.unitPrice * a.quantity);
+        if (a.priceFrom) price = `Desde ${price}`;
+        if (a.priceNote === "c/ampolla") price += " c/ampolla";
+        else if (a.priceNote) price += ` (${a.priceNote})`;
+        return `+ ${a.name}${a.quantity > 1 ? ` × ${a.quantity}` : ""} — ${price}`;
+      }),
+      ...changes.removed.map(
+        (r) => `− ${r.name}${r.quantity > 1 ? ` × ${r.quantity}` : ""}`,
+      ),
+      ...changes.quantityChanged.map(
+        (q) => `${q.name}: × ${q.oldQuantity} → × ${q.newQuantity}`,
+      ),
+    ];
+    const intro = wasConfirmed
+      ? "El paciente cambió los tratamientos de una cita confirmada. La cita vuelve a pendiente y requiere confirmación en el Panel."
+      : "El paciente cambió los tratamientos de su cita. La cita sigue pendiente de confirmación en el Panel.";
+    const rows = [
+      ["Referencia", escapeHtml(appointment.reference_code)],
+      ["Fecha", escapeHtml(when)],
+      ["Cambios", changeLines.map(escapeHtml).join("<br>")],
+      ["Duración", `${appointment.duration_minutes} min`],
+      [totalLabel, `${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`],
+      ["Paciente", escapeHtml(patientName || "(ver en el Panel)")],
+      ...(patientEmail ? [["Correo", escapeHtml(patientEmail)]] : []),
+      ...(patientPhone ? [["Teléfono", escapeHtml(patientPhone)]] : []),
+    ];
+    const text = [
+      intro,
+      ``,
+      `Referencia: ${appointment.reference_code}`,
+      `Fecha: ${when}`,
+      `Cambios:`,
+      ...changeLines,
+      `Duración: ${appointment.duration_minutes} min`,
+      `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
+      ``,
+      `Paciente: ${patientName || "(ver en el Panel)"}`,
+      patientEmail ? `Correo: ${patientEmail}` : "",
+      patientPhone ? `Teléfono: ${patientPhone}` : "",
+      ``,
+      `Ver en el Panel: ${panelUrl}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    await resend.emails.send({
+      from: FROM,
+      to: OWNER_EMAIL,
+      reply_to: replyTo,
+      subject: `Paciente cambió los tratamientos — ${appointment.reference_code}`,
+      html: emailShell({
+        preheader: intro,
+        title: "Paciente cambió los tratamientos",
+        staff: true,
+        body:
+          emailParagraph(intro) +
+          emailDetails(rows) +
+          emailButton("Ver en el Panel", panelUrl),
+      }),
+      text,
+    });
+    return true;
+  } catch (e) {
+    console.error("owner services-change email failed", e);
+    return false;
+  }
+}
+
 // Clinic notification: the patient rescheduled. A rescheduled
 // confirmed cita drops back to pending and needs confirmation again.
 async function sendRescheduleNotice({ appointment, when, wasConfirmed, panelUrl }) {
@@ -703,6 +931,9 @@ module.exports = {
   emailButton,
   emailDetails,
   sendOwnerBookingAlert,
+  sendOwnerManualConfirmAlert,
+  sendOwnerExpiredHoldsDigest,
+  sendOwnerServicesChangeAlert,
   sendPatientVerificationEmail,
   sendApprovalEmail,
   sendRejectionEmail,

@@ -4,8 +4,14 @@ import { useAvailability } from "../lib/queries/availability";
 import { requestConfirmation, validatePromo } from "../lib/api";
 import { formatPrice, formatTime12h } from "../lib/format";
 import {
+  addMinutes,
+  clinicNowHHMM,
   clinicToday,
   createManualBooking,
+  dayHours,
+  displayName,
+  findOverlaps,
+  timeToMinutes,
   type ServiceRow,
 } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
@@ -13,7 +19,8 @@ import { SkeletonForm } from "../components/Skeleton";
 import DatePicker from "../components/DatePicker";
 
 export default function NuevaCita() {
-  const { patients, services, error, reload } = usePanelData();
+  const { appointments, patients, services, schedule, exceptions, error, reload } =
+    usePanelData();
   const [params] = useSearchParams();
   const [patientId, setPatientId] = useState<string>(params.get("paciente") ?? "nuevo");
   const [fullName, setFullName] = useState("");
@@ -22,6 +29,10 @@ export default function NuevaCita() {
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [date, setDate] = useState(clinicToday());
   const [startTime, setStartTime] = useState<string | null>(null);
+  // Doctor's manual time override (migration 010): with the switch on,
+  // the slot grid is replaced by a free time field and the cita may
+  // overlap other citas. Off = today's behavior, free slots only.
+  const [overrideMode, setOverrideMode] = useState(false);
   const [source, setSource] = useState<"telefono" | "whatsapp" | "presencial">("telefono");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
@@ -87,22 +98,40 @@ export default function NuevaCita() {
   }
 
   // Availability is server state: TanStack Query keyed by date+duration.
-  const availability = useAvailability(date, duration, duration > 0);
+  // In override mode no slots are fetched — the Dra picks any time.
+  const availability = useAvailability(date, duration, duration > 0 && !overrideMode);
   const slots: string[] | null =
-    duration === 0 || availability.isPending
+    overrideMode || duration === 0 || availability.isPending
       ? null
       : (availability.data?.slots ?? []);
   const dayOpen = availability.data?.open ?? true;
+
+  // Effective hours for the picked date (exception wins over the weekly
+  // schedule); undefined until schedule/exceptions load.
+  const hours =
+    schedule && exceptions ? dayHours(date, schedule, exceptions) : undefined;
+  // Citas the manually chosen time would stack onto, for the warning.
+  const overlaps =
+    overrideMode && startTime && duration > 0 && appointments
+      ? findOverlaps(date, startTime, duration, appointments)
+      : [];
 
   useEffect(() => {
     setStartTime(null);
   }, [date, duration]);
 
+  // Flipping modes clears the picked time: a slot value must never leak
+  // into manual mode, and a manual time must never pass as a slot.
+  function toggleOverride() {
+    setOverrideMode((v) => !v);
+    setStartTime(null);
+  }
+
   async function submit() {
     setFormError(null);
     const existing = patients?.find((p) => p.id === patientId);
     if (!existing && fullName.trim().length < 2) {
-      setFormError("Escribe el nombre de la paciente.");
+      setFormError("Escribe el nombre del paciente.");
       return;
     }
     // The email is required for a new patient: it is how she signs in
@@ -111,7 +140,7 @@ export default function NuevaCita() {
       const em = email.trim();
       if (!em) {
         setFormError(
-          "Escribe el correo de la paciente: lo necesita para entrar a su cuenta y confirmar su cita.",
+          "Escribe el correo del paciente: lo necesita para entrar a su cuenta y confirmar su cita.",
         );
         return;
       }
@@ -124,7 +153,38 @@ export default function NuevaCita() {
       setFormError("Elige al menos un tratamiento.");
       return;
     }
-    if (!startTime) {
+    if (overrideMode) {
+      // Manual time: any minute, but the day must be open, the whole
+      // cita must fit inside the day's hours, and past times stay
+      // blocked. Overlaps are allowed — that is the point of the
+      // override — and the warning above names them.
+      if (!startTime || !/^\d{2}:\d{2}$/.test(startTime)) {
+        setFormError("Elige la hora de la cita.");
+        return;
+      }
+      if (hours === undefined) {
+        setFormError("Espera a que cargue el horario del día e inténtalo de nuevo.");
+        return;
+      }
+      if (hours === null) {
+        setFormError("El centro está cerrado ese día.");
+        return;
+      }
+      const start = timeToMinutes(startTime);
+      if (
+        start < timeToMinutes(hours.open) ||
+        start + duration > timeToMinutes(hours.close)
+      ) {
+        setFormError(
+          `La cita debe quedar dentro del horario del día (${formatTime12h(hours.open)} – ${formatTime12h(hours.close)}).`,
+        );
+        return;
+      }
+      if (date === clinicToday() && start <= timeToMinutes(clinicNowHHMM())) {
+        setFormError("Esa hora ya pasó. Elige una hora posterior.");
+        return;
+      }
+    } else if (!startTime || !(slots ?? []).includes(startTime)) {
       setFormError("Elige la hora de la cita.");
       return;
     }
@@ -166,6 +226,7 @@ export default function NuevaCita() {
           source,
           note,
           promo: effectivePromo,
+          manualOverride: overrideMode,
         });
       // Refresh the Panel cache now, so Citas/Agenda show the new
       // cita immediately instead of serving the 30s-stale list.
@@ -196,7 +257,8 @@ export default function NuevaCita() {
   }
 
   if (error) return <p className="error">{error}</p>;
-  if (!patients || !services) return <SkeletonForm rows={5} />;
+  if (!patients || !services || !appointments || !schedule || !exceptions)
+    return <SkeletonForm rows={5} />;
 
   if (done) {
     return (
@@ -205,7 +267,7 @@ export default function NuevaCita() {
         <p>
           Referencia <strong>{done.referenceCode}</strong> · {formatPrice(finalTotal)}
           {done.emailState === "sent" &&
-            ` · enviamos un correo a ${done.email} para que la paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
+            ` · enviamos un correo a ${done.email} para que el paciente confirme su cita; hasta que confirme, el espacio queda apartado.`}
           {done.emailState === "failed" &&
             " · no pudimos enviar el correo de confirmación. Puedes confirmar la cita desde Citas."}
           {done.emailState === "none" &&
@@ -316,26 +378,83 @@ export default function NuevaCita() {
           </label>
         </div>
 
-        {duration > 0 && slots === null && <p className="muted">Buscando horarios…</p>}
-        {duration > 0 && slots !== null && !dayOpen && (
-          <p className="muted">El centro está cerrado ese día.</p>
-        )}
-        {duration > 0 && slots !== null && dayOpen && slots.length === 0 && (
-          <p className="muted">No quedan horarios ese día para esta duración.</p>
-        )}
-        {slots !== null && slots.length > 0 && (
-          <div className="slot-grid">
-            {slots.map((s) => (
-              <button
-                key={s}
-                type="button"
-                className={`slot${startTime === s ? " picked" : ""}`}
-                onClick={() => setStartTime(s)}
-              >
-                {formatTime12h(s)}
-              </button>
-            ))}
-          </div>
+        <div className="override-row">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={overrideMode}
+            aria-label="Horario manual"
+            className={overrideMode ? "switch on" : "switch"}
+            onClick={toggleOverride}
+          >
+            <span className="track" aria-hidden="true" />
+            <span className="knob" aria-hidden="true" />
+          </button>
+          <span className="override-label" onClick={toggleOverride}>
+            Horario manual
+          </span>
+          <span className="muted override-hint">
+            La doctora elige la hora, aunque se cruce con otra cita.
+          </span>
+        </div>
+
+        {overrideMode ? (
+          <>
+            <label>
+              Hora
+              <input
+                type="time"
+                step="60"
+                value={startTime ?? ""}
+                onChange={(e) => setStartTime(e.target.value || null)}
+              />
+            </label>
+            {duration > 0 && hours === null && (
+              <p className="muted">El centro está cerrado ese día.</p>
+            )}
+            {overlaps.length > 0 && (
+              <div className="override-warning" role="alert">
+                <strong>
+                  Esta cita se cruza con{" "}
+                  {overlaps.length === 1
+                    ? "esta cita:"
+                    : `estas ${overlaps.length} citas:`}
+                </strong>
+                <ul>
+                  {overlaps.map((o) => (
+                    <li key={o.id}>
+                      {displayName(o)} · {formatTime12h(o.start_time)} –{" "}
+                      {formatTime12h(addMinutes(o.start_time, o.duration_minutes))}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {duration > 0 && slots === null && <p className="muted">Buscando horarios…</p>}
+            {duration > 0 && slots !== null && !dayOpen && (
+              <p className="muted">El centro está cerrado ese día.</p>
+            )}
+            {duration > 0 && slots !== null && dayOpen && slots.length === 0 && (
+              <p className="muted">No quedan horarios ese día para esta duración.</p>
+            )}
+            {slots !== null && slots.length > 0 && (
+              <div className="slot-grid">
+                {slots.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`slot${startTime === s ? " picked" : ""}`}
+                    onClick={() => setStartTime(s)}
+                  >
+                    {formatTime12h(s)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         <label>

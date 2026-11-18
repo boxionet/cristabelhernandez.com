@@ -8,6 +8,8 @@ const postcss = require("postcss");
 const autoprefixer = require("autoprefixer");
 const cssnano = require("cssnano");
 
+const inlineCritical = require("./inline-critical");
+
 const isProduction = process.env.ELEVENTY_ENV === "PROD";
 
 // PostCSS processor - add more plugins here as you see fit. cssnano won't run in development.
@@ -68,4 +70,11 @@ module.exports = async function () {
     });
 
     await Promise.all(processPromises);
+
+    // Inline critical.css into the homepage now that every stylesheet
+    // is written. Chained here (not a separate eleventy.after handler)
+    // so the CSS file is guaranteed to exist before it is read — a
+    // separate handler raced the sass writes on fresh builds (Netlify)
+    // and silently left the <link> tag in place.
+    inlineCritical();
 };

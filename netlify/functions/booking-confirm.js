@@ -14,9 +14,11 @@
 // Verify-first: the clinic alert for a web hold fires HERE, once the
 // email owner clicks — not at booking creation. The RPC clears the
 // token on success, so a repeat click returns 'invalid' and the alert
-// can only fire once.
+// can only fire once. A staff-created hold confirmed by the click
+// fires a different alert (the cita is already confirmada) — same
+// once-only guarantee.
 const { serviceClient, siteOrigin } = require("./_booking/supabase");
-const { sendOwnerBookingAlert } = require("./_booking/email");
+const { sendOwnerBookingAlert, sendOwnerManualConfirmAlert } = require("./_booking/email");
 const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -66,8 +68,7 @@ exports.handler = async (event) => {
     if (error) throw error;
 
     // Web hold verified: alert the clinic now that the cita is real and
-    // awaiting her decision. Staff holds skip this — the Dra created
-    // them, so she already knows. A failed send must never break the
+    // awaiting her decision. A failed send must never break the
     // redirect; the cita is pendiente in the Panel either way.
     if (data && data.result === "confirmed" && data.status === "pendiente" && data.appointment) {
       try {
@@ -87,10 +88,39 @@ exports.handler = async (event) => {
           patientEmail: patientRes.data ? patientRes.data.email : null,
           patientPhone: patientRes.data ? patientRes.data.phone : null,
           intro:
-            "Nueva cita desde la web (la paciente verificó su correo — pendiente de confirmación en el Panel).",
+            "Nueva cita desde la web (el paciente verificó su correo — pendiente de confirmación en el Panel).",
         });
       } catch (e) {
         console.error("owner alert after verification failed", e);
+      }
+    }
+
+    // Staff-created hold confirmed by the patient's click: the cita
+    // resolved straight to 'confirmada'. The Dra created it, but she
+    // doesn't watch the Panel constantly — tell her the patient
+    // confirmed, so she knows it's firm. Fires once, like the web
+    // alert: the RPC clears the token, so a repeat click is 'invalid'.
+    // A failed send must never break the redirect.
+    if (data && data.result === "confirmed" && data.status === "confirmada" && data.appointment) {
+      try {
+        const appt = data.appointment;
+        const [patientRes, itemsRes] = await Promise.all([
+          supabase.from("patients").select("full_name,email,phone").eq("id", appt.patient_id).maybeSingle(),
+          supabase
+            .from("appointment_services")
+            .select("service_name,unit_price,quantity,price_from,price_note")
+            .eq("appointment_id", appt.id),
+        ]);
+        await sendOwnerManualConfirmAlert({
+          appointment: appt,
+          items: itemsRes.data || [],
+          panelUrl: `${origin}/panel/`,
+          patientName: patientRes.data ? patientRes.data.full_name : null,
+          patientEmail: patientRes.data ? patientRes.data.email : null,
+          patientPhone: patientRes.data ? patientRes.data.phone : null,
+        });
+      } catch (e) {
+        console.error("owner manual-confirm alert failed", e);
       }
     }
 

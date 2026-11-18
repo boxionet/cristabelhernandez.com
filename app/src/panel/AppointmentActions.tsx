@@ -169,7 +169,7 @@ export default function AppointmentActions({
             const r = await decideAppointment(appt.id, "approve");
             toast.success(
               r.emailSent
-                ? "Cita confirmada — la paciente recibió la confirmación"
+                ? "Cita confirmada — el paciente recibió la confirmación"
                 : "Cita confirmada, pero no se pudo enviar el correo de confirmación.",
             );
           })}>
@@ -325,7 +325,7 @@ export default function AppointmentActions({
           </p>
           <p className="muted">
             {confirmModal === "reject"
-              ? "La cita se marcará como cancelada, el horario quedará libre y la paciente recibirá un correo avisándole que su solicitud no fue confirmada."
+              ? "La cita se marcará como cancelada, el horario quedará libre y el paciente recibirá un correo avisándole que su solicitud no fue confirmada."
               : "La cita se marcará como cancelada y el horario quedará libre."}
           </p>
           <div className="modal-actions">
@@ -348,7 +348,7 @@ export default function AppointmentActions({
                     setConfirmModal(null);
                     toast.success(
                       r.emailSent
-                        ? "Cita no confirmada — la paciente recibió el aviso"
+                        ? "Cita no confirmada — el paciente recibió el aviso"
                         : "Cita no confirmada, pero no se pudo enviar el correo de aviso.",
                     );
                   } else {

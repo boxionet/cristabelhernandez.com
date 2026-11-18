@@ -31,6 +31,10 @@ export interface Appointment {
     | "no_show";
   payment_status: "pendiente" | "pagado";
   starts_at: string; // ISO timestamptz
+  // Doctor's manual time override (migration 010): the Dra placed this
+  // cita at a manually chosen time from the Panel; it may overlap other
+  // active citas. Panel-only display — patients never see it.
+  manual_override: boolean;
   appointment_services: AppointmentItem[];
 }
 

@@ -524,6 +524,17 @@ input:disabled {
   font-size: 1.15rem;
   color: var(--heading);
 }
+/* Por confirmar queue group headings ("Esperando tu confirmación" /
+   "Esperando al paciente"): smaller than the page title, with room
+   above except when directly under it. */
+.queue-group-title {
+  margin: 1.4rem 0 0.7rem;
+  font-size: 1rem;
+  color: var(--heading);
+}
+.section-title + .queue-group-title {
+  margin-top: 0.9rem;
+}
 
 /* ---------- KPIs ---------- */
 .kpis {
@@ -589,6 +600,13 @@ input:disabled {
 .pill.status-completada {
   background: #e8e8e8;
   color: #555;
+}
+/* Doctor's manual time override (migration 010): an outlined gold pill
+   so it reads as a marker, distinct from the solid status pills. */
+.pill.pill-override {
+  background: #fffbeb;
+  border: 1px solid #f59e0b;
+  color: #92400e;
 }
 .appt-items {
   list-style: none;
@@ -1044,6 +1062,17 @@ input:disabled {
 
 /* ---------- Reschedule ---------- */
 .reschedule {
+  margin-top: 1rem;
+  border-top: 1px solid #eceee6;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+/* Patient treatments editor: same panel rhythm as .reschedule;
+   the row/stepper/add styles (.svc-row, .qty-btn, .svc-add,
+   .svc-footer) are shared from panel.css. */
+.edit-treatments {
   margin-top: 1rem;
   border-top: 1px solid #eceee6;
   padding-top: 1rem;

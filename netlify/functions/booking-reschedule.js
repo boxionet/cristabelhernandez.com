@@ -39,7 +39,11 @@ exports.handler = async (event) => {
     // voids the confirmation — the new slot goes back to 'pendiente'
     // for the Dra to confirm again. Holds and pending requests keep
     // their status.
-    const patch = { date: body.newDate, start_time: body.newStartTime };
+    // Manual override (migration 010): the patient picks from free
+    // slots only, so a rescheduled cita stops being an override — and
+    // clearing the flag here restores the overlap check for the new
+    // time, since the trigger validates the row's new version.
+    const patch = { date: body.newDate, start_time: body.newStartTime, manual_override: false };
     const wasConfirmed = appointment.status === "confirmada";
     if (wasConfirmed) patch.status = "pendiente";
 

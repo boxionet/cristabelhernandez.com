@@ -368,3 +368,23 @@
         }
     }
 }
+
+/* Desktop only: the shadow fades out halfway across the photo, so it
+   sits just behind the text column (title + paragraph + buttons end
+   well before the middle) and the right half of the photo shows
+   clear. Below desktop the text spans the full width, so the
+   full-width wash above stays in place to keep it readable. */
+@media only screen and (min-width: 64rem) {
+    #hero-2335 {
+        .cs-background {
+            &::after {
+                background: linear-gradient(
+                    90deg,
+                    rgba(34, 42, 26, 0.78) 0%,
+                    rgba(34, 42, 26, 0.55) 28%,
+                    rgba(34, 42, 26, 0) 50%
+                );
+            }
+        }
+    }
+}

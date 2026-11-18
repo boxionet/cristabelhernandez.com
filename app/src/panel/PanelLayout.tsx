@@ -56,10 +56,12 @@ export default function PanelLayout() {
       ? ""
       : profile.data || (user?.email ? user.email.split("@")[0] : ""));
 
-  // The action queue: verified citas awaiting the Dra's decision.
-  // The bell and the "Por confirmar" nav badge share this count.
+  // The action queue: citas awaiting the Dra's decision (pendiente)
+  // plus citas awaiting the patient's email click (por_confirmar).
+  // The bell and the "Por confirmar" nav badge share this count, and
+  // it matches what the queue page shows.
   const pendingCount = (appointments ?? []).filter(
-    (a) => a.status === "pendiente",
+    (a) => a.status === "pendiente" || a.status === "por_confirmar",
   ).length;
 
   return (

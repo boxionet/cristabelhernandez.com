@@ -7,18 +7,17 @@ import { useAvailability } from "../lib/queries/availability";
 import { useBookingCatalog, useBookingDayRange } from "../lib/queries/bookingQueries";
 import { calcBookingTotals } from "./constants";
 import {
-  addDaysISO,
   formatDateForDisplay,
-  isWeekendISO,
   nextWeekdayISO,
 } from "./dateUtils";
-import DateCarousel, { initialCarouselWindow } from "./components/DateCarousel";
+import DateCarousel, { carouselWindow } from "./components/DateCarousel";
 import CalendarModal from "./components/CalendarModal";
 import TimeGrid from "./components/TimeGrid";
 import CartSummary from "./components/CartSummary";
 
-// Step 2 — pick a date and time. The carousel window starts at
-// today−7 … today+7 and extends a week per arrow press. Day
+// Step 2 — pick a date and time. The date strip is a FIXED window
+// (today through today+181, Fresha-style): all days render upfront
+// and the chevrons page the strip, appending nothing. Day
 // availability comes from the range query (open + has a slot for the
 // cart's total duration); the slot grid for the picked day comes from
 // the day query. A day with no offered slot shows the unavailable
@@ -37,7 +36,8 @@ export default function FechaHora() {
   );
   const duration = totals.durationMinutes > 0 ? totals.durationMinutes : 30;
 
-  const [window, setWindow] = useState(() => initialCarouselWindow(today));
+  // Fixed strip window: today through today+181. It never grows.
+  const { startISO, endISO } = useMemo(() => carouselWindow(today), [today]);
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   // Default to today when arriving without a picked date.
@@ -47,9 +47,7 @@ export default function FechaHora() {
 
   const selectedDate = booking.date ?? today;
 
-  // The range endpoint rejects past dates: clamp the window's start.
-  const rangeFrom = window.startISO < today ? today : window.startISO;
-  const dayRange = useBookingDayRange(rangeFrom, window.endISO, duration);
+  const dayRange = useBookingDayRange(startISO, endISO, duration);
   const availability = useMemo(() => {
     const map = new Map<string, { open: boolean; available: boolean }>();
     for (const day of dayRange.data ?? []) {
@@ -58,8 +56,11 @@ export default function FechaHora() {
     return map;
   }, [dayRange.data]);
 
-  const staticUnavailable =
-    selectedDate < today || isWeekendISO(selectedDate);
+  // Only the past is ruled out statically. Whether a day is open —
+  // including a Saturday the clinic opened with a short-hours
+  // exception — comes from the availability range, and a failed
+  // range fetch falls back to the day fetch deciding.
+  const isPast = selectedDate < today;
   const rangeInfo = availability.get(selectedDate);
   const rangeUnavailable =
     rangeInfo !== undefined && (!rangeInfo.open || !rangeInfo.available);
@@ -70,7 +71,7 @@ export default function FechaHora() {
   const slotsQuery = useAvailability(
     selectedDate,
     duration,
-    !staticUnavailable && !rangeUnavailable,
+    !isPast && !rangeUnavailable,
   );
   const slotsLoading = slotsQuery.isLoading;
   const slotsFailed =
@@ -78,7 +79,7 @@ export default function FechaHora() {
   const daySlots = slotsQuery.data;
 
   const noSlots =
-    !staticUnavailable &&
+    !isPast &&
     !rangeUnavailable &&
     !slotsLoading &&
     !slotsFailed &&
@@ -86,38 +87,24 @@ export default function FechaHora() {
     daySlots !== null &&
     (!daySlots.open || daySlots.slots.length === 0);
   const showUnavailable =
-    staticUnavailable || rangeUnavailable || noSlots;
-
-  function ensureWindowContains(dateISO: string) {
-    setWindow((w) => ({
-      startISO: dateISO < w.startISO ? dateISO : w.startISO,
-      endISO: dateISO > w.endISO ? dateISO : w.endISO,
-    }));
-  }
+    isPast || rangeUnavailable || noSlots;
 
   function selectDate(dateISO: string) {
-    ensureWindowContains(dateISO);
     dispatch(setBookingDate(dateISO));
-  }
-
-  function extendWindow(direction: "prev" | "next") {
-    setWindow((w) =>
-      direction === "prev"
-        ? { ...w, startISO: addDaysISO(w.startISO, -7) }
-        : { ...w, endISO: addDaysISO(w.endISO, 7) },
-    );
   }
 
   // Next available day: first available day in the loaded range data
   // after the selected date, else the next weekday (the static rule
-  // the old page used — the slot fetch re-checks on arrival).
+  // the old page used — the slot fetch re-checks on arrival),
+  // clamped to the strip's last day.
   const nextAvailable = useMemo(() => {
     const days = [...availability.entries()]
       .filter(([date, info]) => date > selectedDate && info.open && info.available)
       .map(([date]) => date)
       .sort();
-    return days[0] ?? nextWeekdayISO(selectedDate);
-  }, [availability, selectedDate]);
+    const fallback = nextWeekdayISO(selectedDate);
+    return days[0] ?? (fallback > endISO ? endISO : fallback);
+  }, [availability, selectedDate, endISO]);
 
   return (
     <section id="booking-flow-date-time">
@@ -146,19 +133,18 @@ export default function FechaHora() {
             <CalendarModal
               open={calendarOpen}
               selectedISO={selectedDate}
+              maxISO={endISO}
               onPick={selectDate}
               onClose={() => setCalendarOpen(false)}
             />
           </div>
 
           <div className="booking-date-section">
-            <h2>Selecciona una fecha</h2>
             <DateCarousel
-              startISO={window.startISO}
-              endISO={window.endISO}
+              startISO={startISO}
+              endISO={endISO}
               selectedISO={selectedDate}
               availability={availability}
-              onExtend={extendWindow}
               onSelect={selectDate}
             />
           </div>
