@@ -524,6 +524,17 @@ input:disabled {
   font-size: 1.15rem;
   color: var(--heading);
 }
+/* Por confirmar queue group headings ("Esperando tu confirmación" /
+   "Esperando al paciente"): smaller than the page title, with room
+   above except when directly under it. */
+.queue-group-title {
+  margin: 1.4rem 0 0.7rem;
+  font-size: 1rem;
+  color: var(--heading);
+}
+.section-title + .queue-group-title {
+  margin-top: 0.9rem;
+}
 
 /* ---------- KPIs ---------- */
 .kpis {
