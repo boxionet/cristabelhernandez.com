@@ -22,9 +22,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
         <link rel="stylesheet" href="/assets/css/local.css" />
     {% endif %}
 
-    <!-- Preload the hero (LCP) image: AVIF variant per breakpoint -->
-    <link rel="preload" as="image" type="image/avif" media="(max-width: 600px)" href="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 780, height: 862 }) | avif({ quality: 72 }) %}">
-    <link rel="preload" as="image" type="image/avif" media="(min-width: 601px)" href="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1290, height: 1425 }) | avif({ quality: 72 }) %}">
+    <!-- Preload the hero (LCP) image: AVIF variant per breakpoint.
+         The background photo is the LCP element now that the front
+         picture is gone, so the preloads match its AVIF URLs exactly. -->
+    <link rel="preload" as="image" type="image/avif" media="(max-width: 600px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1280, height: 1288 }) | avif({ quality: 70 }) %}">
+    <link rel="preload" as="image" type="image/avif" media="(min-width: 601px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 1300 }) | avif({ quality: 70 }) %}">
 
     <!-- FAQ accordion (CodeStitch #1741) -->
     <script defer src="/assets/js/faq.js"></script>
@@ -54,19 +56,12 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                 </div>
             </div>
         </div>
-        <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 780, height: 862 }) | avif({ quality: 72 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 780, height: 862 }) | webp({ quality: 80 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1290, height: 1425 }) | avif({ quality: 72 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1290, height: 1425 }) | webp({ quality: 80 }) %}" type="image/webp">
-            <img aria-hidden="true" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1290, height: 1425 }) | jpeg({ quality: 85 }) %}" alt="tratamiento facial en el centro" width="860" height="950" loading="eager" fetchpriority="high">
-        </picture>
         <picture class="cs-background">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1280, height: 1288 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1280, height: 1288 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1290, height: 1300 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1290, height: 1300 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img aria-hidden="true" decoding="async" src="{% getUrl "/assets/images/hero-clinica.jpg" | resize({ width: 1290, height: 1300 }) | jpeg({ quality: 82 }) %}" alt="sala de tratamientos del centro" width="860" height="867" loading="eager">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1280, height: 1288 }) | avif({ quality: 70 }) %}" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1280, height: 1288 }) | webp({ quality: 78 }) %}" type="image/webp">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 1300 }) | avif({ quality: 70 }) %}" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 1300 }) | webp({ quality: 78 }) %}" type="image/webp">
+            <img aria-hidden="true" decoding="async" src="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 1300 }) | jpeg({ quality: 82 }) %}" alt="sala de tratamientos del centro" width="860" height="867" loading="eager" fetchpriority="high">
         </picture>
     </section>
 
