@@ -7,11 +7,13 @@ const fs = require("fs");
 // while keeping the styles in exactly the same cascade position (the
 // <style> replaces the <link> tag in place, after root.css).
 //
-// Runs on eleventy.after, AFTER the sass processor has written
-// public/assets/css/critical.css (registration order in .eleventy.js).
-// Only the homepage references critical.css, so only public/index.html
-// is touched. The compiled CSS file is left in place: if inlining ever
-// fails, the <link> fallback in the source still resolves.
+// Runs at the end of the sass processor (src/config/processors/sass.js),
+// AFTER every stylesheet is written — chained there deliberately, because
+// a separate eleventy.after handler raced the sass writes on fresh builds
+// and silently left the <link> tag in place. Only the homepage references
+// critical.css, so only public/index.html is touched. The compiled CSS
+// file is left in place: if inlining ever fails, the <link> fallback in
+// the source still resolves.
 //
 // Fail-safe: on any problem the HTML is left untouched and the reason
 // is logged, so a bad inline can never break the build output.

@@ -15,7 +15,6 @@ const configImages = require("./src/config/plugins/images");
 
 // 🔧 Processing Functions
 const sass = require("./src/config/processors/sass");
-const inlineCritical = require("./src/config/processors/inline-critical");
 const javascript = require("./src/config/processors/javascript");
 
 // 🛠️ Utilities
@@ -38,8 +37,6 @@ module.exports = function (eleventyConfig) {
      */
     eleventyConfig.on("eleventy.after", javascript);
     eleventyConfig.on("eleventy.after", sass);
-    // Inline critical.css into the homepage AFTER sass has written it
-    eleventyConfig.on("eleventy.after", inlineCritical);
 
     // ═════════════════════════════════════════════════════════════════════════
     // PLUGINS
