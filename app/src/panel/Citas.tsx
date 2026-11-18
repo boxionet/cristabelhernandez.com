@@ -19,15 +19,20 @@ const STATUS_FILTERS = [
   { key: "por_confirmar", label: "Esperando verificación" },
   { key: "pendiente", label: "Pendientes" },
   { key: "confirmada", label: "Confirmadas" },
-  { key: "completada", label: "Completadas" },
-  { key: "cancelada", label: "Canceladas" },
-  { key: "no_show", label: "No asistió" },
 ];
+// Finished citas (completada, cancelada, no_show) live in Historial
+// now — Citas is the working view: only what still needs something.
+const ACTIVE_CITAS_STATUSES = STATUS_FILTERS.map((f) => f.key);
 
 export default function Citas() {
   const { appointments, error, reload } = usePanelData();
-  // Filters live in Redux so they survive navigation.
-  const status = useAppSelector((s) => s.ui.citasStatus);
+  // Filters live in Redux so they survive navigation. A stored value
+  // from before the Historial split (e.g. "cancelada") falls back to
+  // "todas" instead of an empty page.
+  const storedStatus = useAppSelector((s) => s.ui.citasStatus);
+  const status = ACTIVE_CITAS_STATUSES.includes(storedStatus)
+    ? storedStatus
+    : "todas";
   const query = useAppSelector((s) => s.ui.citasQuery);
   const dispatch = useAppDispatch();
   const setStatus = (v: string) => dispatch(setCitasStatus(v));

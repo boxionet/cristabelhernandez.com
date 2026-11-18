@@ -2031,3 +2031,13 @@
 .promo-chip svg {
   flex-shrink: 0;
 }
+
+/* --- Historial stat-card icon tints (match the status pills) --- */
+.kpi-ic.tint-red {
+  background: var(--danger-tint);
+  color: var(--danger);
+}
+.kpi-ic.tint-gray {
+  background: #e8e8e8;
+  color: #555;
+}

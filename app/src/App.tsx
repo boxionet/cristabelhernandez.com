@@ -14,6 +14,7 @@ import Citas from "./panel/Citas";
 import ClienteDetalle from "./panel/ClienteDetalle";
 import Clientes from "./panel/Clientes";
 import Dashboard from "./panel/Dashboard";
+import HistorialPanel from "./panel/HistorialPanel";
 import Horario from "./panel/Horario";
 import NuevaCita from "./panel/NuevaCita";
 import PanelLayout from "./panel/PanelLayout";
@@ -179,6 +180,7 @@ export default function App() {
           <Route path="promociones" element={<Promociones />} />
           <Route path="horario" element={<Horario />} />
           <Route path="reportes" element={<Reportes />} />
+          <Route path="historial" element={<HistorialPanel />} />
         </Route>
         {/* Public booking flow (Phase 3 React migration): same URLs
             the static pages used, served by the Netlify redirect to
