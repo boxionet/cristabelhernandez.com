@@ -42,6 +42,9 @@ export default function Citas() {
     if (!appointments) return [];
     const q = query.trim().toLowerCase();
     return appointments.filter((a) => {
+      // Finished citas live in Historial — "Todas" here means all
+      // ACTIVE citas, even before the chip narrows it further.
+      if (!ACTIVE_CITAS_STATUSES.includes(a.status)) return false;
       if (status !== "todas" && a.status !== status) return false;
       if (!q) return true;
       const haystack = [
