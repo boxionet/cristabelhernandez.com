@@ -737,6 +737,85 @@ async function sendCancellationNotice({ appointment, when, panelUrl }) {
   }
 }
 
+// Clinic notification: the patient added treatments to an existing
+// cita from Mi Cuenta. The change always needs the Dra's
+// confirmation — the cita is back to pendiente (or stays pending)
+// and the Dra decides in Por confirmar. Never throws.
+async function sendOwnerServicesChangeAlert({
+  appointment,
+  added,
+  patientName,
+  patientEmail,
+  patientPhone,
+  when,
+  wasConfirmed,
+  panelUrl,
+}) {
+  try {
+    const resend = resendClient();
+    const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
+    const replyTo = patientEmail || OWNER_EMAIL;
+    const addedLines = added.map((a) => {
+      let price = formatPrice(a.unitPrice * a.quantity);
+      if (a.priceFrom) price = `Desde ${price}`;
+      if (a.priceNote === "c/ampolla") price += " c/ampolla";
+      else if (a.priceNote) price += ` (${a.priceNote})`;
+      return `${a.name}${a.quantity > 1 ? ` × ${a.quantity}` : ""} — ${price}`;
+    });
+    const intro = wasConfirmed
+      ? "El paciente agregó tratamientos a una cita confirmada. La cita vuelve a pendiente y requiere confirmación en el Panel."
+      : "El paciente agregó tratamientos a su cita. La cita sigue pendiente de confirmación en el Panel.";
+    const rows = [
+      ["Referencia", escapeHtml(appointment.reference_code)],
+      ["Fecha", escapeHtml(when)],
+      ["Agregado", addedLines.map(escapeHtml).join("<br>")],
+      ["Duración", `${appointment.duration_minutes} min`],
+      [totalLabel, `${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`],
+      ["Paciente", escapeHtml(patientName || "(ver en el Panel)")],
+      ...(patientEmail ? [["Correo", escapeHtml(patientEmail)]] : []),
+      ...(patientPhone ? [["Teléfono", escapeHtml(patientPhone)]] : []),
+    ];
+    const text = [
+      intro,
+      ``,
+      `Referencia: ${appointment.reference_code}`,
+      `Fecha: ${when}`,
+      `Agregado:`,
+      ...addedLines.map((l) => `- ${l}`),
+      `Duración: ${appointment.duration_minutes} min`,
+      `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
+      ``,
+      `Paciente: ${patientName || "(ver en el Panel)"}`,
+      patientEmail ? `Correo: ${patientEmail}` : "",
+      patientPhone ? `Teléfono: ${patientPhone}` : "",
+      ``,
+      `Ver en el Panel: ${panelUrl}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    await resend.emails.send({
+      from: FROM,
+      to: OWNER_EMAIL,
+      reply_to: replyTo,
+      subject: `Paciente agregó tratamientos — ${appointment.reference_code}`,
+      html: emailShell({
+        preheader: intro,
+        title: "Paciente agregó tratamientos",
+        staff: true,
+        body:
+          emailParagraph(intro) +
+          emailDetails(rows) +
+          emailButton("Ver en el Panel", panelUrl),
+      }),
+      text,
+    });
+    return true;
+  } catch (e) {
+    console.error("owner services-change email failed", e);
+    return false;
+  }
+}
+
 // Clinic notification: the patient rescheduled. A rescheduled
 // confirmed cita drops back to pending and needs confirmation again.
 async function sendRescheduleNotice({ appointment, when, wasConfirmed, panelUrl }) {
@@ -843,6 +922,7 @@ module.exports = {
   sendOwnerBookingAlert,
   sendOwnerManualConfirmAlert,
   sendOwnerExpiredHoldsDigest,
+  sendOwnerServicesChangeAlert,
   sendPatientVerificationEmail,
   sendApprovalEmail,
   sendRejectionEmail,

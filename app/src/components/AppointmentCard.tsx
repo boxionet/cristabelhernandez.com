@@ -11,6 +11,7 @@ import {
   STATUS_LABELS,
 } from "../lib/format";
 import type { Appointment } from "../lib/types";
+import AddTreatmentsPanel from "./AddTreatmentsPanel";
 import ReschedulePanel from "./ReschedulePanel";
 import { useToast } from "./Toast";
 
@@ -38,7 +39,9 @@ function dateParts(iso: string): { dow: string; day: number; mon: string } {
 
 // Patient appointment card — the zoned redesign shared with the Panel
 // (owner-approved 2026-11-11): date chip + Dominican long-form date,
-// services, money with the cash note, and the two patient actions.
+// services, money with the cash note, and the patient actions:
+// Reprogramar, Agregar tratamiento (add-only; back to pendiente for
+// the Dra to confirm) and Cancelar cita.
 // Cancelar opens the same confirmation modal as the Panel.
 export default function AppointmentCard({
   appointment,
@@ -55,6 +58,7 @@ export default function AppointmentCard({
   const toast = useToast();
   const [cancelModal, setCancelModal] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
+  const [addingTreatments, setAddingTreatments] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -203,7 +207,7 @@ export default function AppointmentCard({
 
       {error && !cancelModal && <p className="error">{error}</p>}
 
-      {manageable && !rescheduling && (
+      {manageable && !rescheduling && !addingTreatments && (
         <div className="pcard-actions">
           <button
             type="button"
@@ -212,6 +216,15 @@ export default function AppointmentCard({
           >
             Reprogramar
           </button>
+          {appointment.payment_status === "pendiente" && (
+            <button
+              type="button"
+              className="btn ghost"
+              onClick={() => setAddingTreatments(true)}
+            >
+              Agregar tratamiento
+            </button>
+          )}
           <button
             type="button"
             className="btn danger-ghost"
@@ -230,6 +243,17 @@ export default function AppointmentCard({
             onChanged?.();
           }}
           onClose={() => setRescheduling(false)}
+        />
+      )}
+
+      {manageable && addingTreatments && (
+        <AddTreatmentsPanel
+          appointment={appointment}
+          onDone={() => {
+            setAddingTreatments(false);
+            onChanged?.();
+          }}
+          onClose={() => setAddingTreatments(false)}
         />
       )}
 
