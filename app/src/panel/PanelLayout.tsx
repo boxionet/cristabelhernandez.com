@@ -7,6 +7,7 @@ import {
   FiClipboard,
   FiClock,
   FiGrid,
+  FiArchive,
   FiLogOut,
   FiPercent,
   FiTag,
@@ -30,6 +31,7 @@ const NAV: { to: string; label: string; icon: IconType; end: boolean }[] = [
   { to: "/panel/promociones", label: "Promociones", icon: FiPercent, end: false },
   { to: "/panel/horario", label: "Horario", icon: FiClock, end: false },
   { to: "/panel/reportes", label: "Reportes", icon: FiBarChart2, end: false },
+  { to: "/panel/historial", label: "Historial", icon: FiArchive, end: false },
 ];
 
 const LOGO_URL = "/assets/svgs/cristabel_logo_horizontal.svg";

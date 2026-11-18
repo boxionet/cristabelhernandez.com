@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEdit3, FiTag } from "react-icons/fi";
 import {
@@ -40,24 +41,46 @@ function dateParts(iso: string): { dow: string; day: number; mon: string } {
  * Zones: who & when (date chip + headline) / services / money / note /
  * actions. With showPatientName off (Historial), the headline is the
  * date instead of the patient.
+ * Historial mode (showActions off): the Citas action row is hidden —
+ * finished citas have no Citas actions. With onRestore set, a canceled
+ * card shows only a Restaurar button instead.
  */
 export default function PanelAppointmentCard({
   appt,
   onChanged,
   showPatientName = true,
   showContact = false,
+  showActions = true,
+  onRestore,
 }: {
   appt: PanelAppointment;
   onChanged: () => void;
   showPatientName?: boolean;
   showContact?: boolean;
+  showActions?: boolean;
+  onRestore?: (appt: PanelAppointment) => Promise<void>;
 }) {
+  const [restoring, setRestoring] = useState(false);
   const p = dateParts(appt.date);
+  // In Historial, the stored internal note on a canceled cita is the
+  // cancellation reason, so it reads "Motivo:" instead of "Nota interna:".
+  const noteLabel =
+    !showActions && appt.status === "cancelada" ? "Motivo:" : "Nota interna:";
   // The verification-link expiry is NOT the appointment: it lives on
   // its own muted line below, only on unverified holds, so the two
   // date-times can never be confused.
   const venceAt =
     appt.status === "por_confirmar" ? appt.confirmation_expires_at : null;
+
+  async function handleRestore() {
+    if (!onRestore || restoring) return;
+    setRestoring(true);
+    try {
+      await onRestore(appt);
+    } finally {
+      setRestoring(false);
+    }
+  }
 
   return (
     <article className="card appt2">
@@ -162,12 +185,28 @@ export default function PanelAppointmentCard({
         <p className="appt2-note">
           <FiEdit3 aria-hidden />
           <span>
-            <strong>Nota interna:</strong> {appt.internal_notes}
+            <strong>{noteLabel}</strong> {appt.internal_notes}
           </span>
         </p>
       )}
 
-      <AppointmentActions appt={appt} onChanged={onChanged} />
+      {showActions ? (
+        <AppointmentActions appt={appt} onChanged={onChanged} />
+      ) : (
+        onRestore &&
+        appt.status === "cancelada" && (
+          <div className="appt-actions staff">
+            <button
+              type="button"
+              className="btn ghost small"
+              disabled={restoring}
+              onClick={() => void handleRestore()}
+            >
+              {restoring ? "Restaurando…" : "Restaurar"}
+            </button>
+          </div>
+        )
+      )}
     </article>
   );
 }
