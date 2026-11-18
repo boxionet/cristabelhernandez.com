@@ -131,7 +131,7 @@ export default function NuevaCita() {
     setFormError(null);
     const existing = patients?.find((p) => p.id === patientId);
     if (!existing && fullName.trim().length < 2) {
-      setFormError("Escribe el nombre de la paciente.");
+      setFormError("Escribe el nombre del paciente.");
       return;
     }
     // The email is required for a new patient: it is how she signs in
@@ -140,7 +140,7 @@ export default function NuevaCita() {
       const em = email.trim();
       if (!em) {
         setFormError(
-          "Escribe el correo de la paciente: lo necesita para entrar a su cuenta y confirmar su cita.",
+          "Escribe el correo del paciente: lo necesita para entrar a su cuenta y confirmar su cita.",
         );
         return;
       }

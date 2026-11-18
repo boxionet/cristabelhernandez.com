@@ -87,7 +87,7 @@ exports.handler = async (event) => {
           patientEmail: patientRes.data ? patientRes.data.email : null,
           patientPhone: patientRes.data ? patientRes.data.phone : null,
           intro:
-            "Nueva cita desde la web (la paciente verificó su correo — pendiente de confirmación en el Panel).",
+            "Nueva cita desde la web (el paciente verificó su correo — pendiente de confirmación en el Panel).",
         });
       } catch (e) {
         console.error("owner alert after verification failed", e);
