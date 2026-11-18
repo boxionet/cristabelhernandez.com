@@ -3,18 +3,23 @@ import { clinicTodayISO } from "../../lib/format";
 import { MONTH_NAMES_LONG } from "../dateUtils";
 
 // The month-grid jump calendar — same markup and classes as the
-// static fecha-hora modal. Weeks start Monday. Only past days are
-// disabled; every future day stays clickable, and the step's
-// availability data decides whether it offers slots (a Saturday the
-// clinic opened with a short-hours exception works like any day).
+// static fecha-hora modal. Weeks start Monday. Only past days and
+// days past the strip's last day (maxISO) are disabled; every day in
+// between stays clickable, and the step's availability data decides
+// whether it offers slots (a Saturday the clinic opened with a
+// short-hours exception works like any day). Month paging stops at
+// the current month and the month holding maxISO, so a pick always
+// lands on a tile in the strip.
 export default function CalendarModal({
   open,
   selectedISO,
+  maxISO,
   onPick,
   onClose,
 }: {
   open: boolean;
   selectedISO: string;
+  maxISO: string;
   onPick: (dateISO: string) => void;
   onClose: () => void;
 }) {
@@ -37,6 +42,8 @@ export default function CalendarModal({
   if (!open) return null;
 
   const [year, monthNum] = month.split("-").map(Number);
+  const minMonth = today.slice(0, 7);
+  const maxMonth = maxISO.slice(0, 7);
   const daysInMonth = new Date(Date.UTC(year, monthNum, 0)).getUTCDate();
   // Monday-first offset: Sunday (0) becomes 6, others shift down by 1.
   const firstDow = new Date(Date.UTC(year, monthNum - 1, 1)).getUTCDay();
@@ -80,6 +87,7 @@ export default function CalendarModal({
             className="booking-calendar-prev"
             aria-label="Previous month"
             type="button"
+            disabled={month <= minMonth}
             onClick={() => shiftMonth(-1)}
           >
             {chevron("prev")}
@@ -91,6 +99,7 @@ export default function CalendarModal({
             className="booking-calendar-next"
             aria-label="Next month"
             type="button"
+            disabled={month >= maxMonth}
             onClick={() => shiftMonth(1)}
           >
             {chevron("next")}
@@ -111,11 +120,12 @@ export default function CalendarModal({
             const day = i + 1;
             const iso = `${month}-${String(day).padStart(2, "0")}`;
             const isPast = iso < today;
+            const isBeyond = iso > maxISO;
             const className = [
               "booking-calendar-day",
               iso === today ? "today" : "",
               iso === selectedISO ? "selected" : "",
-              isPast ? "disabled" : "",
+              isPast || isBeyond ? "disabled" : "",
             ]
               .filter(Boolean)
               .join(" ");
@@ -124,7 +134,7 @@ export default function CalendarModal({
                 key={iso}
                 type="button"
                 className={className}
-                disabled={isPast}
+                disabled={isPast || isBeyond}
                 onClick={() => {
                   onPick(iso);
                   onClose();

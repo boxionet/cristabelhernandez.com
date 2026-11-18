@@ -15,7 +15,12 @@ const {
 } = require("./_booking/time");
 
 const ACTIVE_STATUSES = ["pendiente", "confirmada", "por_confirmar"];
-const MAX_RANGE_DAYS = 62;
+// The date strip renders a fixed 182-day window upfront (today
+// through today+181, Fresha-style) and fetches it in one range
+// call; the loop guard must cover the whole window. The per-day
+// cost is one computeSlots pass over the appointments already
+// fetched for the range, so 182 days stays cheap.
+const MAX_RANGE_DAYS = 182;
 
 function parseInput(event) {
   let raw = {};
