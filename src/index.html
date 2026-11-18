@@ -8,7 +8,9 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 {% extends "layouts/base.html" %}
 
 {% block head %}
-    <!-- Critical styles are loaded first -->
+    <!-- Critical styles are inlined at build time (see
+         src/config/processors/inline-critical.js), so they load with
+         the document instead of blocking render as a separate file -->
     <link rel="stylesheet" href="/assets/css/critical.css" />
 
     <!-- If we're in production, defer the rest of the home page styles. In development, always load it. Otherwise the site will break when hot-reload is used. -->
@@ -25,8 +27,8 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
     <!-- Preload the hero (LCP) image: AVIF variant per breakpoint.
          The background photo is the LCP element, so each preload
          matches exactly what its breakpoint renders. -->
-    <link rel="preload" as="image" type="image/avif" media="(max-width: 600px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1280, height: 1288 }) | avif({ quality: 70 }) %}">
-    <link rel="preload" as="image" type="image/avif" media="(min-width: 601px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 85 }) %}">
+    <link rel="preload" as="image" fetchpriority="high" type="image/avif" media="(max-width: 600px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1280, height: 1288 }) | avif({ quality: 70 }) %}">
+    <link rel="preload" as="image" fetchpriority="high" type="image/avif" media="(min-width: 601px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 85 }) %}">
 
     <!-- FAQ accordion (CodeStitch #1741) -->
     <script defer src="/assets/js/faq.js"></script>
