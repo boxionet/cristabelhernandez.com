@@ -94,6 +94,72 @@ export function clinicToday(): string {
   return `${get("year")}-${get("month")}-${get("day")}`;
 }
 
+/** Current time in the clinic timezone, "HH:MM" (24h), for the
+ *  past-time check on same-day manual bookings. */
+export function clinicNowHHMM(): string {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "America/Santo_Domingo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const get = (t: string) => parts.find((p) => p.type === t)!.value;
+  return `${get("hour")}:${get("minute")}`;
+}
+
+/** "HH:MM" or "HH:MM:SS" -> minutes since midnight. */
+export function timeToMinutes(hhmm: string): number {
+  const [h, m] = hhmm.split(":").map(Number);
+  return h * 60 + m;
+}
+
+/** "HH:MM" + minutes -> "HH:MM" (same-day arithmetic). */
+export function addMinutes(hhmm: string, minutes: number): string {
+  const total = timeToMinutes(hhmm) + minutes;
+  return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
+/** Effective opening hours for a date: the exception wins over the
+ *  weekly schedule. Returns null when the clinic is closed that day.
+ *  Times are "HH:MM" (seconds stripped). */
+export function dayHours(
+  dateISO: string,
+  schedule: readonly ScheduleRow[],
+  exceptions: readonly ExceptionRow[],
+): { open: string; close: string } | null {
+  const ex = exceptions.find((e) => e.date === dateISO);
+  if (ex) {
+    if (ex.is_closed || !ex.open_time || !ex.close_time) return null;
+    return { open: ex.open_time.slice(0, 5), close: ex.close_time.slice(0, 5) };
+  }
+  const weekday = new Date(`${dateISO}T12:00:00Z`).getUTCDay();
+  const row = schedule.find((s) => s.weekday === weekday);
+  if (!row || !row.is_open) return null;
+  return { open: row.open_time.slice(0, 5), close: row.close_time.slice(0, 5) };
+}
+
+const ACTIVE_STATUSES = ["por_confirmar", "pendiente", "confirmada"];
+
+/** Active citas on a date whose time range strictly overlaps
+ *  [startHHMM, startHHMM + duration). Back-to-back (one ends exactly
+ *  when the other starts) is NOT an overlap. Used for the override
+ *  warning in NuevaCita — the Dra sees who she would stack onto. */
+export function findOverlaps(
+  dateISO: string,
+  startHHMM: string,
+  durationMinutes: number,
+  appointments: readonly PanelAppointment[],
+): PanelAppointment[] {
+  const start = timeToMinutes(startHHMM);
+  const end = start + durationMinutes;
+  return appointments.filter((a) => {
+    if (a.date !== dateISO || !ACTIVE_STATUSES.includes(a.status)) return false;
+    const aStart = timeToMinutes(a.start_time);
+    const aEnd = aStart + a.duration_minutes;
+    return start < aEnd && aStart < end;
+  });
+}
+
 export function displayName(a: PanelAppointment): string {
   return a.patients?.full_name || a.guest_name || "—";
 }
@@ -217,6 +283,10 @@ export interface ManualBookingInput {
   // Promo already validated by the caller (NuevaCita re-checks at
   // submit); the snapshot is stored exactly like create_booking's.
   promo?: { code: string; discountPercent: number } | null;
+  // Doctor's manual time override (migration 010): the Dra chose the
+  // time freely in the Panel; the row is exempt from overlap
+  // enforcement. Defaults to false — every other path stays protected.
+  manualOverride?: boolean;
 }
 
 // Replace an existing appointment's treatments (staff edit). Totals,
@@ -351,6 +421,7 @@ export async function createManualBooking(
     payment_status: "pendiente",
     source: input.source,
     internal_notes: input.note?.trim() || null,
+    manual_override: input.manualOverride ?? false,
   };
 
   let lastError: { code?: string } | null = null;

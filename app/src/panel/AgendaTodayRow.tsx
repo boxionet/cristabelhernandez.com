@@ -70,6 +70,9 @@ export default function AgendaTodayRow({ appt }: { appt: PanelAppointment }) {
           <span className={`pill status-${appt.status}`}>
             {STATUS_LABELS[appt.status]}
           </span>
+          {appt.manual_override && (
+            <span className="pill pill-override">Horario manual</span>
+          )}
         </div>
         <FiChevronRight className="agenda-chevron" aria-hidden />
       </Link>

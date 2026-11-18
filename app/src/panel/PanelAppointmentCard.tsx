@@ -98,9 +98,14 @@ export default function PanelAppointmentCard({
             <p className="appt2-contact">{displayContact(appt)}</p>
           )}
         </div>
-        <span className={`pill status-${appt.status}`}>
-          <span className="pill-full">{STATUS_LABELS[appt.status]}</span>
-          <span className="pill-short">{STATUS_LABELS_SHORT[appt.status]}</span>
+        <span className="appt2-pills">
+          <span className={`pill status-${appt.status}`}>
+            <span className="pill-full">{STATUS_LABELS[appt.status]}</span>
+            <span className="pill-short">{STATUS_LABELS_SHORT[appt.status]}</span>
+          </span>
+          {appt.manual_override && (
+            <span className="pill pill-override">Horario manual</span>
+          )}
         </span>
       </div>
 

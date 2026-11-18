@@ -399,6 +399,16 @@
   gap: 1rem;
   align-items: flex-start;
 }
+/* Status pill + optional "Horario manual" marker, stacked at the
+   right edge of the card headline. */
+.appt2-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-end;
+  margin-left: auto;
+  flex-shrink: 0;
+}
 .datechip {
   flex-shrink: 0;
   width: 64px;
@@ -1827,6 +1837,35 @@
 .switch:disabled {
   cursor: wait;
   opacity: 0.7;
+}
+
+/* Nueva cita manual — doctor's time override (migration 010). The
+   switch row reuses the .switch component; the warning names every
+   cita the manually chosen time would stack onto. */
+.override-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 0.25rem 0;
+}
+.override-label {
+  font-weight: 700;
+  cursor: pointer;
+}
+.override-hint {
+  font-size: 0.85rem;
+}
+.override-warning {
+  background: #fffbeb;
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+}
+.override-warning ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
 }
 .switch:focus-visible {
   outline: 2px solid var(--sage-deep);

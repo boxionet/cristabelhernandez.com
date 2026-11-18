@@ -590,6 +590,13 @@ input:disabled {
   background: #e8e8e8;
   color: #555;
 }
+/* Doctor's manual time override (migration 010): an outlined gold pill
+   so it reads as a marker, distinct from the solid status pills. */
+.pill.pill-override {
+  background: #fffbeb;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+}
 .appt-items {
   list-style: none;
   margin: 1rem 0;
