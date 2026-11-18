@@ -265,7 +265,11 @@ export default function EditTreatmentsPanel({
         </div>
       ))}
 
-      {mode === "add" && available.length > 0 && (
+      {/* In "edit" mode the add control appears only as a recovery:
+          if the patient removed every treatment, they can add one
+          back without leaving the panel (saving an empty list stays
+          blocked). */}
+      {(mode === "add" || lines.length === 0) && available.length > 0 && (
         <div className="svc-add">
           <select value={addId} onChange={(e) => setAddId(e.target.value)}>
             <option value="">Agregar un tratamiento…</option>
