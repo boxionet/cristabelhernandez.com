@@ -11,13 +11,17 @@ import {
   formatDateForDisplay,
   nextWeekdayISO,
 } from "./dateUtils";
-import DateCarousel, { initialCarouselWindow } from "./components/DateCarousel";
+import DateCarousel, {
+  CAROUSEL_EXTEND_DAYS,
+  initialCarouselWindow,
+} from "./components/DateCarousel";
 import CalendarModal from "./components/CalendarModal";
 import TimeGrid from "./components/TimeGrid";
 import CartSummary from "./components/CartSummary";
 
 // Step 2 — pick a date and time. The carousel window starts at
-// today−7 … today+7 and extends a week per arrow press. Day
+// today−7 … today+7 and extends a few days per arrow press
+// (CAROUSEL_EXTEND_DAYS). Day
 // availability comes from the range query (open + has a slot for the
 // cart's total duration); the slot grid for the picked day comes from
 // the day query. A day with no offered slot shows the unavailable
@@ -105,8 +109,8 @@ export default function FechaHora() {
   function extendWindow(direction: "prev" | "next") {
     setWindow((w) =>
       direction === "prev"
-        ? { ...w, startISO: addDaysISO(w.startISO, -7) }
-        : { ...w, endISO: addDaysISO(w.endISO, 7) },
+        ? { ...w, startISO: addDaysISO(w.startISO, -CAROUSEL_EXTEND_DAYS) }
+        : { ...w, endISO: addDaysISO(w.endISO, CAROUSEL_EXTEND_DAYS) },
     );
   }
 

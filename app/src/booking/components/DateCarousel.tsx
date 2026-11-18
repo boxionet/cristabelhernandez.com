@@ -10,12 +10,19 @@ import {
 
 // The horizontal date strip — same markup and classes as the static
 // fecha-hora page. The window starts at today−7 … today+7; the arrows
-// extend it a week at a time and scroll the new days into view. A
+// extend it a few days at a time and scroll the new days into view. A
 // tile is unavailable when the day is past, or the availability
 // range says it is closed or fully booked (when the range data is
 // missing, the tile stays enabled and the slot fetch on selection is
 // authoritative). Weekends follow the same rule — a Saturday the
 // clinic opened with a short-hours exception shows as available.
+
+// Days added per arrow press: a small step, so one press reveals
+// the next few days instead of jumping a whole week ahead. Shared
+// with FechaHora's extendWindow so the scroll target below (the new
+// window edge) always matches the days actually added.
+export const CAROUSEL_EXTEND_DAYS = 3;
+
 export default function DateCarousel({
   startISO,
   endISO,
@@ -68,7 +75,9 @@ export default function DateCarousel({
 
   function handleExtend(direction: "prev" | "next") {
     pendingEdgeRef.current =
-      direction === "next" ? addDaysISO(endISO, 1) : addDaysISO(startISO, -7);
+      direction === "next"
+        ? addDaysISO(endISO, 1)
+        : addDaysISO(startISO, -CAROUSEL_EXTEND_DAYS);
     onExtend(direction);
   }
 
