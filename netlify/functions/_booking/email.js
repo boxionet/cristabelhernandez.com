@@ -737,13 +737,14 @@ async function sendCancellationNotice({ appointment, when, panelUrl }) {
   }
 }
 
-// Clinic notification: the patient added treatments to an existing
-// cita from Mi Cuenta. The change always needs the Dra's
-// confirmation — the cita is back to pendiente (or stays pending)
-// and the Dra decides in Por confirmar. Never throws.
+// Clinic notification: the patient edited the treatments of an
+// existing cita from Mi Cuenta (added, removed, or changed
+// quantities). The change always needs the Dra's confirmation — the
+// cita is back to pendiente (or stays pending) and the Dra decides
+// in Por confirmar. Never throws.
 async function sendOwnerServicesChangeAlert({
   appointment,
-  added,
+  changes,
   patientName,
   patientEmail,
   patientPhone,
@@ -755,20 +756,30 @@ async function sendOwnerServicesChangeAlert({
     const resend = resendClient();
     const totalLabel = appointment.total_is_estimate ? "Total estimado" : "Total";
     const replyTo = patientEmail || OWNER_EMAIL;
-    const addedLines = added.map((a) => {
-      let price = formatPrice(a.unitPrice * a.quantity);
-      if (a.priceFrom) price = `Desde ${price}`;
-      if (a.priceNote === "c/ampolla") price += " c/ampolla";
-      else if (a.priceNote) price += ` (${a.priceNote})`;
-      return `${a.name}${a.quantity > 1 ? ` × ${a.quantity}` : ""} — ${price}`;
-    });
+    // One line per change, in the order the Dra reads them: what was
+    // added, what was removed, what changed quantity.
+    const changeLines = [
+      ...changes.added.map((a) => {
+        let price = formatPrice(a.unitPrice * a.quantity);
+        if (a.priceFrom) price = `Desde ${price}`;
+        if (a.priceNote === "c/ampolla") price += " c/ampolla";
+        else if (a.priceNote) price += ` (${a.priceNote})`;
+        return `+ ${a.name}${a.quantity > 1 ? ` × ${a.quantity}` : ""} — ${price}`;
+      }),
+      ...changes.removed.map(
+        (r) => `− ${r.name}${r.quantity > 1 ? ` × ${r.quantity}` : ""}`,
+      ),
+      ...changes.quantityChanged.map(
+        (q) => `${q.name}: × ${q.oldQuantity} → × ${q.newQuantity}`,
+      ),
+    ];
     const intro = wasConfirmed
-      ? "El paciente agregó tratamientos a una cita confirmada. La cita vuelve a pendiente y requiere confirmación en el Panel."
-      : "El paciente agregó tratamientos a su cita. La cita sigue pendiente de confirmación en el Panel.";
+      ? "El paciente cambió los tratamientos de una cita confirmada. La cita vuelve a pendiente y requiere confirmación en el Panel."
+      : "El paciente cambió los tratamientos de su cita. La cita sigue pendiente de confirmación en el Panel.";
     const rows = [
       ["Referencia", escapeHtml(appointment.reference_code)],
       ["Fecha", escapeHtml(when)],
-      ["Agregado", addedLines.map(escapeHtml).join("<br>")],
+      ["Cambios", changeLines.map(escapeHtml).join("<br>")],
       ["Duración", `${appointment.duration_minutes} min`],
       [totalLabel, `${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`],
       ["Paciente", escapeHtml(patientName || "(ver en el Panel)")],
@@ -780,8 +791,8 @@ async function sendOwnerServicesChangeAlert({
       ``,
       `Referencia: ${appointment.reference_code}`,
       `Fecha: ${when}`,
-      `Agregado:`,
-      ...addedLines.map((l) => `- ${l}`),
+      `Cambios:`,
+      ...changeLines,
       `Duración: ${appointment.duration_minutes} min`,
       `${totalLabel}: ${formatPrice(appointment.total_price)} (a pagar en el centro, efectivo)`,
       ``,
@@ -797,10 +808,10 @@ async function sendOwnerServicesChangeAlert({
       from: FROM,
       to: OWNER_EMAIL,
       reply_to: replyTo,
-      subject: `Paciente agregó tratamientos — ${appointment.reference_code}`,
+      subject: `Paciente cambió los tratamientos — ${appointment.reference_code}`,
       html: emailShell({
         preheader: intro,
-        title: "Paciente agregó tratamientos",
+        title: "Paciente cambió los tratamientos",
         staff: true,
         body:
           emailParagraph(intro) +

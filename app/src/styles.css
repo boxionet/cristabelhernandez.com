@@ -1069,10 +1069,10 @@ input:disabled {
   flex-direction: column;
   gap: 0.8rem;
 }
-/* Patient add-treatments editor: same panel rhythm as .reschedule;
+/* Patient treatments editor: same panel rhythm as .reschedule;
    the row/stepper/add styles (.svc-row, .qty-btn, .svc-add,
    .svc-footer) are shared from panel.css. */
-.add-treatments {
+.edit-treatments {
   margin-top: 1rem;
   border-top: 1px solid #eceee6;
   padding-top: 1rem;

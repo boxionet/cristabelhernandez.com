@@ -1,8 +1,10 @@
-// Patient-initiated: add treatments to an existing cita (manage
-// token or owning session). Add-only: the patient can add NEW
-// services, never remove or change the ones already on the cita.
+// Patient-initiated: edit the treatments of an existing cita
+// (manage token or owning session). The client sends the FULL desired
+// list, so one save can add new services, remove existing ones, and
+// change quantities (a replace is a remove + an add in the same save).
 // Every change needs the Dra's confirmation, so the cita goes back to
-// 'pendiente' and the Dra gets an owner email. POST JSON:
+// 'pendiente' and the Dra gets an owner email describing the change.
+// POST JSON:
 //   { manageToken | appointmentId, items: [{ slug, quantity }] }
 const { serviceClient, json, siteOrigin } = require("./_booking/supabase");
 const { resolveAppointment, outsideWindow, FINAL_STATUSES } = require("./_booking/manage");
@@ -11,7 +13,7 @@ const { formatDateEs, formatTime12h, timeToMinutes, weekdayOf } = require("./_bo
 const { checkRateLimit, rateLimited } = require("./_booking/rateLimit");
 
 const MAX_QTY = 5; // same cap as the Panel services editor
-const MAX_ITEMS_TOTAL = 10; // same cap as create_booking
+const MAX_ITEMS = 10; // same cap as create_booking
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "method_not_allowed" });
@@ -23,7 +25,7 @@ exports.handler = async (event) => {
     if (
       !Array.isArray(items) ||
       items.length === 0 ||
-      items.length > MAX_ITEMS_TOTAL ||
+      items.length > MAX_ITEMS ||
       items.some(
         (it) =>
           !it ||
@@ -50,14 +52,14 @@ exports.handler = async (event) => {
       return json(409, { error: "already_final" });
     // An unverified hold must be verified first: the confirmation
     // click resolves it (web -> pendiente, staff-created ->
-    // confirmada), and only then can treatments be added. Letting an
+    // confirmada), and only then can treatments be edited. Letting an
     // edit land on a hold would skip the email verification.
     if (appointment.status === "por_confirmar")
       return json(409, { error: "unverified_hold" });
     if (outsideWindow(appointment))
       return json(403, { error: "outside_window" });
-    // A cita already marked paid must not silently grow a balance:
-    // the patient contacts the clinic and staff handle it.
+    // A cita already marked paid must not silently change what is
+    // owed: the patient contacts the clinic and staff handle it.
     if (appointment.payment_status === "pagado")
       return json(409, { error: "paid_cita" });
 
@@ -65,12 +67,9 @@ exports.handler = async (event) => {
       await Promise.all([
         supabase
           .from("appointment_services")
-          .select("service_id")
+          .select("*")
           .eq("appointment_id", appointment.id),
-        supabase.from("services").select("*").in(
-          "slug",
-          items.map((it) => it.slug),
-        ),
+        supabase.from("services").select("*"),
         supabase
           .from("weekly_schedule")
           .select("is_open,open_time,close_time")
@@ -83,48 +82,57 @@ exports.handler = async (event) => {
           .maybeSingle(),
       ]);
 
-    if ((existingItems || []).length + items.length > MAX_ITEMS_TOTAL)
-      return json(400, { error: "invalid_items" });
+    const existing = existingItems || [];
     const bySlug = new Map((catalog || []).map((s) => [s.slug, s]));
-    const already = new Set((existingItems || []).map((it) => it.service_id));
-    const added = [];
+    const existingById = new Map(existing.map((it) => [it.service_id, it]));
+    const lines = [];
     for (const it of items) {
       const service = bySlug.get(it.slug);
-      // Added services must exist, be active, and not already be on
-      // the cita (increasing an existing treatment's quantity is a
-      // Panel edit, not a patient add).
-      if (!service || !service.active || already.has(service.id))
+      // Every line must resolve to a catalog row (durations and
+      // prices always come from the catalog). A service NEW to the
+      // cita must be active; one already on the cita may stay even
+      // if it has since been deactivated — same rule as the Panel
+      // editor, which seeds lines regardless of active.
+      if (!service || (!service.active && !existingById.has(service.id)))
         return json(400, { error: "invalid_items" });
-      added.push({ service, quantity: it.quantity });
+      lines.push({ service, quantity: it.quantity });
     }
 
-    // Totals from the catalog, never from the client. The existing
-    // subtotal is kept as booked (no re-pricing of what the patient
-    // already has); only the additions price at the current catalog.
-    // A promo keeps its stored percent, re-applied to the new
-    // subtotal — the same snapshot rule as the Panel editor.
-    const addedSubtotal = added.reduce(
+    // No-op guard: the submitted list must differ from the current
+    // one (same services, same quantities = nothing to confirm).
+    const same =
+      lines.length === existing.length &&
+      lines.every((l) => {
+        const old = existingById.get(l.service.id);
+        return old && old.quantity === l.quantity;
+      });
+    if (same) return json(400, { error: "no_changes" });
+
+    // Totals from the catalog, never from the client — the same
+    // recompute as the Panel editor: the whole list re-prices at the
+    // current catalog, and a promo keeps its stored percent
+    // re-applied to the new subtotal. The patient preview shows
+    // exactly these numbers before saving.
+    const subtotal = lines.reduce(
       (sum, { service, quantity }) => sum + service.price * quantity,
       0,
     );
-    const addedDuration = added.reduce(
+    const duration = lines.reduce(
       (sum, { service, quantity }) => sum + service.duration_minutes * quantity,
       0,
     );
-    const subtotal = (appointment.subtotal_price ?? appointment.total_price) + addedSubtotal;
     const discount =
       appointment.promo_code && appointment.discount_percent
         ? Math.round((subtotal * appointment.discount_percent) / 100)
         : 0;
     const total = subtotal - discount;
-    const duration = appointment.duration_minutes + addedDuration;
-    const estimate =
-      appointment.total_is_estimate ||
-      added.some((a) => a.service.price_from || a.service.price_note !== null);
+    const estimate = lines.some(
+      (l) => l.service.price_from || l.service.price_note !== null,
+    );
 
-    // Fit-before-close: the longer cita must still end by closing
-    // time, using the same schedule/exception resolution as the
-    // availability engine.
+    // Fit-before-close: the cita (possibly longer now) must still end
+    // by closing time, using the same schedule/exception resolution
+    // as the availability engine.
     let open = false;
     let closeTime = null;
     if (exception) {
@@ -153,6 +161,9 @@ exports.handler = async (event) => {
       manual_override: appointment.manual_override,
     };
     const wasConfirmed = appointment.status === "confirmada";
+    // The appointment row updates FIRST so the exclusion constraint /
+    // trigger re-validates the new time range — on a conflict nothing
+    // else is touched.
     const { data: updated, error } = await supabase
       .from("appointments")
       .update({
@@ -172,25 +183,72 @@ exports.handler = async (event) => {
       throw error;
     }
 
-    // Append the new line items. If the insert fails, restore the
-    // original appointment row so the totals never disagree with the
-    // items on the cita.
-    const { error: insErr } = await supabase.from("appointment_services").insert(
-      added.map(({ service, quantity }) => ({
-        appointment_id: appointment.id,
-        service_id: service.id,
-        service_name: service.name,
-        unit_price: service.price,
-        quantity,
-        price_from: service.price_from,
-        price_note: service.price_note,
-      })),
-    );
+    // Replace the line items. If the delete or the insert fails, the
+    // original appointment row AND the original items are restored so
+    // the cita is never left half-edited.
+    const newRows = lines.map(({ service, quantity }) => ({
+      appointment_id: appointment.id,
+      service_id: service.id,
+      service_name: service.name,
+      unit_price: service.price,
+      quantity,
+      price_from: service.price_from,
+      price_note: service.price_note,
+    }));
+    const { error: delErr } = await supabase
+      .from("appointment_services")
+      .delete()
+      .eq("appointment_id", appointment.id);
+    const { error: insErr } = delErr
+      ? { error: delErr }
+      : await supabase.from("appointment_services").insert(newRows);
     if (insErr) {
-      console.error("booking-update-services items insert failed, restoring", insErr);
+      console.error("booking-update-services items replace failed, restoring", insErr);
       await supabase.from("appointments").update(original).eq("id", appointment.id);
+      await supabase.from("appointment_services").delete().eq("appointment_id", appointment.id);
+      if (existing.length > 0) {
+        await supabase.from("appointment_services").insert(
+          existing.map((it) => ({
+            appointment_id: appointment.id,
+            service_id: it.service_id,
+            service_name: it.service_name,
+            unit_price: it.unit_price,
+            quantity: it.quantity,
+            price_from: it.price_from,
+            price_note: it.price_note,
+          })),
+        );
+      }
       return json(500, { error: "services_change_failed" });
     }
+
+    // Diff for the Dra's email: what was added, removed, or had its
+    // quantity changed, against the list before this edit.
+    const newById = new Map(lines.map((l) => [l.service.id, l]));
+    const changes = {
+      added: lines
+        .filter((l) => !existingById.has(l.service.id))
+        .map(({ service, quantity }) => ({
+          name: service.name,
+          quantity,
+          unitPrice: service.price,
+          priceFrom: service.price_from,
+          priceNote: service.price_note,
+        })),
+      removed: existing
+        .filter((it) => !newById.has(it.service_id))
+        .map((it) => ({ name: it.service_name, quantity: it.quantity })),
+      quantityChanged: lines
+        .filter((l) => {
+          const old = existingById.get(l.service.id);
+          return old && old.quantity !== l.quantity;
+        })
+        .map((l) => ({
+          name: l.service.name,
+          oldQuantity: existingById.get(l.service.id).quantity,
+          newQuantity: l.quantity,
+        })),
+    };
 
     let patient = null;
     if (appointment.patient_id) {
@@ -204,13 +262,7 @@ exports.handler = async (event) => {
     const when = `${formatDateEs(updated.date)} a las ${formatTime12h(String(updated.start_time).slice(0, 5))}`;
     await sendOwnerServicesChangeAlert({
       appointment: updated,
-      added: added.map(({ service, quantity }) => ({
-        name: service.name,
-        quantity,
-        unitPrice: service.price,
-        priceFrom: service.price_from,
-        priceNote: service.price_note,
-      })),
+      changes,
       patientName: patient?.full_name || appointment.guest_name || null,
       patientEmail: patient?.email || appointment.guest_email || null,
       patientPhone: patient?.phone || appointment.guest_phone || null,

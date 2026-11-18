@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
 import { useAuth } from "../auth";
 import { supabase } from "../lib/supabase";
-import { addAppointmentServices, errorText } from "../lib/api";
+import { editAppointmentServices, errorText } from "../lib/api";
 import { formatPrice, formatTime12h } from "../lib/format";
 import { useToast } from "./Toast";
 import type { Appointment } from "../lib/types";
@@ -23,11 +23,12 @@ interface Line {
   quantity: number;
 }
 
-// Patient editor: ADD treatments to an existing cita. Existing
-// treatments are never removed or changed here — only new services
-// can be added, and the change always goes back to 'pendiente' for
-// the Dra to confirm (the server enforces that).
-export default function AddTreatmentsPanel({
+// Patient editor for a cita's treatments: add new ones, remove
+// existing ones, or change quantities (a replace is a remove + an
+// add in the same save). The full list is sent to the server, which
+// recomputes the totals from the catalog. Every save goes back to
+// 'pendiente' for the Dra to confirm.
+export default function EditTreatmentsPanel({
   appointment,
   onDone,
   onClose,
@@ -39,7 +40,7 @@ export default function AddTreatmentsPanel({
   const { session } = useAuth();
   const toast = useToast();
   const [catalog, setCatalog] = useState<CatalogService[] | null>(null);
-  const [lines, setLines] = useState<Line[]>([]);
+  const [lines, setLines] = useState<Line[] | null>(null);
   const [addId, setAddId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,89 +53,119 @@ export default function AddTreatmentsPanel({
         .select("*")
         .order("sort_order", { ascending: true });
       if (!live) return;
-      setCatalog((data ?? []) as CatalogService[]);
+      const services = (data ?? []) as CatalogService[];
+      setCatalog(services);
+      // Seed the lines from the appointment's current items, matched
+      // to the catalog by service_id (inactive services seed too, so
+      // a kept treatment is never dropped by a re-save).
+      const seeded: Line[] = [];
+      for (const item of appointment.appointment_services) {
+        const service = services.find((s) => s.id === item.service_id);
+        if (service) seeded.push({ service, quantity: item.quantity });
+      }
+      setLines(seeded);
     })();
     return () => {
       live = false;
     };
-  }, []);
-
-  const existingIds = useMemo(
-    () =>
-      new Set(
-        appointment.appointment_services
-          .map((i) => i.service_id)
-          .filter((id): id is string => id !== null),
-      ),
-    [appointment],
-  );
+  }, [appointment]);
 
   const available = useMemo(
     () =>
       (catalog ?? []).filter(
-        (s) => s.active && !existingIds.has(s.id) && !lines.some((l) => l.service.id === s.id),
+        (s) => s.active && !(lines ?? []).some((l) => l.service.id === s.id),
       ),
-    [catalog, existingIds, lines],
+    [catalog, lines],
   );
 
-  // Same math as the server: the booked subtotal is kept, the
-  // additions price at the current catalog, and a promo keeps its
-  // stored percent re-applied to the new subtotal.
+  // The original list, for the no-changes guard: same services with
+  // the same quantities means there is nothing to confirm.
+  const originalKey = useMemo(
+    () =>
+      appointment.appointment_services
+        .map((i) => `${i.service_id}:${i.quantity}`)
+        .sort()
+        .join("|"),
+    [appointment],
+  );
+  const changed = useMemo(() => {
+    if (!lines) return false;
+    const key = lines
+      .map((l) => `${l.service.id}:${l.quantity}`)
+      .sort()
+      .join("|");
+    return key !== originalKey;
+  }, [lines, originalKey]);
+
+  // Same math as the server and the Panel editor: the whole list
+  // re-prices at the current catalog, and a promo keeps its stored
+  // percent re-applied to the new subtotal.
   const preview = useMemo(() => {
-    const addedSubtotal = lines.reduce(
+    const subtotal = (lines ?? []).reduce(
       (sum, { service, quantity }) => sum + service.price * quantity,
       0,
     );
-    const addedDuration = lines.reduce(
+    const duration = (lines ?? []).reduce(
       (sum, { service, quantity }) => sum + service.duration_minutes * quantity,
       0,
     );
-    const subtotal = (appointment.subtotal_price ?? appointment.total_price) + addedSubtotal;
     const discount =
       appointment.promo_code && appointment.discount_percent
         ? Math.round((subtotal * appointment.discount_percent) / 100)
         : 0;
     const total = subtotal - discount;
-    const duration = appointment.duration_minutes + addedDuration;
-    const estimate =
-      appointment.total_is_estimate ||
-      lines.some((l) => l.service.price_from || l.service.price_note !== null);
+    const estimate = (lines ?? []).some(
+      (l) => l.service.price_from || l.service.price_note !== null,
+    );
     const [h, m] = appointment.start_time.slice(0, 5).split(":").map(Number);
     const endMinutes = h * 60 + m + duration;
     const endTime = `${String(Math.floor(endMinutes / 60)).padStart(2, "0")}:${String(endMinutes % 60).padStart(2, "0")}`;
     return { total, duration, estimate, endTime };
   }, [lines, appointment]);
 
+  if (!catalog || !lines)
+    return (
+      <div className="edit-treatments" aria-busy="true" aria-label="Cargando">
+        <p className="muted">Cargando tratamientos…</p>
+      </div>
+    );
+
   function setQty(id: string, qty: number) {
     setLines((prev) =>
-      prev.map((l) =>
+      (prev ?? []).map((l) =>
         l.service.id === id ? { ...l, quantity: Math.min(5, Math.max(1, qty)) } : l,
       ),
     );
   }
 
   function removeLine(id: string) {
-    setLines((prev) => prev.filter((l) => l.service.id !== id));
+    setLines((prev) => (prev ?? []).filter((l) => l.service.id !== id));
   }
 
   function addLine() {
     const service = available.find((s) => s.id === addId);
     if (!service) return;
-    setLines((prev) => [...prev, { service, quantity: 1 }]);
+    setLines((prev) => [...(prev ?? []), { service, quantity: 1 }]);
     setAddId("");
   }
 
   async function submit() {
-    if (lines.length === 0 || !session) return;
+    if (lines!.length === 0) {
+      setError(
+        "La cita debe tener al menos un tratamiento. Para quitarlos todos, cancela la cita.",
+      );
+      return;
+    }
+    if (!session) return;
     setBusy(true);
     setError(null);
     try {
-      await addAppointmentServices(
+      await editAppointmentServices(
         session.access_token,
         appointment.id,
-        lines.map(({ service, quantity }) => ({ slug: service.slug, quantity })),
+        lines!.map(({ service, quantity }) => ({ slug: service.slug, quantity })),
       );
-      toast.success("Tratamientos agregados — queda pendiente de confirmación por el centro");
+      toast.success("Tratamientos actualizados — queda pendiente de confirmación por el centro");
       onDone();
     } catch (e) {
       setError(errorText(e));
@@ -143,18 +174,12 @@ export default function AddTreatmentsPanel({
   }
 
   return (
-    <div className="add-treatments">
+    <div className="edit-treatments">
       <p className="muted">
-        Agrega tratamientos a esta cita. Los que ya tienes no cambian. Al
-        guardar, la cita vuelve a pendiente y el centro debe confirmarla de
-        nuevo.
+        Agrega tratamientos, quita los que no quieras o cambia las
+        cantidades. Al guardar, la cita vuelve a pendiente y el centro debe
+        confirmarla de nuevo.
       </p>
-
-      {catalog === null && <p className="muted">Cargando tratamientos…</p>}
-
-      {catalog !== null && available.length === 0 && lines.length === 0 && (
-        <p className="muted">Tu cita ya incluye todos los tratamientos disponibles.</p>
-      )}
 
       {lines.map(({ service, quantity }) => (
         <div key={service.id} className="svc-row">
@@ -216,15 +241,19 @@ export default function AddTreatmentsPanel({
         </div>
       )}
 
-      {lines.length > 0 && (
-        <div className="svc-footer">
-          <span className="muted">
-            {preview.estimate ? "Nuevo total estimado" : "Nuevo total"}:{" "}
-            <strong>{formatPrice(preview.total)}</strong> · {preview.duration} min · termina{" "}
-            {formatTime12h(preview.endTime)}
-          </span>
-        </div>
-      )}
+      <div className="svc-footer">
+        <span className="muted">
+          {changed
+            ? preview.estimate
+              ? "Nuevo total estimado"
+              : "Nuevo total"
+            : preview.estimate
+              ? "Total estimado"
+              : "Total"}
+          : <strong>{formatPrice(preview.total)}</strong> · {preview.duration} min · termina{" "}
+          {formatTime12h(preview.endTime)}
+        </span>
+      </div>
 
       {error && <p className="error">{error}</p>}
       <div className="reschedule-actions">
@@ -235,9 +264,9 @@ export default function AddTreatmentsPanel({
           type="button"
           className="btn primary"
           onClick={() => void submit()}
-          disabled={lines.length === 0 || busy}
+          disabled={!changed || busy}
         >
-          {busy ? "Guardando…" : "Solicitar agregar tratamientos"}
+          {busy ? "Guardando…" : "Solicitar cambios"}
         </button>
       </div>
     </div>

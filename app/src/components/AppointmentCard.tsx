@@ -11,7 +11,7 @@ import {
   STATUS_LABELS,
 } from "../lib/format";
 import type { Appointment } from "../lib/types";
-import AddTreatmentsPanel from "./AddTreatmentsPanel";
+import EditTreatmentsPanel from "./EditTreatmentsPanel";
 import ReschedulePanel from "./ReschedulePanel";
 import { useToast } from "./Toast";
 
@@ -40,8 +40,8 @@ function dateParts(iso: string): { dow: string; day: number; mon: string } {
 // Patient appointment card — the zoned redesign shared with the Panel
 // (owner-approved 2026-11-11): date chip + Dominican long-form date,
 // services, money with the cash note, and the patient actions:
-// Reprogramar, Agregar tratamiento (add-only; back to pendiente for
-// the Dra to confirm) and Cancelar cita.
+// Reprogramar, Editar tratamientos (add/remove/quantities; back to
+// pendiente for the Dra to confirm) and Cancelar cita.
 // Cancelar opens the same confirmation modal as the Panel.
 export default function AppointmentCard({
   appointment,
@@ -58,7 +58,7 @@ export default function AppointmentCard({
   const toast = useToast();
   const [cancelModal, setCancelModal] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
-  const [addingTreatments, setAddingTreatments] = useState(false);
+  const [editingTreatments, setEditingTreatments] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -207,7 +207,7 @@ export default function AppointmentCard({
 
       {error && !cancelModal && <p className="error">{error}</p>}
 
-      {manageable && !rescheduling && !addingTreatments && (
+      {manageable && !rescheduling && !editingTreatments && (
         <div className="pcard-actions">
           <button
             type="button"
@@ -220,9 +220,9 @@ export default function AppointmentCard({
             <button
               type="button"
               className="btn ghost"
-              onClick={() => setAddingTreatments(true)}
+              onClick={() => setEditingTreatments(true)}
             >
-              Agregar tratamiento
+              Editar tratamientos
             </button>
           )}
           <button
@@ -246,14 +246,14 @@ export default function AppointmentCard({
         />
       )}
 
-      {manageable && addingTreatments && (
-        <AddTreatmentsPanel
+      {manageable && editingTreatments && (
+        <EditTreatmentsPanel
           appointment={appointment}
           onDone={() => {
-            setAddingTreatments(false);
+            setEditingTreatments(false);
             onChanged?.();
           }}
-          onClose={() => setAddingTreatments(false)}
+          onClose={() => setEditingTreatments(false)}
         />
       )}
 

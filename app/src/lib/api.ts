@@ -59,10 +59,11 @@ export async function rescheduleAppointment(
   }
 }
 
-// Add NEW treatments to an existing cita (booking-update-services).
+// Edit a cita's treatments (booking-update-services): the full
+// desired list — adds, removals, and quantity changes in one save.
 // The server recomputes totals from the catalog and sends the cita
 // back to 'pendiente' for the Dra to confirm.
-export async function addAppointmentServices(
+export async function editAppointmentServices(
   accessToken: string,
   appointmentId: string,
   items: { slug: string; quantity: number }[],
@@ -310,9 +311,10 @@ export const ERROR_MESSAGES: Record<string, string> = {
   paid_cita:
     "Esta cita ya está pagada: para cambiar los tratamientos, llámanos o escríbenos.",
   outside_hours:
-    "Con la nueva duración, la cita terminaría después del horario de cierre. Agrega menos tratamientos o reprograma la cita.",
+    "Con la nueva duración, la cita terminaría después del horario de cierre. Quita un tratamiento o reprograma la cita.",
   change_overlap:
-    "Con la nueva duración, la cita choca con otra. Agrega menos tratamientos o reprograma la cita.",
+    "Con la nueva duración, la cita choca con otra. Quita un tratamiento o reprograma la cita.",
+  no_changes: "No cambiaste ningún tratamiento.",
   invalid_items: "Revisa los tratamientos elegidos e inténtalo de nuevo.",
   invalid_promo:
     "Ese código promocional ya no es válido. Quítalo o verifica el código e inténtalo de nuevo.",
