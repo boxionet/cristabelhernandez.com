@@ -1,8 +1,15 @@
 // Availability engine: real slots from the database.
 // GET/POST JSON:
-//   { date: 'YYYY-MM-DD', durationMinutes }            -> { date, open, slots[] }
+//   { date: 'YYYY-MM-DD', durationMinutes }            -> { date, open, slots[], openTime, closeTime }
 //   { from: 'YYYY-MM-DD', to: 'YYYY-MM-DD', durationMinutes }
 //                                                      -> { days: [{date, open, available}] }
+// The day query also returns the day's open/close times (from the
+// weekly schedule or the day's exception, same source the engine
+// already reads): the booking flow groups the slots under
+// Mañana / Tarde / Noche and needs the hours to tell "this part of
+// the day has no slots because it is fully booked" (show the group
+// with a message) from "the clinic is not open then" (hide the
+// group). openTime/closeTime are "HH:MM" when open, null when closed.
 // Rules: weekly_schedule, overridden by date_exceptions, minus active
 // appointments (pendiente/confirmada + unexpired por_confirmar holds).
 const { serviceClient, json } = require("./_booking/supabase");
@@ -120,7 +127,7 @@ exports.handler = async (event) => {
           closeTime = base.close_time;
         }
       }
-      if (!open) return { date: dateISO, open: false, slots: [] };
+      if (!open) return { date: dateISO, open: false, slots: [], openTime: null, closeTime: null };
       const slots = computeSlots({
         openTime: String(openTime).slice(0, 5),
         closeTime: String(closeTime).slice(0, 5),
@@ -129,7 +136,13 @@ exports.handler = async (event) => {
         isToday: dateISO === todayISO,
         nowMinutes: nowInfo.minutes,
       });
-      return { date: dateISO, open: true, slots };
+      return {
+        date: dateISO,
+        open: true,
+        slots,
+        openTime: String(openTime).slice(0, 5),
+        closeTime: String(closeTime).slice(0, 5),
+      };
     }
 
     if (input.date && !input.from) {
