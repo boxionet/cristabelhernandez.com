@@ -215,6 +215,8 @@ export default function FechaHora() {
               loadError={slotsFailed}
               onSelect={(time) => dispatch(setBookingTime(time))}
               onRetry={() => void slotsQuery.refetch()}
+              openTime={daySlots?.openTime ?? null}
+              closeTime={daySlots?.closeTime ?? null}
             />
           )}
         </div>

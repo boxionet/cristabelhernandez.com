@@ -140,16 +140,30 @@ export async function requestReview(
 }
 
 // Public availability (no auth needed) for the reschedule picker.
+// The day query also returns the day's open/close times ("HH:MM" when
+// open, null when closed) so the booking flow can group the slots
+// under Mañana / Tarde / Noche; older responses without the fields
+// are still accepted (the fields are optional).
 export async function fetchSlots(
   dateISO: string,
   durationMinutes: number,
-): Promise<{ open: boolean; slots: string[] } | null> {
+): Promise<{
+  open: boolean;
+  slots: string[];
+  openTime?: string | null;
+  closeTime?: string | null;
+} | null> {
   try {
     const res = await fetch(
       `/.netlify/functions/booking-availability?date=${encodeURIComponent(dateISO)}&durationMinutes=${durationMinutes}`,
     );
     if (!res.ok) return null;
-    return (await res.json()) as { open: boolean; slots: string[] };
+    return (await res.json()) as {
+      open: boolean;
+      slots: string[];
+      openTime?: string | null;
+      closeTime?: string | null;
+    };
   } catch {
     return null;
   }
