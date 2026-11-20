@@ -16,6 +16,19 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
+# /reservar-cita was a leftover CodeStitch template page (placeholder FAQ
+# with lorem ipsum, never a real booking page). The booking flow lives at
+# /reservar. Send old links there instead of a 404.
+[[redirects]]
+  from = "/reservar-cita"
+  to = "/reservar/"
+  status = 301
+
+[[redirects]]
+  from = "/reservar-cita/"
+  to = "/reservar/"
+  status = 301
+
 # Booking app (app/): SPA fallback for the two gated areas only.
 # The React app is built into public/app by the root build (build:app).
 [[redirects]]
