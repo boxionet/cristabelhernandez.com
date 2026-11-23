@@ -15,6 +15,30 @@
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    # Temporary closure: keep every response out of search results.
+    X-Robots-Tag = "noindex, nofollow"
+
+# TEMPORARY CLOSURE: every URL redirects to the cover (homepage), which is
+# logo-only. 302 (temporary) so Google treats the closure as temporary.
+# The two passthrough rules sit above the catch-all because Netlify uses
+# first match: assets must still serve (the logo has to load) and
+# robots.txt must still serve a real file. Everything else — including
+# /panel, /mi-cuenta and /reservar — goes to the cover.
+# To reopen: delete this block and restore src/index.html.
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/"
+  status = 302
 
 # Booking app (app/): SPA fallback for the two gated areas only.
 # The React app is built into public/app by the root build (build:app).
