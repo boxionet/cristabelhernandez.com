@@ -1,8 +1,1 @@
-# TEMPORARY CLOSURE: every URL redirects to the cover (homepage), which is
-# logo-only. The catch-all is forced (302!) so it applies even when a static
-# file exists at the path (e.g. /tratamientos). Assets and robots.txt pass
-# through first so the logo loads and crawlers get a real robots.txt.
-# To reopen: empty this file and restore src/index.html.
-/assets/*  /assets/:splat  200
-/robots.txt  /robots.txt  200
-/*  /  302!
+

@@ -15,16 +15,38 @@
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    # Temporary closure: keep every response out of search results.
-    X-Robots-Tag = "noindex, nofollow"
 
-# The closure redirect lives ONLY in src/_redirects (copied to
-# public/_redirects). All [[redirects]] were removed from this file so
-# there is a single source of redirect rules during the closure.
-# The SPA rewrites below were removed for the same reason; they are in
-# git history and come back when the site reopens.
-# To reopen: empty src/_redirects, restore src/index.html, and restore
-# the SPA rewrites from git history.
+# Booking app (app/): SPA fallback for the two gated areas only.
+# The React app is built into public/app by the root build (build:app).
+[[redirects]]
+  from = "/mi-cuenta"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mi-cuenta/*"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/panel"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/panel/*"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/reservar"
+  to = "/app/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/reservar/*"
+  to = "/app/index.html"
+  status = 200
 
 [[plugins]]
   # Installs the Lighthouse Build Plugin for all deploy contexts
