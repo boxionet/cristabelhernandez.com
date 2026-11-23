@@ -1,3 +1,10 @@
+{# Temporary-closure gate: when `site.closed` is true (see src/_data/site.js),
+   every page using this layout renders only the logo-only cover
+   (src/_includes/cover.html) — no nav, no footer, no GTM. When false,
+   the normal layout renders. All marketing pages extend this layout. #}
+{% if site.closed %}
+{% include "cover.html" %}
+{% else %}
 <!-- A fully fleshed-out <head>, dynamically changing based on client.json and the page front matter -->
 
 <!DOCTYPE html>
@@ -67,3 +74,4 @@
 
     </body>
 </html>
+{% endif %}

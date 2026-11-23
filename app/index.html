@@ -10,9 +10,30 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/apple-touch-icon.png" />
     <link rel="manifest" href="/assets/favicons/site.webmanifest" />
     <title>Centro Estético Dra. Cristabel Hernández</title>
+    <!-- Temporary-closure gate (see src/_data/site.js): hides the app until
+         /site-status.json says whether the site is closed. Fails open: if the
+         status can't be fetched, the app loads normally. -->
+    <style id="closure-gate-style">html{visibility:hidden}</style>
+    <noscript><style>html{visibility:visible}</style></noscript>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        var style = document.getElementById("closure-gate-style");
+        function open() { if (style) style.remove(); }
+        function cover() {
+          document.body.innerHTML =
+            '<div style="margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;background:#fffdf9">' +
+            '<img src="/assets/svgs/cristabel-hernandez-logo.svg" alt="Dra. Cristabel Hernández" style="width:min(82vw,560px);height:auto;display:block"></div>';
+          open();
+        }
+        fetch("/site-status.json", { cache: "no-store" })
+          .then(function (r) { return r.json(); })
+          .then(function (s) { if (s && s.closed) { cover(); } else { open(); } })
+          .catch(function () { open(); });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
