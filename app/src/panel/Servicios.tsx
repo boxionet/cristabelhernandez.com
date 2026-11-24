@@ -5,7 +5,7 @@ import { type ServiceRow } from "../lib/panel";
 import { usePanelData } from "../lib/queries/panelQueries";
 import { SkeletonTable } from "../components/Skeleton";
 import AsyncButton from "../components/AsyncButton";
-import { FiPlus } from "react-icons/fi";
+import { FiEdit2, FiPlus } from "react-icons/fi";
 import { useToast } from "../components/Toast";
 
 function ServiceEditor({
@@ -20,6 +20,8 @@ function ServiceEditor({
   const [priceFrom, setPriceFrom] = useState(service.price_from);
   const [priceNote, setPriceNote] = useState(service.price_note ?? "");
   const [description, setDescription] = useState(service.description ?? "");
+  const [name, setName] = useState(service.name);
+  const [editingName, setEditingName] = useState(false);
   const [toggling, setToggling] = useState(false);
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "error"
@@ -96,6 +98,20 @@ function ServiceEditor({
     void savePatch({ price_note: next }, () => setPriceNote(prev));
   }
 
+  function saveName() {
+    const next = name.trim();
+    setEditingName(false);
+    if (next.length < 3) {
+      setName(service.name);
+      toast.error("El nombre debe tener al menos 3 caracteres.");
+      return;
+    }
+    if (next === service.name) return;
+    const prev = service.name;
+    // The slug never changes on rename: booking carts are keyed by slug.
+    void savePatch({ name: next }, () => setName(prev));
+  }
+
   function togglePriceFrom(checked: boolean) {
     setPriceFrom(checked);
     const prev = service.price_from;
@@ -124,7 +140,42 @@ function ServiceEditor({
   return (
     <tr className={service.active ? "" : "row-inactive"}>
       <td>
-        <strong>{service.name}</strong>{" "}
+        {editingName ? (
+          <input
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+            onBlur={saveName}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                (e.target as HTMLInputElement).blur();
+              } else if (e.key === "Escape") {
+                setName(service.name);
+                setEditingName(false);
+              }
+            }}
+            autoFocus
+            className="name-input"
+            aria-label={`Nombre de ${service.name}`}
+          />
+        ) : (
+          <>
+            <strong>{service.name}</strong>{" "}
+            <button
+              type="button"
+              className="name-edit-btn"
+              aria-label={`Editar nombre de ${service.name}`}
+              title="Editar nombre"
+              onClick={() => {
+                setName(service.name);
+                setEditingName(true);
+              }}
+            >
+              <FiEdit2 aria-hidden />
+            </button>
+          </>
+        )}{" "}
         <span className="catsep">- {service.category}</span>
         {!service.active && (
           <span className="tag-inactive">Inactivo</span>

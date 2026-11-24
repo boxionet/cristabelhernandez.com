@@ -59,41 +59,17 @@ permalink: "/tratamientos-corporales/"
     <section id="services-2371">
         <div class="cs-container">
             <ul class="cs-card-group">
+                {% for s in services %}
+                {% if s.category == "corporal" %}
                 <li class="cs-item">
-                    <img class="cs-icon" src="/assets/svgs/servicio-lipolisis.svg" alt="icono" width="120" height="120">
-                    <h3 class="cs-h3">Lipólisis de Mentón</h3>
+                    <img class="cs-icon" src="/assets/svgs/{{ s.icon }}" alt="icono" width="120" height="120">
+                    <h3 class="cs-h3">{{ s.name }}</h3>
                     <p class="cs-item-text">
-                        Reduce la papada y define el contorno de tu mandíbula en 3 sesiones.
+                        {{ s.description }}
                     </p>
                 </li>
-                <li class="cs-item">
-                    <img class="cs-icon" src="/assets/svgs/servicio-localizada.svg" alt="icono" width="120" height="120">
-                    <h3 class="cs-h3">Lipólisis Localizada (Aqualyx)</h3>
-                    <p class="cs-item-text">
-                        Reduce grasa localizada en diferentes zonas del cuerpo y mejora tu contorno corporal de forma no quirúrgica. Precio por ampolla.
-                    </p>
-                </li>
-                <li class="cs-item">
-                    <img class="cs-icon" src="/assets/svgs/servicio-anticelulitico.svg" alt="icono" width="120" height="120">
-                    <h3 class="cs-h3">Anticelulítico (Alidya)</h3>
-                    <p class="cs-item-text">
-                        Inyectable diseñado para mejorar la apariencia de la celulitis, favoreciendo una piel más lisa, firme y uniforme. Precio por ampolla.
-                    </p>
-                </li>
-                <li class="cs-item">
-                    <img class="cs-icon" src="/assets/svgs/servicio-escleroterapia.svg" alt="icono" width="120" height="120">
-                    <h3 class="cs-h3">Escleroterapia</h3>
-                    <p class="cs-item-text">
-                        Tratamiento de las arañitas vasculares en las piernas, para unas piernas más uniformes y ligeras.
-                    </p>
-                </li>
-                <li class="cs-item">
-                    <img class="cs-icon" src="/assets/svgs/servicio-rejuvenecimiento.svg" alt="icono" width="120" height="120">
-                    <h3 class="cs-h3">Rejuvenecimiento de Cuello, Escote y Manos</h3>
-                    <p class="cs-item-text">
-                        Devuelve firmeza y un aspecto más joven a las zonas que más revelan el paso del tiempo. Precio por zona.
-                    </p>
-                </li>
+                {% endif %}
+                {% endfor %}
             </ul>
         </div>
     </section>
