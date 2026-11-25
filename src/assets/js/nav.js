@@ -220,3 +220,16 @@ document.querySelectorAll('a[href^="/"]').forEach((a) => {
         document.documentElement.classList.add("is-navigating");
     });
 });
+
+// Clear the bar when this page is shown again. A forward navigation
+// loads a fresh document (no class), but going Back restores this page
+// from the back-forward cache with the DOM exactly as it was when we
+// left — including .is-navigating. Without this the bar slides forever
+// after a Back navigation. pageshow covers the restore; pagereveal
+// covers the view-transition reveal of the restored page.
+window.addEventListener("pageshow", () => {
+    document.documentElement.classList.remove("is-navigating");
+});
+document.addEventListener("pagereveal", () => {
+    document.documentElement.classList.remove("is-navigating");
+});
