@@ -25,6 +25,36 @@
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// IMAGE FADE-IN (2026-11-24)
+// Content photos fade in gently as their data arrives instead of snapping
+// onto the page (same late-image pop the hero had, but on Tienda,
+// Tratamientos, Blog, etc.). Only active when JS runs: the `js` class on
+// <html> is added by a one-line script in <head>, so without JS images
+// render normally. nav.js adds .is-loaded on load (or error / already
+// cached). The hero photo is excluded: it is prefetched and already there
+// at first paint.
+// ─────────────────────────────────────────────────────────────────────────────
+.js main img {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.js main img.is-loaded {
+  opacity: 1;
+}
+
+#hero-2335 img {
+  opacity: 1;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js main img {
+    transition: none;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CODESTITCH GLOBAL STYLES
 // Core stylesheet containing CSS variables, dark mode styles, base element
 // styling, typography rules, utility classes, component styles, navigation,

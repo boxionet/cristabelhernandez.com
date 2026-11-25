@@ -100,3 +100,17 @@ document.addEventListener("keydown", (event) => {
         toggleMenu();
     }
 });
+
+// Content photos fade in as they load instead of snapping onto the page.
+// (CSS in root.scss hides `main img` until it gets .is-loaded; the `js`
+// class on <html> is added by a one-liner in <head>, so without JS images
+// render normally. The hero photo is excluded: it is prefetched.)
+document.querySelectorAll("main img:not(#hero-2335 img)").forEach((img) => {
+    const show = () => img.classList.add("is-loaded");
+    if (img.complete) {
+        show();
+    } else {
+        img.addEventListener("load", show, { once: true });
+        img.addEventListener("error", show, { once: true });
+    }
+});

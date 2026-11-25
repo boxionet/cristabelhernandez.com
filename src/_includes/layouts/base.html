@@ -3,6 +3,10 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
+        <!-- Adds the `js` class before first paint: the image fade-in CSS
+             (root.scss) only hides photos when JS is running, so without
+             JS images render normally. -->
+        <script>document.documentElement.classList.add("js");</script>
         <!-- Google Tag Manager (container GTM-KR663M52, supplied by the
              site owner 2026-11-16; the container already carries the
              GA4 tag G-EVBG5T80N5). Standard container snippet, as high
