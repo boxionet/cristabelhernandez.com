@@ -525,6 +525,24 @@ html.is-navigating .vt-progress {
 
             body {
                 background-color: #425e4c;
+
+                /* Bottom safe-area strip: a fixed sage band exactly over
+                   the home-indicator area, so the bottom reads the menu
+                   color even where the overlay cannot reach — and so iOS 26
+                   Safari has a sage fixed element at the bottom edge to
+                   tint its toolbar from. Never blocks taps, and it sits
+                   under the header/overlay. Only exists while open. */
+                &::after {
+                    content: "";
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: env(safe-area-inset-bottom, 0px);
+                    background-color: #425e4c;
+                    pointer-events: none;
+                    z-index: 9999;
+                }
             }
         }
     }
