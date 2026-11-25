@@ -7,6 +7,8 @@ permalink: "/tratamientos-faciales/"
 {% extends "layouts/base.html" %}
 
 {% block head %}
+    <link rel="preload" as="image" type="image/avif" media="(max-width: 600px)" imagesrcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 576, height: 477 }) | avif({ quality: 70 }) %} 576w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1152, height: 954 }) | avif({ quality: 70 }) %} 1152w" imagesizes="100vw" fetchpriority="high">
+    <link rel="preload" as="image" type="image/avif" media="(min-width: 601px)" imagesrcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 720, height: 597 }) | avif({ quality: 70 }) %} 720w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | avif({ quality: 70 }) %} 1440w" imagesizes="57vw" fetchpriority="high">
     <link rel="stylesheet" href="/assets/css/projects.css">
 {% endblock %}
 
@@ -29,11 +31,11 @@ permalink: "/tratamientos-faciales/"
     <section id="sbs-2525">
         <div class="cs-container">
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1152, height: 954 }) | avif({ quality: 82 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1152, height: 954 }) | webp({ quality: 88 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | avif({ quality: 82 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | webp({ quality: 88 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | jpeg({ quality: 90 }) %}" alt="tratamiento facial en el centro" width="960" height="796">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 576, height: 477 }) | avif({ quality: 70 }) %} 576w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1152, height: 954 }) | avif({ quality: 70 }) %} 1152w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 576, height: 477 }) | webp({ quality: 78 }) %} 576w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1152, height: 954 }) | webp({ quality: 78 }) %} 1152w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 720, height: 597 }) | avif({ quality: 70 }) %} 720w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | avif({ quality: 70 }) %} 1440w" type="image/avif" sizes="57vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 720, height: 597 }) | webp({ quality: 78 }) %} 720w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | webp({ quality: 78 }) %} 1440w" type="image/webp" sizes="57vw">
+            <img loading="eager" decoding="async" fetchpriority="high" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 720, height: 597 }) | jpeg({ quality: 82 }) %} 720w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 1440, height: 1194 }) | jpeg({ quality: 82 }) %} 1440w" sizes="57vw" alt="tratamiento facial en el centro" width="1440" height="1194">
         </picture>
             <div class="cs-content">
                 <span class="cs-topper">Faciales</span>

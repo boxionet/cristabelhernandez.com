@@ -1,4 +1,83 @@
 // ─────────────────────────────────────────────────────────────────────────────
+// CROSS-DOCUMENT VIEW TRANSITIONS (2026-11-24)
+// Smooth fade between pages instead of the white flash of a full reload.
+// The browser handles it natively: on a same-origin link click it keeps the
+// old page visible while the new one loads, then cross-fades. Browsers
+// without support ignore these rules and navigate exactly as before.
+// The SPA pages (/panel, /reservar, /mi-cuenta) do not use this stylesheet,
+// so their client-side routing is untouched.
+// ─────────────────────────────────────────────────────────────────────────────
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  /* Short fade on purpose: the old page stays visible while the new one
+     downloads, so a long fade reads as a delay after the tap. */
+  animation-duration: 0.15s;
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+// NOTE (2026-11-24): a site-wide photo fade-in lived here and was REMOVED.
+// It made photos arrive one by one with a 0.35s opacity animation, which
+// read as flashing on photo-heavy pages (Blog, Tratamientos, Resultados).
+// Photos now appear instantly when loaded, and the first photo of each
+// main destination is prefetched on menu-open / dropdown-expand / hover
+// (nav.js), so it is already cached when the page reveals — same approach
+// that fixed the hero pop-in. Do not re-add a fade without re-testing
+// those pages on a throttled phone connection first.
+
+/* Navigation progress bar (2026-11-24): with view transitions the old
+   page stays visible while the new one downloads, so a tap can feel
+   dead for a beat. nav.js adds .is-navigating to <html> the moment a
+   link is tapped (and again on pageswap), so the slim sage bar appears
+   at the top and slides across while the new page is still being
+   fetched — the tap reads instantly instead of looking frozen.
+   Browsers without view transitions never fire pageswap, but the
+   click trigger still shows the bar for them. */
+.vt-progress {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  z-index: 10001;
+  overflow: hidden;
+  background: transparent;
+}
+
+.vt-progress::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 40%;
+  background: var(--primary);
+  animation: vt-progress-slide 1s ease-in-out infinite;
+}
+
+html.is-navigating .vt-progress {
+  display: block;
+}
+
+@keyframes vt-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CODESTITCH GLOBAL STYLES
 // Core stylesheet containing CSS variables, dark mode styles, base element
 // styling, typography rules, utility classes, component styles, navigation,
@@ -43,6 +122,7 @@
     body {
         margin: 0;
         padding: 0;
+        min-height: 100vh;
         overflow-x: hidden;
         font-family: var(--bodyFont);
         font-size: 100%;
@@ -431,11 +511,53 @@
         }
     }
 
+    /* Lock the scroll on the root element while the menu is open:
+       overflow hidden on <html> is what iOS Safari respects, and it
+       leaves the fixed header (and the close X) exactly where it is.
+       The page itself also turns sage while open, so the iPhone notch
+       and home-indicator areas — which the overlay cannot reach —
+       read the menu color instead of white. Same trick as Cafetería
+       La Movie, whose black body is what shows in those areas. */
+    html {
+        &.cs-open {
+            overflow: hidden;
+            background-color: #425e4c;
+
+            body {
+                background-color: #425e4c;
+
+                /* Bottom strip: a fixed sage band at the bottom edge while
+                   the menu is open, so the bottom reads the menu color
+                   even where the overlay cannot reach. It is deliberately
+                   TALL — the safe area plus 120px — not just the safe
+                   area: on his phone env(safe-area-inset-bottom) alone
+                   came back 0 / too thin, so the strip was invisible and
+                   the bottom stayed white. The extra height also gives
+                   iOS 26 Safari a tall sage fixed element at the bottom
+                   edge to tint its toolbar from. It sits under the
+                   header/overlay (z-index 9999 vs 10000), so it never
+                   covers menu content, and it never blocks taps.
+                   Only exists while open. */
+                &::after {
+                    content: "";
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: calc(env(safe-area-inset-bottom, 0px) + 120px);
+                    background-color: #425e4c;
+                    pointer-events: none;
+                    z-index: 9999;
+                }
+            }
+        }
+    }
+
     #cs-navigation {
         width: 100%;
         /* prevents padding and border from affecting height and width */
         box-sizing: border-box;
-        padding: calc(12 / 16 * 1rem) calc(16 / 16 * 1rem);
+        padding: calc(12 / 16 * 1rem + env(safe-area-inset-top, 0px)) calc(16 / 16 * 1rem) calc(12 / 16 * 1rem);
         background-color: #fff;
         box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
         position: fixed;
@@ -459,15 +581,19 @@
         }
 
         &.cs-active {
+            /* The bar itself turns sage while the menu is open, so iOS 26
+               Safari — which tints its top toolbar from the fixed element
+               at the top edge — reads the menu color instead of white. */
+            background-color: #425e4c;
+
             &:before {
                 width: 100%;
                 opacity: 1;
             }
 
             .cs-ul-wrapper {
-                opacity: 1;
-                transform: scaleX(1);
-                transition-delay: 0.2s;
+                visibility: visible;
+                clip-path: circle(150% at var(--clip-x, 100%) var(--clip-y, 0px));
             }
 
             .cs-li {
@@ -507,16 +633,34 @@
         }
 
         .cs-toggle {
-            /* 44px - 48px */
+            /* 44px - 48px. Closed it is the plain hamburger as before
+               (dark lines, no circle). When the menu opens it morphs
+               into the circular X: the ring fades in and the lines turn
+               white and rotate into the X. Stays above the overlay
+               (z-index) so the whole morph is visible. */
             width: clamp(2.75rem, 6vw, 3rem);
             height: clamp(2.75rem, 6vw, 3rem);
             margin: 0 0 0 auto;
             background-color: transparent;
-            border: none;
-            border-radius: calc(4 / 16 * 1rem);
+            border: 1.5px solid transparent;
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            z-index: 30;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+
+            /* open: the circle appears (white ring) and the lines turn white */
+            &.cs-active {
+                background-color: transparent;
+                border-color: #fff;
+
+                .cs-line {
+                    background-color: #fff;
+                }
+            }
         }
 
         .cs-active {
@@ -538,9 +682,8 @@
         }
 
         .cs-box {
-            /* 24px - 28px */
+            /* 24px - 28px wide, 14px - 16px tall stack — as it was */
             width: clamp(1.5rem, 2vw, 1.75rem);
-            /* 14px - 16px */
             height: clamp(0.875rem, 1.5vw, 1rem);
             position: relative;
         }
@@ -557,7 +700,7 @@
 
         .cs-line1 {
             top: 0;
-            transition: transform 0.5s, top 0.3s, left 0.3s;
+            transition: transform 0.5s, top 0.3s, left 0.3s, background-color 0.3s;
             animation-duration: 0.7s;
             animation-timing-function: ease;
             animation-direction: normal;
@@ -568,7 +711,7 @@
         .cs-line2 {
             top: 50%;
             transform: translateX(-50%) translateY(-50%);
-            transition: top 0.3s, left 0.3s, transform 0.5s;
+            transition: top 0.3s, left 0.3s, transform 0.5s, background-color 0.3s;
             animation-duration: 0.7s;
             animation-timing-function: ease;
             animation-direction: normal;
@@ -577,42 +720,69 @@
 
         .cs-line3 {
             bottom: 0;
-            transition: bottom 0.3s, opacity 0.3s;
+            transition: bottom 0.3s, opacity 0.3s, background-color 0.3s;
         }
 
         .cs-ul-wrapper {
-            height: 100vh;
-            background-color: #fff;
-            box-shadow: inset rgba(0, 0, 0, 0.2) 0px 8px 24px;
-            opacity: 0;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            left: auto;
-            z-index: -1;
-            overflow: hidden;
-            transform: scaleX(0);
-            transition: transform 0.4s, opacity 0.3s;
-            transform-origin: top right;
+            /* Full-screen overlay menu (La Movie style): deep sage, reveals
+               in a circle expanding from the hamburger button.
+               inset: 0 alone stretches it over the whole screen incl. the
+               notch and home-indicator areas — no height: 100vh/dvh here,
+               that over-constrains it on iOS Safari and leaves a white
+               strip at the bottom when the URL bar is showing.
+               The menu scrolls inside itself on short screens and never
+               passes the scroll to the page behind it. */
+            background-color: #425e4c;
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            display: flex;
+            flex-direction: column;
+            visibility: hidden;
+            clip-path: circle(0px at var(--clip-x, 100%) var(--clip-y, 0px));
+            transition: clip-path 0.5s ease, visibility 0.5s;
+        }
+
+        /* Overlay head: white navbar logo only. The hamburger in the bar
+           stays on top as the close X, on the same axis as the logo.
+           Top padding clears the iPhone notch; the overlay background
+           itself covers the safe areas (viewport-fit=cover). */
+        .cs-overlay-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: none;
+            padding: calc(12 / 16 * 1rem + env(safe-area-inset-top, 0px)) calc(16 / 16 * 1rem) calc(12 / 16 * 1rem);
+        }
+
+        .cs-overlay-logo {
+            display: flex;
+            align-items: center;
+
+            img {
+                height: calc(48 / 16 * 1rem);
+                width: auto;
+            }
         }
 
         .cs-ul {
-            width: auto;
-            min-width: 40%;
-            height: 65vh;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
             margin: 0;
-            /* 28px - 40px */
-            padding: calc(48 / 16 * 1rem) clamp(1.75rem, 3vw, 2.5rem) calc(32 / 16 * 1rem) calc(70 / 16 * 1rem);
+            padding: calc(24 / 16 * 1rem) calc(16 / 16 * 1rem) calc(32 / 16 * 1rem + env(safe-area-inset-bottom, 0px));
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: flex-end;
-            gap: calc(20 / 16 * 1rem);
-            overflow: scroll;
+            align-items: flex-start;
+            gap: 0.8rem;
+            overflow-y: auto;
         }
 
         .cs-li {
-            text-align: right;
+            text-align: left;
             list-style: none;
             width: 100%;
             margin-right: 0;
@@ -651,32 +821,86 @@
         }
 
         .cs-li-link {
-            /* 16px - 24px */
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            /* 28px - 36px */
+            font-size: clamp(1.75rem, 8vw, 2.25rem);
             line-height: 1.2em;
+            font-weight: 700;
             text-decoration: none;
             margin: 0;
-            color: var(--headerColor);
+            color: #fff;
             display: inline-block;
             position: relative;
 
             &:before {
-                /* active state underline */
-                content: "";
-                width: 100%;
-                height: 1px;
-                background: currentColor;
-                opacity: 1;
+                /* no underlines in the overlay */
                 display: none;
-                position: absolute;
-                bottom: calc(-2 / 16 * 1rem);
-                left: 0;
             }
 
             &.cs-active {
-                &:before {
-                    display: block;
-                }
+                /* active page reads in gold, not underlined */
+                color: #c9a96a;
+            }
+        }
+
+        /* Gold chevron, only on the two parents with sub-pages.
+           Points right when collapsed, down when expanded. */
+        .cs-dropdown > .cs-li-link {
+            display: inline-flex;
+            align-items: center;
+            gap: calc(16 / 16 * 1rem);
+
+            &:after {
+                content: "";
+                width: calc(12 / 16 * 1rem);
+                height: calc(12 / 16 * 1rem);
+                border-right: 2px solid #c9a96a;
+                border-bottom: 2px solid #c9a96a;
+                transform: rotate(-45deg);
+                transition: transform 0.3s;
+                flex: none;
+            }
+        }
+
+        .cs-dropdown.cs-active > .cs-li-link {
+            &:after {
+                transform: rotate(45deg);
+            }
+        }
+
+        /* Bottom CTA pills */
+        .cs-li.cs-cta-reservar {
+            margin-top: auto;
+            width: 100%;
+
+            .cs-li-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                min-height: calc(56 / 16 * 1rem);
+                border-radius: 999px;
+                background: #fff;
+                color: #425e4c;
+                font-size: calc(20 / 16 * 1rem);
+                font-weight: 700;
+            }
+        }
+
+        .cs-li.cs-cta-cuenta {
+            width: 100%;
+
+            .cs-li-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                min-height: calc(56 / 16 * 1rem);
+                border-radius: 999px;
+                background: transparent;
+                border: 1.5px solid #fff;
+                color: #fff;
+                font-size: calc(20 / 16 * 1rem);
+                font-weight: 600;
             }
         }
 
@@ -726,7 +950,7 @@
                 .cs-drop-ul {
                     height: auto;
                     margin: calc(12 / 16 * 1rem) 0 0 0;
-                    padding: calc(24 / 16 * 1rem);
+                    padding: 0;
                     opacity: 1;
                     visibility: visible;
                     transform: scale(1);
@@ -744,12 +968,8 @@
         }
 
         .cs-drop-icon {
-            width: calc(15 / 16 * 1rem);
-            height: auto;
-            position: absolute;
-            top: 50%;
-            right: calc(-20 / 16 * 1rem);
-            transform: translateY(-50%);
+            /* replaced by the gold CSS chevron on the parent link */
+            display: none;
         }
 
         .cs-drop-ul {
@@ -757,19 +977,19 @@
             height: 0;
             margin: 0;
             box-sizing: border-box;
-            padding: 0 calc(24 / 16 * 1rem) 0 calc(24 / 16 * 1rem);
-            background-color: var(--primary);
+            padding: 0;
+            background-color: transparent;
             opacity: 0;
             display: flex;
             visibility: hidden;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: flex-end;
+            align-items: flex-start;
             gap: calc(12 / 16 * 1rem);
             overflow: hidden;
             transform: scale(0);
             transition: padding 0.3s, margin 0.3s, height 0.3s, opacity 0.3s, transform 0.3s, visibility 0.3s;
-            transform-origin: top right;
+            transform-origin: top left;
         }
 
         .cs-drop-li {
@@ -779,8 +999,9 @@
 
         .cs-li-link {
             &.cs-drop-link {
-                /* 14px - 16px */
-                font-size: clamp(0.875rem, 2vw, 1.25rem);
+                /* 20px - 24px */
+                font-size: clamp(1.25rem, 5vw, 1.5rem);
+                font-weight: 500;
                 color: #fff;
             }
         }
@@ -970,6 +1191,11 @@
         }
 
         .cs-toggle {
+            display: none;
+        }
+
+        /* overlay head lives only in the mobile/tablet menu */
+        .cs-overlay-head {
             display: none;
         }
 

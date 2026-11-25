@@ -16,6 +16,18 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
+# QR code on the business card (cristabel-qr-code.svg encodes
+# https://cristabelhernandez.com/qr). 302, not 301, so the target can
+# change later without browsers caching the redirect permanently.
+# One hop, straight to the home page. The UTM parameters let GA4
+# (already on the site via GTM) attribute the visit to the QR code:
+# source = qr_code, medium = print, campaign = business_card. See the
+# QR traffic in GA4 under Reports > Acquisition > Traffic acquisition.
+[[redirects]]
+  from = "/qr"
+  to = "/?utm_source=qr_code&utm_medium=print&utm_campaign=business_card"
+  status = 302
+
 # Booking app (app/): SPA fallback for the two gated areas only.
 # The React app is built into public/app by the root build (build:app).
 [[redirects]]

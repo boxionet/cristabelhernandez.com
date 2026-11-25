@@ -15,7 +15,8 @@
         <!-- Standard meta tags -->
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+        <meta name="theme-color" content="#ffffff">
         <meta name="description" content="{{ description }}">
         <link rel="canonical" href="{{ client.domain }}{{ page.url }}">
         <meta name="generator" content="{{ eleventy.generator }}">
@@ -42,7 +43,16 @@
         <!-- <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/roboto-v29-latin-regular.woff2" crossorigin>
         <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/roboto-v29-latin-700.woff2" crossorigin> -->
         <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/gordita-regular.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/gordita-medium.woff2" crossorigin>
         <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/gordita-black.woff2" crossorigin>
+        <!-- Prefetch the home hero photo so it is already cached when the
+             visitor taps Inicio / the logo: the photo is then in the new
+             page's first paint instead of popping in after the fade.
+             The media queries mean only the variant for this device is
+             fetched. These MUST match the home page's hero files
+             (src/index.html) — a mismatch downloads the photo twice. -->
+        <link rel="prefetch" as="image" media="(max-width: 600px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | avif({ quality: 70 }) %}">
+        <link rel="prefetch" as="image" media="(min-width: 601px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 70 }) %}">
         <!-- Sitewide Stylesheets and Scripts -->
         <link rel="stylesheet" href="/assets/css/root.css">
         <script defer src="/assets/js/nav.js"></script>
@@ -53,6 +63,9 @@
         <title>{{ title }}</title>
     </head>
     <body>
+        <!-- Slim progress bar shown while a view transition is running
+             (see root.scss + nav.js). Hidden by default. -->
+        <div class="vt-progress" aria-hidden="true"></div>
         <!-- Google Tag Manager (noscript) -->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KR663M52" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- End Google Tag Manager (noscript) -->

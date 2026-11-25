@@ -2,6 +2,7 @@
 const bodyElement = document.querySelector("body");
 const navbarMenu = document.querySelector("#cs-navigation");
 const hamburgerMenu = document.querySelector("#cs-navigation .cs-toggle");
+const overlayWrapper = document.querySelector("#cs-navigation .cs-ul-wrapper");
 
 // Function to toggle the aria-expanded attribute
 function toggleAriaExpanded(element) {
@@ -9,16 +10,61 @@ function toggleAriaExpanded(element) {
     element.setAttribute("aria-expanded", isExpanded === "false" ? "true" : "false");
 }
 
+// While the menu is open the page behind it must not scroll at all.
+// Do NOT freeze the body with position: fixed — that breaks the fixed
+// header (it slides off-screen by the scroll amount, taking the close X
+// with it). Instead lock the scroll on the root element: overflow hidden
+// on <html> is what iOS Safari actually respects, and it leaves the
+// header and the scroll position exactly where they are.
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+function lockBodyScroll() {
+    document.documentElement.classList.add("cs-open");
+    // Paint the browser's own top/bottom bars the menu color while it is open
+    if (themeColorMeta) themeColorMeta.setAttribute("content", "#425e4c");
+}
+
+function unlockBodyScroll() {
+    document.documentElement.classList.remove("cs-open");
+    if (themeColorMeta) themeColorMeta.setAttribute("content", "#ffffff");
+}
+
 // Function to toggle the menu open or closed
 function toggleMenu() {
+    // The overlay reveals in a circle from the hamburger: point the
+    // clip-path at the button's center, so opening grows out of the
+    // three-line button and closing shrinks back into it.
+    const toggleRect = hamburgerMenu.getBoundingClientRect();
+    overlayWrapper.style.setProperty("--clip-x", (toggleRect.left + toggleRect.width / 2) + "px");
+    overlayWrapper.style.setProperty("--clip-y", (toggleRect.top + toggleRect.height / 2) + "px");
     hamburgerMenu.classList.toggle("cs-active");
     navbarMenu.classList.toggle("cs-active");
     bodyElement.classList.toggle("cs-open");
     toggleAriaExpanded(hamburgerMenu);
+    // Menu just opened on mobile: the user is about to pick a top-level
+    // page, so prefetch those pages' first photos now (blog, tienda).
+    if (navbarMenu.classList.contains("cs-active")) {
+        lockBodyScroll();
+        prefetchPhotosFor("/blog/");
+        prefetchPhotosFor("/tienda/");
+    } else {
+        unlockBodyScroll();
+    }
 }
 
 // Add click event listener to the hamburger menu
 hamburgerMenu.addEventListener("click", toggleMenu);
+
+// Tapping a link in the overlay closes it (navigation follows).
+// The hamburger itself is the close button: it stays above the overlay
+// and morphs into the X, so it already calls toggleMenu.
+document.querySelectorAll("#cs-navigation .cs-ul-wrapper a").forEach((link) => {
+    link.addEventListener("click", () => {
+        if (navbarMenu.classList.contains("cs-active")) {
+            toggleMenu();
+        }
+    });
+});
 
 // Add click event listener to the navbar menu to handle clicks on the pseudo-element
 navbarMenu.addEventListener("click", function (event) {
@@ -80,7 +126,16 @@ dropdownElements.forEach(element => {
     // Handles dropdown menus on mobile - the matching media query (max-width: 63.9375rem) is necessary so that clicking the dropdown button on desktop does not add the active class and thus interfere with the hover state
     const maxWidthMediaQuery = window.matchMedia("(max-width: 63.9375rem)");
     if (maxWidthMediaQuery.matches) {
-        element.addEventListener("click", () => toggleDropdown(element));
+        element.addEventListener("click", () => {
+            toggleDropdown(element);
+            // Dropdown just opened: prefetch its destinations' first
+            // photos, so they are cached when the user taps one.
+            if (element.classList.contains("cs-active")) {
+                element.querySelectorAll(".cs-drop-li > a").forEach((a) => {
+                    prefetchPhotosFor(a.getAttribute("href"));
+                });
+            }
+        });
     }
 });
 
@@ -99,4 +154,82 @@ document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && hamburgerMenu.classList.contains("cs-active")) {
         toggleMenu();
     }
+});
+
+// Prefetch a destination's first photo(s) before the user taps it, so the
+// photo is already cached when the new page reveals (no late-arriving
+// flash — same approach that fixed the hero pop-in). Triggered by real
+// intent signals only (menu open, dropdown expand, link hover/focus),
+// never on page load, so a first visit stays light. URLs must match the
+// variant the browser will actually request: the <picture> serves a
+// mobile AVIF at <=600px and a desktop AVIF above it, so pick by the
+// same breakpoint — prefetching the JPEG fallback would download a
+// second, unused file.
+const NAV_PHOTO_PREFETCH = {
+    "/tratamientos-faciales/": [
+        { mobile: "/assets/images/tratamiento-facial-ff3154ee.avif", desktop: "/assets/images/tratamiento-facial-9357eabc.avif" },
+    ],
+    "/tratamientos-corporales/": [
+        { mobile: "/assets/images/tratamiento-corporal-2eb542f9.avif", desktop: "/assets/images/tratamiento-corporal-9bbcbe31.avif" },
+    ],
+    "/nosotros/": [
+        { mobile: "/assets/images/doctora-sbs-f50b469b.avif", desktop: "/assets/images/doctora-sbs-11fa8f41.avif" },
+    ],
+    "/resultados/": [
+        { mobile: "/assets/images/resultado-antes-real-6877afcf.avif", desktop: "/assets/images/resultado-antes-real-00c827a2.avif" },
+        { mobile: "/assets/images/resultado-despues-real-61c30c02.avif", desktop: "/assets/images/resultado-despues-real-33ecaaf7.avif" },
+    ],
+    "/blog/": [
+        { mobile: "/assets/images/radiant-beauty-in-a-serene-spa-70b42a96.avif", desktop: "/assets/images/radiant-beauty-in-a-serene-spa-1cff908d.avif" },
+    ],
+    "/tienda/": [
+        { mobile: "/assets/images/tizo3-studio-b73a9417.avif", desktop: "/assets/images/tizo3-studio-da0a3133.avif" },
+    ],
+};
+const prefetchedPhotos = new Set();
+function prefetchPhotosFor(href) {
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    (NAV_PHOTO_PREFETCH[href] || []).forEach((variant) => {
+        const src = isMobile ? variant.mobile : variant.desktop;
+        if (prefetchedPhotos.has(src)) return;
+        prefetchedPhotos.add(src);
+        const link = document.createElement("link");
+        link.rel = "prefetch";
+        link.as = "image";
+        link.href = src;
+        document.head.appendChild(link);
+    });
+}
+
+// Desktop hover / keyboard focus on a nav link: prefetch its photos.
+document.querySelectorAll("#cs-navigation a[href]").forEach((a) => {
+    a.addEventListener("mouseenter", () => prefetchPhotosFor(a.getAttribute("href")));
+    a.addEventListener("focus", () => prefetchPhotosFor(a.getAttribute("href")));
+});
+
+// Show the slim progress bar the moment a link is tapped, not only when
+// the transition starts: pageswap fires after the new page's HTML and CSS
+// have downloaded, and until then the old page sits there looking frozen.
+// A tap on any internal link shows the bar immediately; the new page is
+// a fresh document, so the class is gone on arrival.
+document.addEventListener("pageswap", () => {
+    document.documentElement.classList.add("is-navigating");
+});
+document.querySelectorAll('a[href^="/"]').forEach((a) => {
+    a.addEventListener("click", () => {
+        document.documentElement.classList.add("is-navigating");
+    });
+});
+
+// Clear the bar when this page is shown again. A forward navigation
+// loads a fresh document (no class), but going Back restores this page
+// from the back-forward cache with the DOM exactly as it was when we
+// left — including .is-navigating. Without this the bar slides forever
+// after a Back navigation. pageshow covers the restore; pagereveal
+// covers the view-transition reveal of the restored page.
+window.addEventListener("pageshow", () => {
+    document.documentElement.classList.remove("is-navigating");
+});
+document.addEventListener("pagereveal", () => {
+    document.documentElement.classList.remove("is-navigating");
 });

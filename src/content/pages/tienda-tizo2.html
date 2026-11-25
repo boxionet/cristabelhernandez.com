@@ -7,6 +7,8 @@ permalink: "/tienda/tizo2/"
 {% extends "layouts/base.html" %}
 
 {% block head %}
+    <link rel="preload" as="image" type="image/avif" media="(max-width: 600px)" imagesrcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" imagesizes="100vw" fetchpriority="high">
+    <link rel="preload" as="image" type="image/avif" media="(min-width: 601px)" imagesrcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" imagesizes="600px" fetchpriority="high">
     <link rel="stylesheet" href="/assets/css/tienda-producto.css">
     <script src="/assets/js/tienda-producto.js" defer></script>
 {% endblock %}
@@ -35,31 +37,31 @@ permalink: "/tienda/tizo2/"
                     <div class="cs-thumbs" aria-label="Fotos y video del producto">
                         <button class="cs-thumb is-active" type="button" data-gallery-thumb="0" aria-pressed="true" aria-label="Ver foto 1: tubo de TiZO2">
                             <picture>
-                                <source srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <source srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp" sizes="160px">
                                 <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
                             </picture>
                         </button>
                         <button class="cs-thumb" type="button" data-gallery-thumb="1" aria-pressed="false" aria-label="Ver foto 2: tubo de TiZO2 con una muestra de la crema">
                             <picture>
-                                <source srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <source srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp" sizes="160px">
                                 <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
                             </picture>
                         </button>
                         <button class="cs-thumb" type="button" data-gallery-thumb="2" aria-pressed="false" aria-label="Ver foto 3: caja de TiZO2">
                             <picture>
-                                <source srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <source srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp" sizes="160px">
                                 <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
                             </picture>
                         </button>
                         <button class="cs-thumb" type="button" data-gallery-thumb="3" aria-pressed="false" aria-label="Ver foto 4: textura cremosa sin color de TiZO2">
                             <picture>
-                                <source srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <source srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp" sizes="160px">
                                 <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
                             </picture>
                         </button>
                         <button class="cs-thumb cs-thumb-video" type="button" data-gallery-thumb="4" aria-pressed="false" aria-label="Ver video del producto TiZO2">
                             <picture>
-                                <source srcset="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp">
+                                <source srcset="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 160, height: 160 }) | webp({ quality: 78 }) %}" type="image/webp" sizes="160px">
                                 <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 160, height: 160 }) | jpeg({ quality: 82 }) %}" alt="" width="160" height="160">
                             </picture>
                             <span class="cs-thumb-play" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></span>
@@ -67,32 +69,32 @@ permalink: "/tienda/tizo2/"
                     </div>
                     <div class="cs-main">
                         <picture class="cs-picture is-active" data-gallery-panel="0">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <img loading="eager" decoding="async" src="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Tubo de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="800">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" type="image/avif" sizes="100vw">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 360, height: 360 }) | webp({ quality: 78 }) %} 360w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %} 720w" type="image/webp" sizes="100vw">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="600px">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 400, height: 400 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="600px">
+                            <img loading="eager" decoding="async" fetchpriority="high" src="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 400, height: 400 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/tizo2-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %} 800w" sizes="600px" alt="Tubo de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="800">
                         </picture>
                         <picture class="cs-picture" data-gallery-panel="1">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Tubo de TiZO2 con una muestra de la crema" width="800" height="800">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" type="image/avif" sizes="100vw">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 360, height: 360 }) | webp({ quality: 78 }) %} 360w, {% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %} 720w" type="image/webp" sizes="100vw">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="600px">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 400, height: 400 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="600px">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 400, height: 400 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/tizo2-muestra.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %} 800w" sizes="600px" alt="Tubo de TiZO2 con una muestra de la crema" width="800" height="800">
                         </picture>
                         <picture class="cs-picture" data-gallery-panel="2">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Caja de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="800">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" type="image/avif" sizes="100vw">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 360, height: 360 }) | webp({ quality: 78 }) %} 360w, {% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %} 720w" type="image/webp" sizes="100vw">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="600px">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 400, height: 400 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="600px">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 400, height: 400 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/tizo2-primer-nontinted.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %} 800w" sizes="600px" alt="Caja de TiZO2 Primer y protector solar sin color, FPS 40" width="800" height="800">
                         </picture>
                         <picture class="cs-picture" data-gallery-panel="3">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Muestra de la textura cremosa sin color de TiZO2" width="800" height="800">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" type="image/avif" sizes="100vw">
+                            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 360, height: 360 }) | webp({ quality: 78 }) %} 360w, {% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %} 720w" type="image/webp" sizes="100vw">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="600px">
+                            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 400, height: 400 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="600px">
+                            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 400, height: 400 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/tizo2-textura.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %} 800w" sizes="600px" alt="Muestra de la textura cremosa sin color de TiZO2" width="800" height="800">
                         </picture>
                         <div class="cs-picture cs-video" data-gallery-panel="4">
                             <video muted loop playsinline preload="metadata" poster="{% getUrl "/assets/images/tizo2-video-poster.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" aria-label="Video del producto TiZO2">
@@ -315,11 +317,11 @@ permalink: "/tienda/tizo2/"
                 <li class="cs-item">
                     <a class="cs-card-link" href="/tienda/tizo3/" aria-label="Ver TiZO3 Primer / Protector Solar">
                     <picture class="cs-picture">
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
-                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Tubo de TiZO3 Primer y protector solar con color, FPS 40" width="800" height="800">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" type="image/avif" sizes="100vw">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 360, height: 360 }) | webp({ quality: 78 }) %} 360w, {% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %} 720w" type="image/webp" sizes="100vw">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="400px">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 400, height: 400 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="400px">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 400, height: 400 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/tizo3-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %} 800w" sizes="400px" alt="Tubo de TiZO3 Primer y protector solar con color, FPS 40" width="800" height="800">
                     </picture>
                     <h3 class="cs-h3">TiZO3 Primer / Protector Solar</h3>
                     <p class="cs-item-text">
@@ -330,11 +332,11 @@ permalink: "/tienda/tizo2/"
                 <li class="cs-item">
                     <a class="cs-card-link" href="/tienda/mineral-stick/" aria-label="Ver TiZO Mineral Stick">
                     <picture class="cs-picture">
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %}" type="image/avif">
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %}" type="image/webp">
-                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Envase de TiZO Mineral Stick sin color, FPS 45" width="800" height="800">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 360, height: 360 }) | avif({ quality: 70 }) %} 360w, {% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | avif({ quality: 70 }) %} 720w" type="image/avif" sizes="100vw">
+                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 360, height: 360 }) | webp({ quality: 78 }) %} 360w, {% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 720, height: 720 }) | webp({ quality: 78 }) %} 720w" type="image/webp" sizes="100vw">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 400, height: 400 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="400px">
+                        <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 400, height: 400 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="400px">
+                        <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 400, height: 400 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/tizo-stick-studio.jpg" | resize({ width: 800, height: 800 }) | jpeg({ quality: 82 }) %} 800w" sizes="400px" alt="Envase de TiZO Mineral Stick sin color, FPS 45" width="800" height="800">
                     </picture>
                     <h3 class="cs-h3">TiZO Mineral Stick</h3>
                     <p class="cs-item-text">
