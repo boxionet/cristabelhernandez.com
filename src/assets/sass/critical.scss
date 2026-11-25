@@ -210,6 +210,11 @@
             top: 0;
             left: 0;
             z-index: -1;
+            /* Placeholder tone while the photo loads: the photo's average
+               color (#a28f7a), so the hero shows a warm field close to the
+               photo instead of a blank area that the photo then snaps
+               onto. The img covers it fully once loaded. */
+            background-color: #a28f7a;
 
             img {
                 width: 100%;

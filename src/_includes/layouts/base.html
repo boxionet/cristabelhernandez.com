@@ -44,6 +44,14 @@
         <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/gordita-regular.woff2" crossorigin>
         <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/gordita-medium.woff2" crossorigin>
         <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/gordita-black.woff2" crossorigin>
+        <!-- Prefetch the home hero photo so it is already cached when the
+             visitor taps Inicio / the logo: the photo is then in the new
+             page's first paint instead of popping in after the fade.
+             The media queries mean only the variant for this device is
+             fetched. Same URLs as the home page's preloads, so the
+             browser downloads each variant once. -->
+        <link rel="prefetch" as="image" media="(max-width: 600px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | avif({ quality: 70 }) %}">
+        <link rel="prefetch" as="image" media="(min-width: 601px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 85 }) %}">
         <!-- Sitewide Stylesheets and Scripts -->
         <link rel="stylesheet" href="/assets/css/root.css">
         <script defer src="/assets/js/nav.js"></script>
