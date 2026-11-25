@@ -346,12 +346,11 @@
         }
 
         .cs-content {
-            text-align: left;
+            text-align: center;
             width: 100%;
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
             gap: calc(24 / 16 * 1rem);
         }
 
@@ -368,6 +367,51 @@
             /* 16px - 20px */
             gap: clamp(1rem, 1.5vw, 1.25rem);
             position: relative;
+        }
+
+        /* Proposal B: modern grid — rounded corners, soft shadow, caption
+           overlaid on a dark gradient at the bottom of each photo. The
+           aspect-ratio keeps every tile uniform (305x400) and the width /
+           height attributes on the <img> stay at the display size so the
+           mobile grid track never blows out (see the 915px regression). */
+        .cs-picture {
+            position: relative;
+            display: block;
+            width: 100%;
+            aspect-ratio: 305 / 400;
+            overflow: hidden;
+            border-radius: calc(16 / 16 * 1rem);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+            }
+
+            img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .cs-caption {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+                padding: calc(40 / 16 * 1rem) calc(20 / 16 * 1rem) calc(16 / 16 * 1rem);
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+                color: #fff;
+                font-size: calc(16 / 16 * 1rem);
+                font-weight: 600;
+                line-height: 1.3em;
+            }
         }
 
         .cs-image {
