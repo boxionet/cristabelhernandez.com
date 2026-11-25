@@ -26,42 +26,23 @@
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// IMAGE FADE-IN (2026-11-24)
-// Content photos fade in gently as their data arrives instead of snapping
-// onto the page (same late-image pop the hero had, but on Tienda,
-// Tratamientos, Blog, etc.). Only active when JS runs: the `js` class on
-// <html> is added by a one-line script in <head>, so without JS images
-// render normally. nav.js adds .is-loaded on load (or error / already
-// cached). The hero photo is excluded: it is prefetched and already there
-// at first paint.
-// ─────────────────────────────────────────────────────────────────────────────
-.js main img:not([src$=".svg"]) {
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.js main img.is-loaded {
-  opacity: 1;
-}
-
-#hero-2335 img {
-  opacity: 1;
-  transition: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js main img {
-    transition: none;
-  }
-}
+// NOTE (2026-11-24): a site-wide photo fade-in lived here and was REMOVED.
+// It made photos arrive one by one with a 0.35s opacity animation, which
+// read as flashing on photo-heavy pages (Blog, Tratamientos, Resultados).
+// Photos now appear instantly when loaded, and the first photo of each
+// main destination is prefetched on menu-open / dropdown-expand / hover
+// (nav.js), so it is already cached when the page reveals — same approach
+// that fixed the hero pop-in. Do not re-add a fade without re-testing
+// those pages on a throttled phone connection first.
 
 /* Navigation progress bar (2026-11-24): with view transitions the old
    page stays visible while the new one downloads, so a tap can feel
-   dead for a beat. When the browser starts the swap (pageswap event,
-   nav.js adds .is-navigating to <html>) a slim sage bar appears at the
-   top and slides across, so the tap reads instantly. Browsers without
-   view transitions never fire pageswap, so nothing changes for them. */
+   dead for a beat. nav.js adds .is-navigating to <html> the moment a
+   link is tapped (and again on pageswap), so the slim sage bar appears
+   at the top and slides across while the new page is still being
+   fetched — the tap reads instantly instead of looking frozen.
+   Browsers without view transitions never fire pageswap, but the
+   click trigger still shows the bar for them. */
 .vt-progress {
   display: none;
   position: fixed;

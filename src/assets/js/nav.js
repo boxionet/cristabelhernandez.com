@@ -15,6 +15,12 @@ function toggleMenu() {
     navbarMenu.classList.toggle("cs-active");
     bodyElement.classList.toggle("cs-open");
     toggleAriaExpanded(hamburgerMenu);
+    // Menu just opened on mobile: the user is about to pick a top-level
+    // page, so prefetch those pages' first photos now (blog, tienda).
+    if (navbarMenu.classList.contains("cs-active")) {
+        prefetchPhotosFor("/blog/");
+        prefetchPhotosFor("/tienda/");
+    }
 }
 
 // Add click event listener to the hamburger menu
@@ -80,7 +86,16 @@ dropdownElements.forEach(element => {
     // Handles dropdown menus on mobile - the matching media query (max-width: 63.9375rem) is necessary so that clicking the dropdown button on desktop does not add the active class and thus interfere with the hover state
     const maxWidthMediaQuery = window.matchMedia("(max-width: 63.9375rem)");
     if (maxWidthMediaQuery.matches) {
-        element.addEventListener("click", () => toggleDropdown(element));
+        element.addEventListener("click", () => {
+            toggleDropdown(element);
+            // Dropdown just opened: prefetch its destinations' first
+            // photos, so they are cached when the user taps one.
+            if (element.classList.contains("cs-active")) {
+                element.querySelectorAll(".cs-drop-li > a").forEach((a) => {
+                    prefetchPhotosFor(a.getAttribute("href"));
+                });
+            }
+        });
     }
 });
 
@@ -101,27 +116,67 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-// Content photos fade in as they load instead of snapping onto the page.
-// (CSS in root.scss hides `main img` until it gets .is-loaded; the `js`
-// class on <html> is added by a one-liner in <head>, so without JS images
-// render normally. The hero photo is excluded: it is prefetched.)
-document.querySelectorAll("main img:not(#hero-2335 img)").forEach((img) => {
-    // SVG icons are tiny UI graphics, not photos: they render instantly
-    // and must never be hidden. (Fading them made the 12+ service icons
-    // strobe in one by one — the icon flashing.)
-    if ((img.getAttribute("src") || "").endsWith(".svg")) return;
-    const show = () => img.classList.add("is-loaded");
-    if (img.complete) {
-        show();
-    } else {
-        img.addEventListener("load", show, { once: true });
-        img.addEventListener("error", show, { once: true });
-    }
+// Prefetch a destination's first photo(s) before the user taps it, so the
+// photo is already cached when the new page reveals (no late-arriving
+// flash — same approach that fixed the hero pop-in). Triggered by real
+// intent signals only (menu open, dropdown expand, link hover/focus),
+// never on page load, so a first visit stays light. URLs must match the
+// variant the browser will actually request: the <picture> serves a
+// mobile AVIF at <=600px and a desktop AVIF above it, so pick by the
+// same breakpoint — prefetching the JPEG fallback would download a
+// second, unused file.
+const NAV_PHOTO_PREFETCH = {
+    "/tratamientos-faciales/": [
+        { mobile: "/assets/images/tratamiento-facial-ff3154ee.avif", desktop: "/assets/images/tratamiento-facial-9357eabc.avif" },
+    ],
+    "/tratamientos-corporales/": [
+        { mobile: "/assets/images/tratamiento-corporal-2eb542f9.avif", desktop: "/assets/images/tratamiento-corporal-9bbcbe31.avif" },
+    ],
+    "/nosotros/": [
+        { mobile: "/assets/images/doctora-sbs-f50b469b.avif", desktop: "/assets/images/doctora-sbs-11fa8f41.avif" },
+    ],
+    "/resultados/": [
+        { mobile: "/assets/images/resultado-antes-real-6877afcf.avif", desktop: "/assets/images/resultado-antes-real-00c827a2.avif" },
+        { mobile: "/assets/images/resultado-despues-real-61c30c02.avif", desktop: "/assets/images/resultado-despues-real-33ecaaf7.avif" },
+    ],
+    "/blog/": [
+        { mobile: "/assets/images/radiant-beauty-in-a-serene-spa-70b42a96.avif", desktop: "/assets/images/radiant-beauty-in-a-serene-spa-1cff908d.avif" },
+    ],
+    "/tienda/": [
+        { mobile: "/assets/images/tizo3-studio-b73a9417.avif", desktop: "/assets/images/tizo3-studio-da0a3133.avif" },
+    ],
+};
+const prefetchedPhotos = new Set();
+function prefetchPhotosFor(href) {
+    const isMobile = window.matchMedia("(max-width: 600px)").matches;
+    (NAV_PHOTO_PREFETCH[href] || []).forEach((variant) => {
+        const src = isMobile ? variant.mobile : variant.desktop;
+        if (prefetchedPhotos.has(src)) return;
+        prefetchedPhotos.add(src);
+        const link = document.createElement("link");
+        link.rel = "prefetch";
+        link.as = "image";
+        link.href = src;
+        document.head.appendChild(link);
+    });
+}
+
+// Desktop hover / keyboard focus on a nav link: prefetch its photos.
+document.querySelectorAll("#cs-navigation a[href]").forEach((a) => {
+    a.addEventListener("mouseenter", () => prefetchPhotosFor(a.getAttribute("href")));
+    a.addEventListener("focus", () => prefetchPhotosFor(a.getAttribute("href")));
 });
 
-// Show the slim progress bar while a view transition is running: the old
-// page otherwise stays frozen while the new one downloads, so a tap can
-// feel dead. pageswap only fires when a transition actually runs.
+// Show the slim progress bar the moment a link is tapped, not only when
+// the transition starts: pageswap fires after the new page's HTML and CSS
+// have downloaded, and until then the old page sits there looking frozen.
+// A tap on any internal link shows the bar immediately; the new page is
+// a fresh document, so the class is gone on arrival.
 document.addEventListener("pageswap", () => {
     document.documentElement.classList.add("is-navigating");
+});
+document.querySelectorAll('a[href^="/"]').forEach((a) => {
+    a.addEventListener("click", () => {
+        document.documentElement.classList.add("is-navigating");
+    });
 });
