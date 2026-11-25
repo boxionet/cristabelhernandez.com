@@ -544,9 +544,8 @@ html.is-navigating .vt-progress {
             }
 
             .cs-ul-wrapper {
-                opacity: 1;
-                transform: scaleX(1);
-                transition-delay: 0.2s;
+                visibility: visible;
+                clip-path: circle(150% at var(--clip-x, 100%) var(--clip-y, 0px));
             }
 
             .cs-li {
@@ -660,38 +659,88 @@ html.is-navigating .vt-progress {
         }
 
         .cs-ul-wrapper {
+            /* Full-screen overlay menu (La Movie style): deep sage, reveals
+               in a circle expanding from the hamburger button */
             height: 100vh;
-            background-color: #fff;
-            box-shadow: inset rgba(0, 0, 0, 0.2) 0px 8px 24px;
-            opacity: 0;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            left: auto;
-            z-index: -1;
+            height: 100dvh;
+            background-color: #425e4c;
+            position: fixed;
+            inset: 0;
+            z-index: 20;
             overflow: hidden;
-            transform: scaleX(0);
-            transition: transform 0.4s, opacity 0.3s;
-            transform-origin: top right;
+            display: flex;
+            flex-direction: column;
+            visibility: hidden;
+            clip-path: circle(0px at var(--clip-x, 100%) var(--clip-y, 0px));
+            transition: clip-path 0.5s ease, visibility 0.5s;
+        }
+
+        /* Overlay head: white navbar logo + close button, flex-centered
+           on the same axis so they always line up */
+        .cs-overlay-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: none;
+            padding: calc(12 / 16 * 1rem) calc(24 / 16 * 1rem);
+        }
+
+        .cs-overlay-logo {
+            display: flex;
+            align-items: center;
+
+            img {
+                height: calc(48 / 16 * 1rem);
+                width: auto;
+            }
+        }
+
+        .cs-overlay-close {
+            width: calc(44 / 16 * 1rem);
+            height: calc(44 / 16 * 1rem);
+            background: transparent;
+            border: 1.5px solid #fff;
+            border-radius: 50%;
+            position: relative;
+            flex: none;
+            cursor: pointer;
+            padding: 0;
+
+            span {
+                width: 55%;
+                height: 2px;
+                background: #fff;
+                border-radius: 2px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                &:nth-of-type(1) {
+                    transform: translate(-50%, -50%) rotate(45deg);
+                }
+
+                &:nth-of-type(2) {
+                    transform: translate(-50%, -50%) rotate(-45deg);
+                }
+            }
         }
 
         .cs-ul {
-            width: auto;
-            min-width: 40%;
-            height: 65vh;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
             margin: 0;
-            /* 28px - 40px */
-            padding: calc(48 / 16 * 1rem) clamp(1.75rem, 3vw, 2.5rem) calc(32 / 16 * 1rem) calc(70 / 16 * 1rem);
+            padding: calc(24 / 16 * 1rem) calc(24 / 16 * 1rem) calc(32 / 16 * 1rem);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: flex-end;
-            gap: calc(20 / 16 * 1rem);
-            overflow: scroll;
+            align-items: flex-start;
+            gap: calc(8 / 16 * 1rem);
+            overflow-y: auto;
         }
 
         .cs-li {
-            text-align: right;
+            text-align: left;
             list-style: none;
             width: 100%;
             margin-right: 0;
@@ -730,32 +779,86 @@ html.is-navigating .vt-progress {
         }
 
         .cs-li-link {
-            /* 16px - 24px */
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            /* 28px - 36px */
+            font-size: clamp(1.75rem, 8vw, 2.25rem);
             line-height: 1.2em;
+            font-weight: 700;
             text-decoration: none;
             margin: 0;
-            color: var(--headerColor);
+            color: #fff;
             display: inline-block;
             position: relative;
 
             &:before {
-                /* active state underline */
-                content: "";
-                width: 100%;
-                height: 1px;
-                background: currentColor;
-                opacity: 1;
+                /* no underlines in the overlay */
                 display: none;
-                position: absolute;
-                bottom: calc(-2 / 16 * 1rem);
-                left: 0;
             }
 
             &.cs-active {
-                &:before {
-                    display: block;
-                }
+                /* active page reads in gold, not underlined */
+                color: #c9a96a;
+            }
+        }
+
+        /* Gold chevron, only on the two parents with sub-pages.
+           Points right when collapsed, down when expanded. */
+        .cs-dropdown > .cs-li-link {
+            display: inline-flex;
+            align-items: center;
+            gap: calc(16 / 16 * 1rem);
+
+            &:after {
+                content: "";
+                width: calc(12 / 16 * 1rem);
+                height: calc(12 / 16 * 1rem);
+                border-right: 2px solid #c9a96a;
+                border-bottom: 2px solid #c9a96a;
+                transform: rotate(-45deg);
+                transition: transform 0.3s;
+                flex: none;
+            }
+        }
+
+        .cs-dropdown.cs-active > .cs-li-link {
+            &:after {
+                transform: rotate(45deg);
+            }
+        }
+
+        /* Bottom CTA pills */
+        .cs-li.cs-cta-reservar {
+            margin-top: auto;
+            width: 100%;
+
+            .cs-li-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                min-height: calc(56 / 16 * 1rem);
+                border-radius: 999px;
+                background: #fff;
+                color: #425e4c;
+                font-size: calc(20 / 16 * 1rem);
+                font-weight: 700;
+            }
+        }
+
+        .cs-li.cs-cta-cuenta {
+            width: 100%;
+
+            .cs-li-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                min-height: calc(56 / 16 * 1rem);
+                border-radius: 999px;
+                background: transparent;
+                border: 1.5px solid #fff;
+                color: #fff;
+                font-size: calc(20 / 16 * 1rem);
+                font-weight: 600;
             }
         }
 
@@ -805,7 +908,7 @@ html.is-navigating .vt-progress {
                 .cs-drop-ul {
                     height: auto;
                     margin: calc(12 / 16 * 1rem) 0 0 0;
-                    padding: calc(24 / 16 * 1rem);
+                    padding: 0;
                     opacity: 1;
                     visibility: visible;
                     transform: scale(1);
@@ -823,12 +926,8 @@ html.is-navigating .vt-progress {
         }
 
         .cs-drop-icon {
-            width: calc(15 / 16 * 1rem);
-            height: auto;
-            position: absolute;
-            top: 50%;
-            right: calc(-20 / 16 * 1rem);
-            transform: translateY(-50%);
+            /* replaced by the gold CSS chevron on the parent link */
+            display: none;
         }
 
         .cs-drop-ul {
@@ -836,19 +935,19 @@ html.is-navigating .vt-progress {
             height: 0;
             margin: 0;
             box-sizing: border-box;
-            padding: 0 calc(24 / 16 * 1rem) 0 calc(24 / 16 * 1rem);
-            background-color: var(--primary);
+            padding: 0;
+            background-color: transparent;
             opacity: 0;
             display: flex;
             visibility: hidden;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: flex-end;
+            align-items: flex-start;
             gap: calc(12 / 16 * 1rem);
             overflow: hidden;
             transform: scale(0);
             transition: padding 0.3s, margin 0.3s, height 0.3s, opacity 0.3s, transform 0.3s, visibility 0.3s;
-            transform-origin: top right;
+            transform-origin: top left;
         }
 
         .cs-drop-li {
@@ -858,8 +957,9 @@ html.is-navigating .vt-progress {
 
         .cs-li-link {
             &.cs-drop-link {
-                /* 14px - 16px */
-                font-size: clamp(0.875rem, 2vw, 1.25rem);
+                /* 20px - 24px */
+                font-size: clamp(1.25rem, 5vw, 1.5rem);
+                font-weight: 500;
                 color: #fff;
             }
         }
@@ -1049,6 +1149,11 @@ html.is-navigating .vt-progress {
         }
 
         .cs-toggle {
+            display: none;
+        }
+
+        /* overlay head lives only in the mobile/tablet menu */
+        .cs-overlay-head {
             display: none;
         }
 

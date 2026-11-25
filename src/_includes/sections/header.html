@@ -20,6 +20,16 @@
             </button>
             <!-- We need a wrapper div so we can set a fixed height on the cs-ul in case the nav list gets too long from too many dropdowns being opened and needs to have an overflow scroll. This wrapper acts as the background so it can go the full height of the screen and not cut off any overflowing nav items while the cs-ul stops short of the bottom of the screen, which keeps all nav items in view no matter how mnay there are-->
             <div class="cs-ul-wrapper">
+                <!--Overlay head (mobile/tablet only): white navbar logo + close button, vertically centered on the same axis-->
+                <div class="cs-overlay-head">
+                    <a href="/" class="cs-overlay-logo" aria-label="regresar al inicio">
+                        <img src="/assets/svgs/cristabel-logo-blanco-horizontal.svg" alt="Dra. Cristabel Hernández" width="210" height="42" decoding="async">
+                    </a>
+                    <button class="cs-overlay-close" aria-label="cerrar menú">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
                 <ul id="cs-expanded" class="cs-ul" aria-expanded="false">
                     <li class="cs-li">
                         <a href="/" class="cs-li-link {% if page.url == "/" %} cs-active {% endif %}">
@@ -73,12 +83,12 @@
                             Contactanos
                         </a>
                     </li>
-                    <li class="cs-li cs-hide-on-desktop">
+                    <li class="cs-li cs-hide-on-desktop cs-cta-reservar">
                         <a href="/reservar/" class="cs-li-link {% if page.url == "/reservar/" %} cs-active {% endif %}">
                             Reservar Cita
                         </a>
                     </li>
-                    <li class="cs-li cs-hide-on-desktop">
+                    <li class="cs-li cs-hide-on-desktop cs-cta-cuenta">
                         <a href="/mi-cuenta/" class="cs-li-link">
                             Mi Cuenta
                         </a>
