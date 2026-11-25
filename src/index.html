@@ -26,9 +26,14 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 
     <!-- Preload the hero (LCP) image: AVIF variant per breakpoint.
          The background photo is the LCP element, so each preload
-         matches exactly what its breakpoint renders. -->
-    <link rel="preload" as="image" fetchpriority="high" type="image/avif" media="(max-width: 600px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | avif({ quality: 70 }) %}">
-    <link rel="preload" as="image" fetchpriority="high" type="image/avif" media="(min-width: 601px)" href="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 85 }) %}">
+         matches exactly what its breakpoint renders. imagesrcset /
+         imagesizes mirror the <picture> srcset / sizes below, so the
+         browser picks the same candidate for the preload as for the
+         element (no double download). Only the AVIF variant is
+         preloaded — a browser without AVIF skips it and fetches the
+         WebP / JPEG via the <picture> normally. -->
+    <link rel="preload" as="image" fetchpriority="high" type="image/avif" media="(max-width: 600px)" imagesrcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 400, height: 403 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | avif({ quality: 70 }) %} 800w" imagesizes="100vw">
+    <link rel="preload" as="image" fetchpriority="high" type="image/avif" media="(min-width: 601px)" imagesrcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 640, height: 480 }) | avif({ quality: 70 }) %} 640w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 960, height: 720 }) | avif({ quality: 70 }) %} 960w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 70 }) %} 1290w" imagesizes="100vw">
 
     <!-- FAQ accordion (CodeStitch #1741) -->
     <script defer src="/assets/js/faq.js"></script>
@@ -59,15 +64,19 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
             </div>
         </div>
         <picture class="cs-background">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <!-- Desktop: full-frame derivatives at high quality — the
-                 same whole photo as the original file, compressed
-                 (AVIF q85 / WebP q90 / JPEG q92, native 1290x968,
-                 no crop). -->
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 85 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | webp({ quality: 90 }) %}" type="image/webp">
-            <img aria-hidden="true" src="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | jpeg({ quality: 92 }) %}" alt="sala de tratamientos del centro" width="860" height="867" loading="eager" fetchpriority="high">
+            <!-- Mobile: center crop of the photo, responsive widths.
+                 The hero is full-bleed (100vw), so sizes="100vw". -->
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 400, height: 403 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | avif({ quality: 70 }) %} 800w" sizes="100vw" type="image/avif">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 400, height: 403 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 800, height: 805 }) | webp({ quality: 78 }) %} 800w" sizes="100vw" type="image/webp">
+            <!-- Desktop: full-frame derivatives — the same whole photo
+                 as the original file, compressed (AVIF q70 / WebP q85 /
+                 JPEG q80, native 1290x968, no crop). Widths match the
+                 rendered slot: the hero is full-bleed, so a 640w file
+                 serves small laptops, 960w serves most desktops, and
+                 1290w is the largest the source supports. -->
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 640, height: 480 }) | avif({ quality: 70 }) %} 640w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 960, height: 720 }) | avif({ quality: 70 }) %} 960w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 70 }) %} 1290w" sizes="100vw" type="image/avif">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 640, height: 480 }) | webp({ quality: 85 }) %} 640w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 960, height: 720 }) | webp({ quality: 85 }) %} 960w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | webp({ quality: 85 }) %} 1290w" sizes="100vw" type="image/webp">
+            <img aria-hidden="true" src="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | jpeg({ quality: 80 }) %}" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 640, height: 480 }) | jpeg({ quality: 80 }) %} 640w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 960, height: 720 }) | jpeg({ quality: 80 }) %} 960w, {% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | jpeg({ quality: 80 }) %} 1290w" sizes="100vw" alt="sala de tratamientos del centro" width="1290" height="968" loading="eager" fetchpriority="high">
         </picture>
     </section>
 
