@@ -67,7 +67,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                  no crop). -->
             <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | avif({ quality: 85 }) %}" type="image/avif">
             <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | webp({ quality: 90 }) %}" type="image/webp">
-            <img aria-hidden="true" decoding="async" src="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | jpeg({ quality: 92 }) %}" alt="sala de tratamientos del centro" width="860" height="867" loading="eager" fetchpriority="high">
+            <img aria-hidden="true" src="{% getUrl "/assets/images/hero-consultorio.jpg" | resize({ width: 1290, height: 968 }) | jpeg({ quality: 92 }) %}" alt="sala de tratamientos del centro" width="860" height="867" loading="eager" fetchpriority="high">
         </picture>
     </section>
 
