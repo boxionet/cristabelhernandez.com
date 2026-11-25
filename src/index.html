@@ -95,11 +95,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     <a href="/tratamientos/" class="cs-link">
                         <h3 class="cs-h3">Tratamientos Faciales</h3>
                         <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 480, height: 361 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 480, height: 361 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %}" alt="tratamiento facial" width="373" height="420">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 240, height: 180 }) | avif({ quality: 70 }) %} 240w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 480, height: 361 }) | avif({ quality: 70 }) %} 480w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 240, height: 180 }) | webp({ quality: 78 }) %} 240w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 480, height: 361 }) | webp({ quality: 78 }) %} 480w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 358, height: 269 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="373px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 358, height: 269 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="373px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 358, height: 269 }) | jpeg({ quality: 82 }) %} 358w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %} 716w" sizes="373px" alt="tratamiento facial" width="716" height="538">
         </picture>
                         <p class="cs-item-text">
                             Toxina botulínica, microneedling, plasma rico en plaquetas y más, para una piel sana y radiante.
@@ -112,11 +112,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     <a href="/tratamientos/" class="cs-link">
                         <h3 class="cs-h3">Lipólisis de Mentón</h3>
                         <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 480, height: 361 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 480, height: 361 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %}" alt="lipólisis de mentón (papada)" width="373" height="420">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 240, height: 180 }) | avif({ quality: 70 }) %} 240w, {% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 480, height: 361 }) | avif({ quality: 70 }) %} 480w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 240, height: 180 }) | webp({ quality: 78 }) %} 240w, {% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 480, height: 361 }) | webp({ quality: 78 }) %} 480w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 358, height: 269 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="373px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 358, height: 269 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="373px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 358, height: 269 }) | jpeg({ quality: 82 }) %} 358w, {% getUrl "/assets/images/lipolisis-menton.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %} 716w" sizes="373px" alt="lipólisis de mentón (papada)" width="716" height="538">
         </picture>
                         <p class="cs-item-text">
                             Reduce la papada y define el contorno de tu mandíbula en 3 sesiones.
@@ -129,11 +129,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     <a href="/tratamientos/" class="cs-link">
                         <h3 class="cs-h3">Microneedling</h3>
                         <picture class="cs-picture cs-picture-tall">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 480, height: 480 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 480, height: 480 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | jpeg({ quality: 82 }) %}" alt="microneedling" width="746" height="746">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 240, height: 240 }) | avif({ quality: 70 }) %} 240w, {% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 480, height: 480 }) | avif({ quality: 70 }) %} 480w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 240, height: 240 }) | webp({ quality: 78 }) %} 240w, {% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 480, height: 480 }) | webp({ quality: 78 }) %} 480w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 358, height: 358 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="373px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 358, height: 358 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="373px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 358, height: 358 }) | jpeg({ quality: 82 }) %} 358w, {% getUrl "/assets/images/microneedling-card.jpg" | resize({ width: 716, height: 716 }) | jpeg({ quality: 82 }) %} 716w" sizes="373px" alt="microneedling" width="716" height="716">
         </picture>
                         <p class="cs-item-text">
                             Estimula el colágeno para mejorar la textura y la luminosidad de tu piel.
@@ -146,11 +146,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     <a href="/tratamientos/" class="cs-link">
                         <h3 class="cs-h3">Toxina Botulínica</h3>
                         <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %}" alt="toxina botulínica" width="373" height="420">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 269 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 269 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 269 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="373px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 269 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="373px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 269 }) | jpeg({ quality: 82 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 538 }) | jpeg({ quality: 82 }) %} 716w" sizes="373px" alt="toxina botulínica" width="716" height="538">
         </picture>
                         <p class="cs-item-text">
                             Suaviza líneas de expresión y arrugas dinámicas con un resultado natural y fresco.
@@ -177,11 +177,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
     <section id="sbsr-2526">
         <div class="cs-container">
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 742, height: 702 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 742, height: 702 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | jpeg({ quality: 82 }) %}" alt="Dra. Cristabel Hernández" width="960" height="796">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 371, height: 351 }) | avif({ quality: 70 }) %} 371w, {% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 742, height: 702 }) | avif({ quality: 70 }) %} 742w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 371, height: 351 }) | webp({ quality: 78 }) %} 371w, {% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 742, height: 702 }) | webp({ quality: 78 }) %} 742w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 768, height: 400 }) | avif({ quality: 70 }) %} 768w, {% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | avif({ quality: 70 }) %} 1536w" type="image/avif" sizes="960px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 768, height: 400 }) | webp({ quality: 78 }) %} 768w, {% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | webp({ quality: 78 }) %} 1536w" type="image/webp" sizes="960px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 768, height: 400 }) | jpeg({ quality: 82 }) %} 768w, {% getUrl "/assets/images/doctora-sbs.jpg" | resize({ width: 1536, height: 800 }) | jpeg({ quality: 82 }) %} 1536w" sizes="960px" alt="Dra. Cristabel Hernández" width="1536" height="800">
         </picture>
             <div class="cs-content">
                 <span class="cs-topper">Conoce a tu doctora</span>
@@ -208,11 +208,11 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
         <div class="cs-container">
             <div class="cs-image-group">
                 <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 440, height: 640 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 440, height: 640 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | jpeg({ quality: 82 }) %}" alt="Dra. Cristabel Hernández" width="400" height="520">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 220, height: 320 }) | avif({ quality: 70 }) %} 220w, {% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 440, height: 640 }) | avif({ quality: 70 }) %} 440w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 220, height: 320 }) | webp({ quality: 78 }) %} 220w, {% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 440, height: 640 }) | webp({ quality: 78 }) %} 440w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 400, height: 590 }) | avif({ quality: 70 }) %} 400w, {% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | avif({ quality: 70 }) %} 800w" type="image/avif" sizes="400px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 400, height: 590 }) | webp({ quality: 78 }) %} 400w, {% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | webp({ quality: 78 }) %} 800w" type="image/webp" sizes="400px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 400, height: 590 }) | jpeg({ quality: 82 }) %} 400w, {% getUrl "/assets/images/doctora-pasos.jpg" | resize({ width: 800, height: 1180 }) | jpeg({ quality: 82 }) %} 800w" sizes="400px" alt="Dra. Cristabel Hernández" width="800" height="1180">
         </picture>
             </div>
             <div class="cs-wrapper">
@@ -271,19 +271,19 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                 <div class="ba-card">
                     <div class="ba-view">
                         <picture class="ba-layer">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | jpeg({ quality: 82 }) %}" draggable="false" alt="antes del tratamiento con toxina botulínica" width="640" height="853">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 358, height: 477 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 358, height: 477 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 600, height: 800 }) | avif({ quality: 70 }) %} 600w, {% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | avif({ quality: 70 }) %} 1200w" type="image/avif" sizes="600px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 600, height: 800 }) | webp({ quality: 78 }) %} 600w, {% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | webp({ quality: 78 }) %} 1200w" type="image/webp" sizes="600px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 600, height: 800 }) | jpeg({ quality: 82 }) %} 600w, {% getUrl "/assets/images/resultado-antes-real.jpg" | resize({ width: 1200, height: 1600 }) | jpeg({ quality: 82 }) %} 1200w" sizes="600px" draggable="false" alt="antes del tratamiento con toxina botulínica" width="1200" height="1600">
         </picture>
                         <div class="ba-after">
                             <picture class="ba-layer">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | jpeg({ quality: 82 }) %}" draggable="false" alt="después del tratamiento con toxina botulínica" width="640" height="853">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 358, height: 477 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 716, height: 954 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 358, height: 477 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 716, height: 954 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 600, height: 800 }) | avif({ quality: 70 }) %} 600w, {% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | avif({ quality: 70 }) %} 1200w" type="image/avif" sizes="600px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 600, height: 800 }) | webp({ quality: 78 }) %} 600w, {% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | webp({ quality: 78 }) %} 1200w" type="image/webp" sizes="600px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 600, height: 800 }) | jpeg({ quality: 82 }) %} 600w, {% getUrl "/assets/images/resultado-despues-real.jpg" | resize({ width: 1200, height: 1600 }) | jpeg({ quality: 82 }) %} 1200w" sizes="600px" draggable="false" alt="después del tratamiento con toxina botulínica" width="1200" height="1600">
         </picture>
                         </div>
                         <span class="ba-label ba-label-before">Antes</span>
@@ -489,43 +489,43 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
         <div class="cs-gallery">
             <!--Picture 1-->
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" alt="tratamiento facial" width="272" height="320">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 358, height: 210 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 358, height: 210 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 234, height: 346 }) | avif({ quality: 70 }) %} 234w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %} 468w" type="image/avif" sizes="272px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 234, height: 346 }) | webp({ quality: 78 }) %} 234w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %} 468w" type="image/webp" sizes="272px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 234, height: 346 }) | jpeg({ quality: 82 }) %} 234w, {% getUrl "/assets/images/tratamiento-facial.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %} 468w" sizes="272px" alt="tratamiento facial" width="468" height="692">
         </picture>
             <!--Picture 2-->
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" alt="Dra. Cristabel Hernández" width="272" height="320">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 210 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 358, height: 210 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 234, height: 346 }) | avif({ quality: 70 }) %} 234w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %} 468w" type="image/avif" sizes="272px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 234, height: 346 }) | webp({ quality: 78 }) %} 234w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %} 468w" type="image/webp" sizes="272px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 234, height: 346 }) | jpeg({ quality: 82 }) %} 234w, {% getUrl "/assets/images/toxina-botulinica.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %} 468w" sizes="272px" alt="Dra. Cristabel Hernández" width="468" height="692">
         </picture>
             <!--Picture 3-->
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" alt="tratamiento corporal" width="272" height="320">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 358, height: 210 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 358, height: 210 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 234, height: 346 }) | avif({ quality: 70 }) %} 234w, {% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %} 468w" type="image/avif" sizes="272px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 234, height: 346 }) | webp({ quality: 78 }) %} 234w, {% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %} 468w" type="image/webp" sizes="272px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 234, height: 346 }) | jpeg({ quality: 82 }) %} 234w, {% getUrl "/assets/images/tratamiento-corporal.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %} 468w" sizes="272px" alt="tratamiento corporal" width="468" height="692">
         </picture>
             <!--Picture 4-->
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" alt="interior del centro" width="272" height="320">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 358, height: 210 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 358, height: 210 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 234, height: 346 }) | avif({ quality: 70 }) %} 234w, {% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %} 468w" type="image/avif" sizes="272px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 234, height: 346 }) | webp({ quality: 78 }) %} 234w, {% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %} 468w" type="image/webp" sizes="272px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 234, height: 346 }) | jpeg({ quality: 82 }) %} 234w, {% getUrl "/assets/images/clinica-recepcion.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %} 468w" sizes="272px" alt="interior del centro" width="468" height="692">
         </picture>
             <!--Picture 5-->
             <picture class="cs-picture">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %}" type="image/avif">
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %}" type="image/webp">
-            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" alt="cuidado de la piel" width="272" height="320">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 358, height: 210 }) | avif({ quality: 70 }) %} 358w, {% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 716, height: 420 }) | avif({ quality: 70 }) %} 716w" type="image/avif" sizes="100vw">
+            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 358, height: 210 }) | webp({ quality: 78 }) %} 358w, {% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 716, height: 420 }) | webp({ quality: 78 }) %} 716w" type="image/webp" sizes="100vw">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 234, height: 346 }) | avif({ quality: 70 }) %} 234w, {% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | avif({ quality: 70 }) %} 468w" type="image/avif" sizes="272px">
+            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 234, height: 346 }) | webp({ quality: 78 }) %} 234w, {% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | webp({ quality: 78 }) %} 468w" type="image/webp" sizes="272px">
+            <img loading="lazy" decoding="async" src="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %}" srcset="{% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 234, height: 346 }) | jpeg({ quality: 82 }) %} 234w, {% getUrl "/assets/images/clinica-productos.jpg" | resize({ width: 468, height: 692 }) | jpeg({ quality: 82 }) %} 468w" sizes="272px" alt="cuidado de la piel" width="468" height="692">
         </picture>
         </div>
     </section>
