@@ -1,4 +1,30 @@
 // ─────────────────────────────────────────────────────────────────────────────
+// CROSS-DOCUMENT VIEW TRANSITIONS (2026-11-24)
+// Smooth fade between pages instead of the white flash of a full reload.
+// The browser handles it natively: on a same-origin link click it keeps the
+// old page visible while the new one loads, then cross-fades. Browsers
+// without support ignore these rules and navigate exactly as before.
+// The SPA pages (/panel, /reservar, /mi-cuenta) do not use this stylesheet,
+// so their client-side routing is untouched.
+// ─────────────────────────────────────────────────────────────────────────────
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CODESTITCH GLOBAL STYLES
 // Core stylesheet containing CSS variables, dark mode styles, base element
 // styling, typography rules, utility classes, component styles, navigation,
