@@ -3,7 +3,6 @@ const bodyElement = document.querySelector("body");
 const navbarMenu = document.querySelector("#cs-navigation");
 const hamburgerMenu = document.querySelector("#cs-navigation .cs-toggle");
 const overlayWrapper = document.querySelector("#cs-navigation .cs-ul-wrapper");
-const overlayClose = document.querySelector("#cs-navigation .cs-overlay-close");
 
 // Function to toggle the aria-expanded attribute
 function toggleAriaExpanded(element) {
@@ -34,12 +33,9 @@ function toggleMenu() {
 // Add click event listener to the hamburger menu
 hamburgerMenu.addEventListener("click", toggleMenu);
 
-// The overlay's own close button (top-right X) closes the menu
-if (overlayClose) {
-    overlayClose.addEventListener("click", toggleMenu);
-}
-
-// Tapping a link in the overlay closes it (navigation follows)
+// Tapping a link in the overlay closes it (navigation follows).
+// The hamburger itself is the close button: it stays above the overlay
+// and morphs into the X, so it already calls toggleMenu.
 document.querySelectorAll("#cs-navigation .cs-ul-wrapper a").forEach((link) => {
     link.addEventListener("click", () => {
         if (navbarMenu.classList.contains("cs-active")) {
