@@ -10,6 +10,25 @@ function toggleAriaExpanded(element) {
     element.setAttribute("aria-expanded", isExpanded === "false" ? "true" : "false");
 }
 
+// While the menu is open the page behind it must not scroll at all.
+// Do NOT freeze the body with position: fixed — that breaks the fixed
+// header (it slides off-screen by the scroll amount, taking the close X
+// with it). Instead lock the scroll on the root element: overflow hidden
+// on <html> is what iOS Safari actually respects, and it leaves the
+// header and the scroll position exactly where they are.
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
+function lockBodyScroll() {
+    document.documentElement.classList.add("cs-open");
+    // Paint the browser's own top/bottom bars the menu color while it is open
+    if (themeColorMeta) themeColorMeta.setAttribute("content", "#425e4c");
+}
+
+function unlockBodyScroll() {
+    document.documentElement.classList.remove("cs-open");
+    if (themeColorMeta) themeColorMeta.setAttribute("content", "#ffffff");
+}
+
 // Function to toggle the menu open or closed
 function toggleMenu() {
     // The overlay reveals in a circle from the hamburger: point the
@@ -25,8 +44,11 @@ function toggleMenu() {
     // Menu just opened on mobile: the user is about to pick a top-level
     // page, so prefetch those pages' first photos now (blog, tienda).
     if (navbarMenu.classList.contains("cs-active")) {
+        lockBodyScroll();
         prefetchPhotosFor("/blog/");
         prefetchPhotosFor("/tienda/");
+    } else {
+        unlockBodyScroll();
     }
 }
 
