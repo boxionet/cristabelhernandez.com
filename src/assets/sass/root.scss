@@ -512,10 +512,19 @@ html.is-navigating .vt-progress {
 
     /* Lock the scroll on the root element while the menu is open:
        overflow hidden on <html> is what iOS Safari respects, and it
-       leaves the fixed header (and the close X) exactly where it is. */
+       leaves the fixed header (and the close X) exactly where it is.
+       The page itself also turns sage while open, so the iPhone notch
+       and home-indicator areas — which the overlay cannot reach —
+       read the menu color instead of white. Same trick as Cafetería
+       La Movie, whose black body is what shows in those areas. */
     html {
         &.cs-open {
             overflow: hidden;
+            background-color: #425e4c;
+
+            body {
+                background-color: #425e4c;
+            }
         }
     }
 
