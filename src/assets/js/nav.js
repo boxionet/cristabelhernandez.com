@@ -114,3 +114,10 @@ document.querySelectorAll("main img:not(#hero-2335 img)").forEach((img) => {
         img.addEventListener("error", show, { once: true });
     }
 });
+
+// Show the slim progress bar while a view transition is running: the old
+// page otherwise stays frozen while the new one downloads, so a tap can
+// feel dead. pageswap only fires when a transition actually runs.
+document.addEventListener("pageswap", () => {
+    document.documentElement.classList.add("is-navigating");
+});

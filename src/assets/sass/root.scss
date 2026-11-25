@@ -13,7 +13,9 @@
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.3s;
+  /* Short fade on purpose: the old page stays visible while the new one
+     downloads, so a long fade reads as a delay after the tap. */
+  animation-duration: 0.15s;
   animation-timing-function: ease;
 }
 
@@ -51,6 +53,46 @@
 @media (prefers-reduced-motion: reduce) {
   .js main img {
     transition: none;
+  }
+}
+
+/* Navigation progress bar (2026-11-24): with view transitions the old
+   page stays visible while the new one downloads, so a tap can feel
+   dead for a beat. When the browser starts the swap (pageswap event,
+   nav.js adds .is-navigating to <html>) a slim sage bar appears at the
+   top and slides across, so the tap reads instantly. Browsers without
+   view transitions never fire pageswap, so nothing changes for them. */
+.vt-progress {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  z-index: 10001;
+  overflow: hidden;
+  background: transparent;
+}
+
+.vt-progress::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 40%;
+  background: var(--primary);
+  animation: vt-progress-slide 1s ease-in-out infinite;
+}
+
+html.is-navigating .vt-progress {
+  display: block;
+}
+
+@keyframes vt-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
   }
 }
 
