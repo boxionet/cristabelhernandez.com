@@ -106,6 +106,10 @@ document.addEventListener("keydown", (event) => {
 // class on <html> is added by a one-liner in <head>, so without JS images
 // render normally. The hero photo is excluded: it is prefetched.)
 document.querySelectorAll("main img:not(#hero-2335 img)").forEach((img) => {
+    // SVG icons are tiny UI graphics, not photos: they render instantly
+    // and must never be hidden. (Fading them made the 12+ service icons
+    // strobe in one by one — the icon flashing.)
+    if ((img.getAttribute("src") || "").endsWith(".svg")) return;
     const show = () => img.classList.add("is-loaded");
     if (img.complete) {
         show();
