@@ -126,6 +126,13 @@
             margin: 0;
         }
 
+        /* the intro block is narrower than the title block, so center the
+           block itself (not just its text) or it sits left of the title */
+        .ba-intro {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .cs-button-solid {
             font-size: calc(16/16 * 1rem);
             font-weight: 700;
