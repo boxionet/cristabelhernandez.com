@@ -1526,8 +1526,8 @@ html.is-navigating .vt-progress {
             width: clamp(13.125rem, 8vw, 15rem);
             height: auto;
             display: block;
-            /* 28px - 44px */
-            margin-bottom: clamp(1.75rem, 4.17vw, 2.75rem);
+            /* 12px - 16px — the tagline sits close under the logo */
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
         }
 
         .cs-logo-img {

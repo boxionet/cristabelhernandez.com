@@ -126,6 +126,13 @@
             margin: 0;
         }
 
+        /* the intro block is narrower than the title block, so center the
+           block itself (not just its text) or it sits left of the title */
+        .ba-intro {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         .cs-button-solid {
             font-size: calc(16/16 * 1rem);
             font-weight: 700;
@@ -265,11 +272,13 @@
 /* Tablet - 600px */
 @media only screen and (min-width: 37.5rem) {
     #antes-despues {
+        /* keep the header centered on desktop too — the button sat
+           stranded at the far right of the row and looked out of place */
         .cs-content {
-            text-align: left;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-end;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .cs-gallery {
@@ -346,12 +355,11 @@
         }
 
         .cs-content {
-            text-align: left;
+            text-align: center;
             width: 100%;
             display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
             gap: calc(24 / 16 * 1rem);
         }
 
@@ -368,6 +376,59 @@
             /* 16px - 20px */
             gap: clamp(1rem, 1.5vw, 1.25rem);
             position: relative;
+        }
+
+        /* Proposal B: modern grid — rounded corners, soft shadow, caption
+           overlaid on a dark gradient at the bottom of each photo. The
+           aspect-ratio keeps every tile uniform (305x400) and the width /
+           height attributes on the <img> stay at the display size so the
+           mobile grid track never blows out (see the 915px regression). */
+        .cs-picture {
+            position: relative;
+            display: block;
+            width: 100%;
+            aspect-ratio: 305 / 400;
+            overflow: hidden;
+            border-radius: calc(16 / 16 * 1rem);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+            }
+
+            img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .cs-caption {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+                /* tall brand-green gradient — covers the bottom ~45% of
+                   the photo so the label reads as a green band, not a
+                   thin black strip */
+                height: 45%;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                padding: calc(16 / 16 * 1rem) calc(20 / 16 * 1rem);
+                background: linear-gradient(to top, rgba(66, 94, 76, 0.95) 0%, rgba(66, 94, 76, 0.55) 55%, rgba(66, 94, 76, 0) 100%);
+                color: #fff;
+                font-size: calc(16 / 16 * 1rem);
+                font-weight: 600;
+                line-height: 1.3em;
+                text-align: center;
+            }
         }
 
         .cs-image {
