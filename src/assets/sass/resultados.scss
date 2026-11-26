@@ -265,11 +265,13 @@
 /* Tablet - 600px */
 @media only screen and (min-width: 37.5rem) {
     #antes-despues {
+        /* keep the header centered on desktop too — the button sat
+           stranded at the far right of the row and looked out of place */
         .cs-content {
-            text-align: left;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-end;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .cs-gallery {
@@ -405,12 +407,20 @@
                 right: 0;
                 bottom: 0;
                 z-index: 1;
-                padding: calc(40 / 16 * 1rem) calc(20 / 16 * 1rem) calc(16 / 16 * 1rem);
-                background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+                /* tall brand-green gradient — covers the bottom ~45% of
+                   the photo so the label reads as a green band, not a
+                   thin black strip */
+                height: 45%;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                padding: calc(16 / 16 * 1rem) calc(20 / 16 * 1rem);
+                background: linear-gradient(to top, rgba(66, 94, 76, 0.95) 0%, rgba(66, 94, 76, 0.55) 55%, rgba(66, 94, 76, 0) 100%);
                 color: #fff;
                 font-size: calc(16 / 16 * 1rem);
                 font-weight: 600;
                 line-height: 1.3em;
+                text-align: center;
             }
         }
 
