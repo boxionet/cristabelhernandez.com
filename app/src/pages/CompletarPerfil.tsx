@@ -95,7 +95,7 @@ export default function CompletarPerfil() {
               type="text"
               required
               autoComplete="given-name"
-              placeholder="Yamileth"
+              placeholder="Yesenia"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
             />
